@@ -1,0 +1,368 @@
+2026-03-11 23:14:27.777 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 5: Explicit Columns) ===
+2026-03-11 23:14:32.584 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 4: Clean GOs) ===
+2026-03-11 23:14:33.877 [INF]  | [DB] Connected to: 103.235.104.197 | proxPayroll
+2026-03-11 23:14:34.286 [INF]  | [DB] Database exists. Running migrations.sql...
+2026-03-11 23:14:40.903 [INF]  | [DB] Finished running migrations.sql. 83 batches applied, 0 skipped.
+2026-03-11 23:14:40.904 [INF]  | [DB] Migrations complete.
+2026-03-11 23:14:41.385 [INF]  | === Backend running at http://localhost:5217 ===
+2026-03-11 23:14:41.407 [INF] Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager | User profile is available. Using 'C:\Users\vasanth\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-11 23:14:41.417 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is starting.
+2026-03-11 23:14:41.425 [INF] Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager | Creating key {7bccaa84-c724-42a6-89e7-9a7bcadf8dda} with creation date 2026-03-11 17:44:41Z, activation date 2026-03-11 17:44:41Z, and expiration date 2026-06-09 17:44:41Z.
+2026-03-11 23:14:41.437 [INF] Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository | Writing data to file 'C:\Users\vasanth\AppData\Local\ASP.NET\DataProtection-Keys\key-7bccaa84-c724-42a6-89e7-9a7bcadf8dda.xml'.
+2026-03-11 23:14:41.655 [INF] Microsoft.Hosting.Lifetime | Now listening on: http://localhost:5217
+2026-03-11 23:14:41.656 [INF] Microsoft.Hosting.Lifetime | Application started. Press Ctrl+C to shut down.
+2026-03-11 23:14:41.656 [INF] Microsoft.Hosting.Lifetime | Hosting environment: Development
+2026-03-11 23:14:41.656 [INF] Microsoft.Hosting.Lifetime | Content root path: C:\Repos_Work\HRM_Prodex\backend
+2026-03-11 23:14:51.422 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is running...
+2026-03-11 23:14:55.536 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service completed. Inserted 0 new schedules for the rolling 30-day window.
+2026-03-11 23:15:38.260 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - null null
+2026-03-11 23:15:38.288 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:38.356 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - 204 null null 97.5054ms
+2026-03-11 23:15:38.359 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/api/auth/login - application/json 62
+2026-03-11 23:15:38.363 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:38.375 [WRN] Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware | Failed to determine the https port for redirect.
+2026-03-11 23:15:39.761 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-03-11 23:15:39.778 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(backend.Models.LoginRequest) on controller backend.Controllers.AuthController (backend).
+2026-03-11 23:15:40.986 [INF] backend.Controllers.AuthController | [Auth] Login attempt | Email=vasanth2004vk@gmail.com
+2026-03-11 23:15:41.357 [INF] backend.Controllers.AuthController | [Auth] Login SUCCESS | Email=vasanth2004vk@gmail.com | Role=SuperAdmin | OrgId=2
+2026-03-11 23:15:41.361 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type '<>f__AnonymousType2`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType3`6[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:15:41.376 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AuthController.Login (backend) in 1596.5202ms
+2026-03-11 23:15:41.377 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-03-11 23:15:41.378 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /api/auth/login → 200 (1617.6ms)
+2026-03-11 23:15:41.381 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/api/auth/login - 200 null application/json; charset=utf-8 3022.1555ms
+2026-03-11 23:15:41.441 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:15:41.508 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.1ms)
+2026-03-11 23:15:41.508 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 67.3412ms
+2026-03-11 23:15:41.508 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:15:41.808 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:15:41.814 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.1ms)
+2026-03-11 23:15:41.814 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 6.4144ms
+2026-03-11 23:15:41.814 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:15:47.730 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-03-11 23:15:47.730 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.731 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.4579ms
+2026-03-11 23:15:47.731 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-03-11 23:15:47.731 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.731 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.138ms
+2026-03-11 23:15:47.731 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:15:47.732 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.766 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:15:47.772 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:15:47.774 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:15:47.826 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:15:47.834 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 61.106ms
+2026-03-11 23:15:47.834 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:15:47.834 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (68.0ms)
+2026-03-11 23:15:47.834 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 102.3959ms
+2026-03-11 23:15:47.835 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:15:47.835 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.837 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:15:47.837 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:15:47.837 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:15:47.872 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null null
+2026-03-11 23:15:47.873 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.873 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 204 null null 0.6678ms
+2026-03-11 23:15:47.874 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null 0
+2026-03-11 23:15:47.875 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.875 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees/negotiate'
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251147870 - null null
+2026-03-11 23:15:47.876 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.0ms)
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 0.5256ms
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251147870 - 204 null null 0.2833ms
+2026-03-11 23:15:47.876 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:15:47.877 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251147870 - null null
+2026-03-11 23:15:47.877 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.879 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:15:47.882 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees/negotiate'
+2026-03-11 23:15:47.882 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/employees/negotiate → 200 (6.7ms)
+2026-03-11 23:15:47.882 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 200 316 application/json 8.0612ms
+2026-03-11 23:15:47.885 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/employees?id=B_wGJCxKWsIQXNeKo4ATFg - null null
+2026-03-11 23:15:47.885 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:47.885 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees'
+2026-03-11 23:15:47.887 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:15:47.890 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-03-11 23:15:47.890 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:15:47.890 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 53.3058ms
+2026-03-11 23:15:47.890 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:15:47.890 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (53.6ms)
+2026-03-11 23:15:47.890 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 55.5358ms
+2026-03-11 23:15:48.034 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:15:48.045 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 157.7735ms
+2026-03-11 23:15:48.045 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:15:48.045 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (166.2ms)
+2026-03-11 23:15:48.045 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251147870 - 200 null application/json; charset=utf-8 168.0432ms
+2026-03-11 23:15:48.071 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:15:48.071 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:15:48.072 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:15:48.072 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:15:48.072 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.4837ms
+2026-03-11 23:15:48.072 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.5127ms
+2026-03-11 23:15:48.072 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:15:48.072 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:15:48.085 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:15:48.085 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.5062ms
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.5384ms
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:15:48.085 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:15:54.280 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:15:54.280 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:54.280 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.3661ms
+2026-03-11 23:15:54.281 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:15:54.281 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:15:54.282 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:15:54.286 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:16:03.388 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.FileContentResultExecutor | Executing FileContentResult, sending file with download name 'Employees_20260311.pdf' ...
+2026-03-11 23:16:03.397 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 9111.4567ms
+2026-03-11 23:16:03.397 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:16:03.397 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 200 (9115.7ms)
+2026-03-11 23:16:03.398 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 200 199198 application/pdf 9116.8387ms
+2026-03-11 23:17:03.286 [INF] Microsoft.Hosting.Lifetime | Application is shutting down...
+2026-03-11 23:17:03.287 [INF] Microsoft.AspNetCore.Server.Kestrel.Connections | Connection id "0HNJVIO0PARRU", Request id "0HNJVIO0PARRU:00000001": the application aborted the connection.
+2026-03-11 23:17:03.292 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null null
+2026-03-11 23:17:03.292 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:03.292 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 204 null null 0.6033ms
+2026-03-11 23:17:03.293 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null 0
+2026-03-11 23:17:03.293 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:03.294 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:03.294 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees'
+2026-03-11 23:17:03.294 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/employees → 101 (75408.7ms)
+2026-03-11 23:17:03.294 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/employees?id=B_wGJCxKWsIQXNeKo4ATFg - 101 null null 75409.1921ms
+2026-03-11 23:17:03.294 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:03.294 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/employees/negotiate → 200 (0.5ms)
+2026-03-11 23:17:03.294 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 200 316 application/json 0.8323ms
+2026-03-11 23:17:22.917 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 5: Explicit Columns) ===
+2026-03-11 23:17:23.214 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 4: Clean GOs) ===
+2026-03-11 23:17:23.738 [INF]  | [DB] Connected to: 103.235.104.197 | proxPayroll
+2026-03-11 23:17:24.039 [INF]  | [DB] Database exists. Running migrations.sql...
+2026-03-11 23:17:30.644 [INF]  | [DB] Finished running migrations.sql. 83 batches applied, 0 skipped.
+2026-03-11 23:17:30.645 [INF]  | [DB] Migrations complete.
+2026-03-11 23:17:30.759 [INF]  | === Backend running at http://localhost:5217 ===
+2026-03-11 23:17:30.771 [INF] Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager | User profile is available. Using 'C:\Users\vasanth\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-03-11 23:17:30.778 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is starting.
+2026-03-11 23:17:30.853 [INF] Microsoft.Hosting.Lifetime | Now listening on: http://localhost:5217
+2026-03-11 23:17:30.853 [INF] Microsoft.Hosting.Lifetime | Application started. Press Ctrl+C to shut down.
+2026-03-11 23:17:30.853 [INF] Microsoft.Hosting.Lifetime | Hosting environment: Development
+2026-03-11 23:17:30.853 [INF] Microsoft.Hosting.Lifetime | Content root path: C:\Repos_Work\HRM_Prodex\backend
+2026-03-11 23:17:31.069 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.069 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:17:31.068 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.096 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.096 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.100 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 31.9478ms
+2026-03-11 23:17:31.100 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 31.9402ms
+2026-03-11 23:17:31.103 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.105 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.110 [WRN] Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware | Failed to determine the https port for redirect.
+2026-03-11 23:17:31.138 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.4ms)
+2026-03-11 23:17:31.139 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 72.32ms
+2026-03-11 23:17:31.141 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:17:31.175 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.185 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:17:31.187 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:17:31.361 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:31.383 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.383 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.385 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 197.5289ms
+2026-03-11 23:17:31.385 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.386 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (211.4ms)
+2026-03-11 23:17:31.387 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 284.0728ms
+2026-03-11 23:17:31.388 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.388 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:17:31.389 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:17:31.423 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null null
+2026-03-11 23:17:31.423 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.423 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 204 null null 0.5374ms
+2026-03-11 23:17:31.424 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null 0
+2026-03-11 23:17:31.425 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.425 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:31.426 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:17:31.426 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251251421 - null null
+2026-03-11 23:17:31.426 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.427 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251251421 - 204 null null 0.2453ms
+2026-03-11 23:17:31.427 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.0ms)
+2026-03-11 23:17:31.427 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 0.9451ms
+2026-03-11 23:17:31.427 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:17:31.428 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251251421 - null null
+2026-03-11 23:17:31.428 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.430 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:17:31.433 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:31.433 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/employees/negotiate → 200 (7.9ms)
+2026-03-11 23:17:31.433 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 200 316 application/json 8.9072ms
+2026-03-11 23:17:31.438 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/employees?id=8HxRO0ARnLiagrLxmT2PdQ - null null
+2026-03-11 23:17:31.438 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.438 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees'
+2026-03-11 23:17:31.439 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:17:31.442 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:31.442 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 53.9567ms
+2026-03-11 23:17:31.442 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.443 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (54.4ms)
+2026-03-11 23:17:31.443 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 59.6971ms
+2026-03-11 23:17:31.447 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-03-11 23:17:31.535 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:31.555 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 115.7968ms
+2026-03-11 23:17:31.555 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:17:31.555 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (125.3ms)
+2026-03-11 23:17:31.556 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251251421 - 200 null application/json; charset=utf-8 127.6674ms
+2026-03-11 23:17:31.585 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:17:31.585 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:17:31.585 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:17:31.585 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:17:31.586 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.5766ms
+2026-03-11 23:17:31.586 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.6034ms
+2026-03-11 23:17:31.586 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:17:31.586 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:17:31.594 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:17:31.594 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:17:31.595 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:17:31.595 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:17:31.595 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.6514ms
+2026-03-11 23:17:31.595 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.67ms
+2026-03-11 23:17:31.595 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:17:31.595 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:17:31.631 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees'
+2026-03-11 23:17:31.631 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/employees → 101 (193.1ms)
+2026-03-11 23:17:31.632 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/employees?id=8HxRO0ARnLiagrLxmT2PdQ - 101 null null 193.9992ms
+2026-03-11 23:17:31.857 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.857 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:17:31.857 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.858 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.0ms)
+2026-03-11 23:17:31.858 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 0.5924ms
+2026-03-11 23:17:31.858 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:17:31.858 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.858 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:17:31.858 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:17:31.914 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:31.914 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 56.2808ms
+2026-03-11 23:17:31.914 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.914 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (56.5ms)
+2026-03-11 23:17:31.914 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 57.2215ms
+2026-03-11 23:17:31.915 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - null null
+2026-03-11 23:17:31.915 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.916 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.916 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-03-11 23:17:31.916 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-03-11 23:17:31.953 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null null
+2026-03-11 23:17:31.953 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.953 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 204 null null 0.5404ms
+2026-03-11 23:17:31.954 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - null 0
+2026-03-11 23:17:31.955 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.955 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:31.955 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/employees/negotiate'
+2026-03-11 23:17:31.955 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/employees/negotiate → 200 (0.4ms)
+2026-03-11 23:17:31.955 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/employees/negotiate?negotiateVersion=1 - 200 316 application/json 0.9283ms
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251251951 - null null
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2&_t=1773251251951 - 204 null null 0.2724ms
+2026-03-11 23:17:31.957 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg → 404 (0.0ms)
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 404 0 null 0.3501ms
+2026-03-11 23:17:31.957 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg, Response status code: 404
+2026-03-11 23:17:31.958 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251251951 - null null
+2026-03-11 23:17:31.958 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.959 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:17:31.959 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:17:31.960 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-03-11 23:17:31.963 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/employees?id=oRDFl6QYdaxfQxHIDCxaCA - null null
+2026-03-11 23:17:31.963 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:31.963 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/employees'
+2026-03-11 23:17:31.968 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:31.968 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 52.1885ms
+2026-03-11 23:17:31.968 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-03-11 23:17:31.968 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (52.5ms)
+2026-03-11 23:17:31.968 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 53.0392ms
+2026-03-11 23:17:32.194 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-11 23:17:32.194 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 235.3792ms
+2026-03-11 23:17:32.194 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-03-11 23:17:32.194 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (235.6ms)
+2026-03-11 23:17:32.194 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2&_t=1773251251951 - 200 null application/json; charset=utf-8 236.0597ms
+2026-03-11 23:17:32.222 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:17:32.222 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:17:32.223 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:17:32.223 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:17:32.223 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.5276ms
+2026-03-11 23:17:32.223 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.5556ms
+2026-03-11 23:17:32.223 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:17:32.223 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:17:32.233 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-03-11 23:17:32.233 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-03-11 23:17:32.234 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-22.png → 404 (0.0ms)
+2026-03-11 23:17:32.234 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-23.png → 404 (0.0ms)
+2026-03-11 23:17:32.234 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 404 0 null 0.7705ms
+2026-03-11 23:17:32.234 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 404 0 null 0.7704ms
+2026-03-11 23:17:32.234 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-23.png, Response status code: 404
+2026-03-11 23:17:32.234 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-22.png, Response status code: 404
+2026-03-11 23:17:36.389 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:17:36.389 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:36.389 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.4749ms
+2026-03-11 23:17:36.390 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:17:36.392 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:17:36.392 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:17:36.401 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:17:40.501 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.FileContentResultExecutor | Executing FileContentResult, sending file with download name 'Employees_20260311.pdf' ...
+2026-03-11 23:17:40.514 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 4112.7921ms
+2026-03-11 23:17:40.515 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:17:40.515 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 200 (4122.2ms)
+2026-03-11 23:17:40.515 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 200 199198 application/pdf 4124.3869ms
+2026-03-11 23:17:40.780 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is running...
+2026-03-11 23:17:44.025 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service completed. Inserted 0 new schedules for the rolling 30-day window.
+2026-03-11 23:19:36.056 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:19:36.057 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:19:36.057 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.6398ms
+2026-03-11 23:19:36.058 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:19:36.058 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:19:36.059 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:19:36.059 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:19:36.321 [ERR] backend.Controllers.EmployeesController | PDF export failed
+System.IO.FileNotFoundException: Report template not found at C:\Repos_Work\HRM_Prodex\backend\ReportTemplate\EmployeeReport.rdlc
+   at backend.Services.ExportService.GenerateEmployeesPdf(List`1 employees, Organization org, List`1 fields) in C:\Repos_Work\HRM_Prodex\backend\Services\ExportService.cs:line 188
+   at backend.Controllers.EmployeesController.ExportPdf(Int32 organizationId, String employeeIds) in C:\Repos_Work\HRM_Prodex\backend\Controllers\EmployeesController.cs:line 698
+2026-03-11 23:19:36.327 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-11 23:19:36.332 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 272.2918ms
+2026-03-11 23:19:36.332 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:19:36.332 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 500 (272.7ms)
+2026-03-11 23:19:36.333 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 500 null application/json; charset=utf-8 274.9027ms
+2026-03-11 23:19:44.284 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:19:44.284 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:19:44.284 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.3818ms
+2026-03-11 23:19:44.285 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:19:44.285 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:19:44.285 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:19:44.286 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:19:44.567 [ERR] backend.Controllers.EmployeesController | PDF export failed
+System.IO.FileNotFoundException: Report template not found at C:\Repos_Work\HRM_Prodex\backend\ReportTemplate\EmployeeReport.rdlc
+   at backend.Services.ExportService.GenerateEmployeesPdf(List`1 employees, Organization org, List`1 fields) in C:\Repos_Work\HRM_Prodex\backend\Services\ExportService.cs:line 188
+   at backend.Controllers.EmployeesController.ExportPdf(Int32 organizationId, String employeeIds) in C:\Repos_Work\HRM_Prodex\backend\Controllers\EmployeesController.cs:line 698
+2026-03-11 23:19:44.568 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-11 23:19:44.568 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 282.4708ms
+2026-03-11 23:19:44.568 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:19:44.568 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 500 (282.7ms)
+2026-03-11 23:19:44.568 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 500 null application/json; charset=utf-8 283.4371ms
+2026-03-11 23:20:23.837 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:20:23.837 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:20:23.837 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.2544ms
+2026-03-11 23:20:23.838 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:20:23.838 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:20:23.838 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:20:23.839 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:20:24.575 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.FileContentResultExecutor | Executing FileContentResult, sending file with download name 'Employees_20260311.pdf' ...
+2026-03-11 23:20:24.576 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 737.3739ms
+2026-03-11 23:20:24.576 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:20:24.576 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 200 (737.6ms)
+2026-03-11 23:20:24.576 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 200 205715 application/pdf 737.9878ms
+2026-03-11 23:25:26.288 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:25:26.288 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:25:26.288 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 204 null null 0.5773ms
+2026-03-11 23:25:26.289 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - null null
+2026-03-11 23:25:26.292 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-03-11 23:25:26.292 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:25:26.298 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "ExportPdf", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportPdf(Int32, System.String) on controller backend.Controllers.EmployeesController (backend).
+2026-03-11 23:25:28.577 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.FileContentResultExecutor | Executing FileContentResult, sending file with download name 'Employees_20260311.pdf' ...
+2026-03-11 23:25:28.578 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.ExportPdf (backend) in 2279.704ms
+2026-03-11 23:25:28.578 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.ExportPdf (backend)'
+2026-03-11 23:25:28.578 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees/export-pdf → 200 (2286.1ms)
+2026-03-11 23:25:28.578 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees/export-pdf?organizationId=2&employeeIds=22 - 200 205683 application/pdf 2289.1968ms
