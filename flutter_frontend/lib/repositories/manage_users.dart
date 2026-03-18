@@ -213,21 +213,23 @@ class ManageUsersRepository {
       request.headers['Authorization'] = 'Bearer $token';
 
       
-      // Add text fields
-      request.fields['name'] = name;
-      request.fields['email'] = email;
-      request.fields['phone'] = phone;
-      request.fields['address'] = address;
+      // Add text fields (only if not empty)
+      if (name.isNotEmpty) request.fields['name'] = name;
+      if (email.isNotEmpty) request.fields['email'] = email;
+      if (phone.isNotEmpty) request.fields['phone'] = phone;
+      if (address.isNotEmpty) request.fields['address'] = address;
 
-      // Add logo file if provided
+      // Add logo file if provided (Web-safe way)
       if (logo != null) {
-        final multipartFile = await http.MultipartFile.fromPath(
+        final bytes = await logo.readAsBytes();
+        final multipartFile = http.MultipartFile.fromBytes(
           'logo',
-          logo.path,
+          bytes,
           filename: logo.name,
         );
         request.files.add(multipartFile);
       }
+
 
 
       final streamedResponse = await request.send();
@@ -237,6 +239,7 @@ class ManageUsersRepository {
         final data = jsonDecode(response.body);
         return UserOrganization.fromJson(data);
       } else {
+        print('Server Error Body: ${response.body}');
         String errorMessage = 'Failed to create organization';
         try {
           final error = jsonDecode(response.body);
@@ -244,6 +247,7 @@ class ManageUsersRepository {
         } catch (_) {}
         throw Exception(errorMessage);
       }
+
     } catch (e) {
       print('Error creating organization: $e');
       if (e is Exception) rethrow;

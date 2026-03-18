@@ -104,8 +104,9 @@ public class OrganizationsController : ControllerBase
             }
 
             var newId = await conn.ExecuteScalarAsync<int>("sp_CreateOrganization",
-                new { request.Name, request.Email, request.Phone, request.Address, LogoUrl = logoUrl, CreatedBy = GetUserId() },
+                new { request.Name, request.Email, request.Phone, request.Address, LogoUrl = logoUrl },
                 commandType: CommandType.StoredProcedure);
+
 
             _logger.LogInformation("[Orgs] CREATE success | Id={Id} | Name={Name}", newId, request.Name);
             return Ok(new { id = newId, name = request.Name, logoUrl, message = "Organization created successfully" });
@@ -146,10 +147,10 @@ public class OrganizationsController : ControllerBase
                     request.Email, 
                     request.Phone, 
                     request.Address, 
-                    LogoUrl = logoUrl,
-                    LastUpdatedBy = GetUserId()
+                    LogoUrl = logoUrl
                 },
                 commandType: CommandType.StoredProcedure);
+
 
             _logger.LogInformation("[Orgs] UPDATE success | Id={Id}", id);
             return Ok(new { message = "Organization updated successfully" });

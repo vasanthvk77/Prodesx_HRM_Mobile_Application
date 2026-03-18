@@ -1,5 +1,8 @@
-import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/manage_users.dart';
@@ -40,6 +43,7 @@ class _CreateUserPopupState extends ConsumerState<CreateUserPopup> {
   
   // Note: Logo handling using image_picker.
   XFile? _selectedLogo; 
+  Uint8List? _logoBytes;
 
   // Loading and Notification states
   bool _isLoading = false;
@@ -173,12 +177,17 @@ class _CreateUserPopupState extends ConsumerState<CreateUserPopup> {
     try {
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        setState(() => _selectedLogo = image);
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _selectedLogo = image;
+          _logoBytes = bytes;
+        });
       }
     } catch (e) {
       _showToast("Failed to pick image", isError: true);
     }
   }
+
 
   void _showToast(String message, {bool isError = false}) {
 
@@ -631,9 +640,11 @@ class _CreateUserPopupState extends ConsumerState<CreateUserPopup> {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: Colors.white.withOpacity(0.1)),
             ),
-            child: _selectedLogo != null
-                ? Image.file(File(_selectedLogo!.path), fit: BoxFit.cover)
+            child: _logoBytes != null
+                ? Image.memory(_logoBytes!, fit: BoxFit.cover)
                 : const Icon(Icons.business_outlined, color: labelColor, size: 24),
+
+
           ),
           const SizedBox(width: 12),
           Expanded(

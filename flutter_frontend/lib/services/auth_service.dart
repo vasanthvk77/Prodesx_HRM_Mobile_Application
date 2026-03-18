@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_frontend/core/api_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class AuthService {
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -46,4 +48,10 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<String?> getToken() async {
+    const storage = FlutterSecureStorage();
+    return await storage.read(key: 'auth_token');
+  }
 }
+

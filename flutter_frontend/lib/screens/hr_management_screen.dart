@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/digital_clock.dart';
+import 'designation_list_screen.dart';
+import 'department_list_screen.dart';
+
+
 
 class HRManagementScreen extends StatelessWidget {
   const HRManagementScreen({super.key});
@@ -78,7 +82,20 @@ class HRManagementScreen extends StatelessWidget {
           ),
         ),
         trailing: Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
-        onTap: () {},
+        onTap: () {
+          if (title == 'Designation') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DesignationListScreen()),
+            );
+          } else if (title == 'Department') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DepartmentListScreen()),
+            );
+          }
+        },
+
       ),
     );
   }

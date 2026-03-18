@@ -23,11 +23,18 @@ class ApiConfig {
   // Organizations
   static const String organizations = '$baseUrl/organizations';
   static const String userOrganizations = '$baseUrl/users/organizations';
+  static const String designationBulkDelete = '$baseUrl/designations/bulk-delete';
+
 
   // Designations
   static const String designations = '$baseUrl/designations';
   static const String parentDesignations = '$baseUrl/designations/parents';
   static String designation(int id) => '$designations/$id';
+
+  // Departments
+  static const String departments = '$baseUrl/departments';
+  static const String departmentBulkDelete = '$baseUrl/departments/bulk-delete';
+  static String department(int id) => '$departments/$id';
 
 
   // User Management
