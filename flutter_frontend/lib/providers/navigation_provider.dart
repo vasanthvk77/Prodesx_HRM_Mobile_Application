@@ -6,20 +6,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class NavigationState {
   final int currentIndex;
   final Widget? dashboardContent;
+  final Widget? manageUsersContent;
 
   NavigationState({
     this.currentIndex = 0,
     this.dashboardContent,
+    this.manageUsersContent,
   });
 
   NavigationState copyWith({
     int? currentIndex,
     Widget? dashboardContent,
-    bool clearContent = false,
+    Widget? manageUsersContent,
+    bool? clearDashboard,
+    bool? clearManageUsers,
   }) {
     return NavigationState(
       currentIndex: currentIndex ?? this.currentIndex,
-      dashboardContent: clearContent ? null : (dashboardContent ?? this.dashboardContent),
+      dashboardContent: (clearDashboard == true) ? null : (dashboardContent ?? this.dashboardContent),
+      manageUsersContent: (clearManageUsers == true) ? null : (manageUsersContent ?? this.manageUsersContent),
     );
   }
 }
@@ -42,12 +47,22 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
   void setDashboardContent(Widget? content) {
     state = state.copyWith(
       dashboardContent: content,
+      clearDashboard: content == null,
       currentIndex: 0, // Always switch back to the Dashboard tab
     );
   }
 
-  /// Resets the Dashboard and returns to index 0.
-  void resetDashboard() {
+  /// Switches the User Management's content.
+  void setManageUsersContent(Widget? content) {
+    state = state.copyWith(
+      manageUsersContent: content,
+      clearManageUsers: content == null,
+      currentIndex: 2, // Switch to User Management tab (index 2 for Admin)
+    );
+  }
+
+  /// Resets everything and returns to index 0.
+  void resetNavigation() {
     state = NavigationState();
   }
 }

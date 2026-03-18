@@ -7,6 +7,7 @@ import '../providers/auth_provider.dart';
 import '../core/api_config.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/digital_clock.dart';
+import '../widgets/org_dropdown.dart';
 
 class PrivateDashboard extends ConsumerStatefulWidget {
   const PrivateDashboard({super.key});
@@ -466,140 +467,43 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
 
     if (_orgData.isEmpty) return const SizedBox();
 
-    return Container(
-      height: 38,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
-        boxShadow: Theme.of(context).brightness == Brightness.light
-            ? [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 4, offset: const Offset(0, 2))]
-            : [],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Icon and Label
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                   Icon(Icons.business, color: Theme.of(context).iconTheme.color?.withOpacity(0.5), size: 14),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      'Organization',
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Dropdown Container
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Theme.of(context).dividerColor),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedOrgId,
-                dropdownColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).colorScheme.surfaceVariant,
-                icon: Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).iconTheme.color?.withOpacity(0.5), size: 20),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                ),
-                onChanged: (String? newValue) async {
-                  if (newValue != null && newValue != _selectedOrgId) {
-                    final authState = ref.read(authProvider);
-                    final authNotifier = ref.read(authProvider.notifier);
-                    try {
-                      // Perform backend organization switch
-                      await authNotifier.switchOrganization(newValue);
-                      
-                      if (mounted) {
-                        setState(() {
-                          _selectedOrgId = newValue;
-                        });
-                      }
-                      
-                      // Reload all dashboard data with the new token and orgId
-                      await _loadDashboardData();
-                      
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Switched organization successfully'), duration: Duration(seconds: 2)),
-                        );
-                      }
-                    } catch (e) {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to switch: $e'), backgroundColor: Colors.red),
-                        );
-                      }
-                    }
-                  }
-                },
-                items: _orgData.map<DropdownMenuItem<String>>((org) {
-                  final name = org['name']?.toString() ?? 'Unknown';
-                  final id = org['id']?.toString() ?? '';
-                  final logoUrl = org['logoUrl']?.toString();
-
-                  return DropdownMenuItem<String>(
-                    value: id,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildOrgLogo(logoUrl, 18),
-                        const SizedBox(width: 8),
-                        Text(name, style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Safe organization logo rendering
-  
-  Widget _buildOrgLogo(String? url, double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Theme.of(context).dividerColor,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(size / 2),
-        child: ((url?.length ?? 0) > 0)
-            ? Image.network(
-                ApiConfig.getFullImageUrl(url),
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.business, color: Theme.of(context).iconTheme.color, size: 12),
-              )
-            : const Icon(Icons.business, color: Colors.white70, size: 12),
-      ),
+    return OrgDropdown(
+      value: _selectedOrgId,
+      showLabel: true,
+      isCompact: false,
+      items: _orgData.map((org) => OrgDropdownItem(
+        id: org['id']?.toString() ?? '',
+        name: org['name']?.toString() ?? 'Unknown',
+        logoUrl: org['logoUrl']?.toString(),
+      )).toList(),
+      onChanged: (String? newValue) async {
+        if (newValue != null && newValue != _selectedOrgId) {
+          final authNotifier = ref.read(authProvider.notifier);
+          try {
+            await authNotifier.switchOrganization(newValue);
+            
+            if (mounted) {
+              setState(() {
+                _selectedOrgId = newValue;
+              });
+            }
+            
+            await _loadDashboardData();
+            
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Switched organization successfully'), duration: Duration(seconds: 2)),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to switch: $e'), backgroundColor: Colors.red),
+              );
+            }
+          }
+        }
+      },
     );
   }
 

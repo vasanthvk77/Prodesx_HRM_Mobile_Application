@@ -24,6 +24,11 @@ class ApiConfig {
   static const String organizations = '$baseUrl/organizations';
   static const String userOrganizations = '$baseUrl/users/organizations';
 
+  // User Management
+  static const String users = '$baseUrl/users';
+  static const String roles = '$baseUrl/users/roles';
+  static const String loginSessions = '$baseUrl/users/login-sessions';
+
   static String getFullImageUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     if (path.startsWith('http')) return path;
