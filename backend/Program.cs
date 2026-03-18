@@ -75,13 +75,12 @@ try
     // Add CORS
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowAll",
-            policy =>
+        options.AddPolicy("AllowAll", policy =>
             {
-                policy.SetIsOriginAllowed(_ => true) // Allow any origin (including Flutter Web/Mobile)
+                policy.SetIsOriginAllowed(_ => true)
                       .AllowAnyMethod()
                       .AllowAnyHeader()
-                      .AllowCredentials(); 
+                      .AllowCredentials();
             });
     });
 
@@ -90,6 +89,7 @@ try
     builder.Services.AddSingleton(new DataBaseConnection(connectionString));
 
     var app = builder.Build();
+    app.UseCors("AllowAll");
 
     // Auto-Initialize Database
     var schemaPath     = Path.Combine(app.Environment.ContentRootPath, "../schema.sql");
@@ -111,7 +111,7 @@ try
     app.UseCors("AllowAll");
     app.UseSwagger();
     app.UseSwaggerUI();
-    // app.UseHttpsRedirection(); // Commented out to avoid issues with local http development
+    app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
 

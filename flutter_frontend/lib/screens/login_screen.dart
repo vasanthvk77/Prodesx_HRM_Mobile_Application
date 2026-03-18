@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
-import 'package:flutter_frontend/screens/home_screen.dart';
+import 'package:flutter_frontend/screens/private_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,14 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
           TextInput.finishAutofillContext();
 
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) => const PrivateDashboard()),
           );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
         }
       }
     }
@@ -106,9 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         Text(
                           'Sign In',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
+                          style: Theme.of(context).textTheme.headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade900,
@@ -117,11 +115,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         Text(
                           'Enter your credentials to access the HRM dashboard',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.blue.shade900,
-                                    fontSize: 14,
-                                  ),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.blue.shade900,
+                                fontSize: 14,
+                              ),
                         ),
 
                         const SizedBox(height: 32),
@@ -166,9 +165,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelText: 'Password',
                             prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
-                              icon: Icon(_obscurePassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _obscurePassword = !_obscurePassword;
@@ -196,8 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed:
-                                    auth.isLoading ? null : _handleLogin,
+                                onPressed: auth.isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue.shade700,
                                   foregroundColor: Colors.white,
@@ -225,11 +225,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         Text(
                           'By signing in, you agree to our Terms of Service',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.blue.shade900,
-                                    fontSize: 12,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.blue.shade900,
+                                fontSize: 12,
+                              ),
                         ),
                       ],
                     ),

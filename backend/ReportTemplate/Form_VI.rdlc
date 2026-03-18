@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <DataSources>
     <DataSource Name="FormVIDs">
       <ConnectionProperties>
@@ -17,171 +18,560 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="OrgName"><DataField>OrgName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="OrgAddress"><DataField>OrgAddress</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="Year"><DataField>Year</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="SlNo"><DataField>SlNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="EmpName"><DataField>EmpName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="TicketOrFatherName"><DataField>TicketOrFatherName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M1"><DataField>M1</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M2"><DataField>M2</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M3"><DataField>M3</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M4"><DataField>M4</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M5"><DataField>M5</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M6"><DataField>M6</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M7"><DataField>M7</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M8"><DataField>M8</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M9"><DataField>M9</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M10"><DataField>M10</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M11"><DataField>M11</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="M12"><DataField>M12</DataField><rd:TypeName>System.String</rd:TypeName></Field>
-        <Field Name="Remarks"><DataField>Remarks</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="OrgName">
+          <DataField>OrgName</DataField>
+        </Field>
+        <Field Name="OrgAddress">
+          <DataField>OrgAddress</DataField>
+        </Field>
+        <Field Name="Year">
+          <DataField>Year</DataField>
+        </Field>
+        <Field Name="SlNo">
+          <DataField>SlNo</DataField>
+        </Field>
+        <Field Name="EmpName">
+          <DataField>EmpName</DataField>
+        </Field>
+        <Field Name="TicketOrFatherName">
+          <DataField>TicketOrFatherName</DataField>
+        </Field>
+        <Field Name="HolidayName">
+          <DataField>HolidayName</DataField>
+        </Field>
+        <Field Name="HolidayDate">
+          <DataField>HolidayDate</DataField>
+        </Field>
+        <Field Name="HolidayOrder">
+          <DataField>HolidayOrder</DataField>
+        </Field>
+        <Field Name="Status">
+          <DataField>Status</DataField>
+        </Field>
+        <Field Name="Remarks">
+          <DataField>Remarks</DataField>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
-      <Width>7.8in</Width>
       <Body>
         <ReportItems>
-          <Textbox Name="Title">
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Form No. VI / படிவம் எண். VI</Value>
-                    <Style>
-                      <FontFamily>Nirmala UI</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                      <FontSize>12pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style><TextAlign>Center</TextAlign></Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>[See Rule 7 (1) of The Tamil Nadu Industrial Establishments (National and Festival Holidays) Rules, 1959]</Value>
-                    <Style>
-                      <FontFamily>Nirmala UI</FontFamily>
-                      <FontSize>8pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style><TextAlign>Center</TextAlign></Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Register of National &amp; Festival Holidays for the year " &amp; Fields!Year.Value</Value>
-                    <Style>
-                      <FontFamily>Nirmala UI</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style><TextAlign>Center</TextAlign></Style>
-              </Paragraph>
-            </Paragraphs>
-            <Height>0.75in</Height>
-            <Width>7.8in</Width>
-          </Textbox>
-          
-          <Textbox Name="InstructionsCombined">
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>To be marked as follows / கீழ்கண்டபடி குறிக்கவும் :&#13;&#10;H - for holiday allowed / அனுமதித்த விடுமுறை&#13;&#10;W/D - for work on double wages / வேலை செய்தால் இரட்டை ஊதியம்&#13;&#10;W/H - for work with substituted holiday / வேலை செய்தால் மாற்று விடுமுறை&#13;&#10;N/E - if not eligible for wages / ஊதியம் பெற தகுதியற்றவர்</Value>
-                    <Style>
-                      <FontFamily>Nirmala UI</FontFamily>
-                      <FontSize>7.5pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-              </Paragraph>
-            </Paragraphs>
-            <Top>0.8in</Top>
-            <Height>0.7in</Height>
-            <Width>5in</Width>
-          </Textbox>
-
-          <Tablix Name="Tablix1">
+          <Tablix Name="HolidayMatrix">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="cSl">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Sl. No</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="cName">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Name of the Employee</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="cTicket">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Ticket No. or Father's Name</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
             <TablixBody>
               <TablixColumns>
-                <TablixColumn><Width>0.5in</Width></TablixColumn>
-                <TablixColumn><Width>1.6in</Width></TablixColumn>
-                <TablixColumn><Width>1.4in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.28in</Width></TablixColumn><TablixColumn><Width>0.28in</Width></TablixColumn>
-                <TablixColumn><Width>0.9in</Width></TablixColumn>
+                <TablixColumn>
+                  <Width>0.5in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.8in</Width>
+                </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.6in</Height>
+                  <Height>0.3in</Height>
                   <TablixCells>
-                    <TablixCell><CellContents><Textbox Name="H1"><Paragraphs><Paragraph><TextRuns><TextRun><Value>வ.எண்&#13;&#10;Sl.No.</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="H2"><Paragraphs><Paragraph><TextRuns><TextRun><Value>தொழிலாளரின் பெயர்&#13;&#10;Name of the Employee</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="H3"><Paragraphs><Paragraph><TextRuns><TextRun><Value>அடையாள அட்டை எண் / தந்தையார் பெயர்&#13;&#10;Ticket No / Father's Name</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM1"><Paragraphs><Paragraph><TextRuns><TextRun><Value>1</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM2"><Paragraphs><Paragraph><TextRuns><TextRun><Value>2</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM3"><Paragraphs><Paragraph><TextRuns><TextRun><Value>3</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM4"><Paragraphs><Paragraph><TextRuns><TextRun><Value>4</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM5"><Paragraphs><Paragraph><TextRuns><TextRun><Value>5</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM6"><Paragraphs><Paragraph><TextRuns><TextRun><Value>6</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM7"><Paragraphs><Paragraph><TextRuns><TextRun><Value>7</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM8"><Paragraphs><Paragraph><TextRuns><TextRun><Value>8</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM9"><Paragraphs><Paragraph><TextRuns><TextRun><Value>9</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM10"><Paragraphs><Paragraph><TextRuns><TextRun><Value>10</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM11"><Paragraphs><Paragraph><TextRuns><TextRun><Value>11</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="HM12"><Paragraphs><Paragraph><TextRuns><TextRun><Value>12</Value><Style><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="H16"><Paragraphs><Paragraph><TextRuns><TextRun><Value>குறிப்புகள்&#13;&#10;Remarks</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell><CellContents><Textbox Name="D1"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SlNo.Value</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="D2"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EmpName.Value</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="D3"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TicketOrFatherName.Value</Value><Style><FontFamily>Nirmala UI</FontFamily><FontSize>8pt</FontSize></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM1"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M1.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM2"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M2.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM3"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M3.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM4"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M4.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM5"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M5.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM6"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M6.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM7"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M7.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM8"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M8.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM9"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M9.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM10"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M10.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM11"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M11.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="DM12"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!M12.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
-                    <TablixCell><CellContents><Textbox Name="D16"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Remarks.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Status">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Status.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Remarks">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Remarks.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
-            <TablixColumnHierarchy><TablixMembers><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/><TablixMember/></TablixMembers></TablixColumnHierarchy>
-            <TablixRowHierarchy><TablixMembers><TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember><TablixMember><Group Name="Details"/></TablixMember></TablixMembers></TablixRowHierarchy>
-            <Top>1.55in</Top>
-            <Height>0.85in</Height>
-            <Width>7.76in</Width>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="ColGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!HolidayOrder.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <TablixHeader>
+                    <Size>1in</Size>
+                    <CellContents>
+                      <Textbox Name="HolidayHeader">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!HolidayName.Value &amp; "
+" &amp; Fields!HolidayDate.Value &amp; "
+" &amp; Fields!HolidayOrder.Value</Value>
+                                <Style>
+                                  <FontSize>6.5pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1in</Size>
+                    <CellContents>
+                      <Textbox Name="HeaderRemarks">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Remarks</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="SlNoGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!SlNo.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <TablixHeader>
+                    <Size>0.3in</Size>
+                    <CellContents>
+                      <Textbox Name="dSl">
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!SlNo.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1.8in</Size>
+                        <CellContents>
+                          <Textbox Name="dName">
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!EmpName.Value</Value>
+                                    <Style>
+                                      <FontSize>8pt</FontSize>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <Style>
+                              <Border>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <TablixMembers>
+                        <TablixMember>
+                          <TablixHeader>
+                            <Size>1.4in</Size>
+                            <CellContents>
+                              <Textbox Name="dTicket">
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!TicketOrFatherName.Value</Value>
+                                        <Style>
+                                          <FontSize>8pt</FontSize>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <Style>
+                                  <Border>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <Top>0.1in</Top>
+            <Left>0.1in</Left>
+            <Height>1.3in</Height>
+            <Width>5.8in</Width>
+            <Style />
           </Tablix>
         </ReportItems>
-        <Height>3in</Height>
+        <Height>2in</Height>
+        <Style />
       </Body>
+      <Width>10in</Width>
       <Page>
-        <LeftMargin>0.2in</LeftMargin>
-        <RightMargin>0.2in</RightMargin>
-        <TopMargin>0.5in</TopMargin>
-        <BottomMargin>0.5in</BottomMargin>
+        <PageHeader>
+          <Height>1.7in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>false</PrintOnLastPage>
+          <ReportItems>
+            <Rectangle Name="OrgBox">
+              <ReportItems>
+                <Textbox Name="OrgNameTxt">
+                  <Paragraphs>
+                    <Paragraph>
+                      <TextRuns>
+                        <TextRun>
+                          <Value>=First(Fields!OrgName.Value, "FormVIDataSet")</Value>
+                          <Style>
+                            <FontSize>9pt</FontSize>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </TextRun>
+                      </TextRuns>
+                      <Style />
+                    </Paragraph>
+                  </Paragraphs>
+                  <Height>0.2in</Height>
+                  <Width>2.4in</Width>
+                  <Style>
+                    <Border>
+                      <Style>None</Style>
+                    </Border>
+                  </Style>
+                </Textbox>
+                <Textbox Name="OrgAddrTxt">
+                  <CanGrow>true</CanGrow>
+                  <Paragraphs>
+                    <Paragraph>
+                      <TextRuns>
+                        <TextRun>
+                          <Value>=First(Fields!OrgAddress.Value, "FormVIDataSet")</Value>
+                          <Style>
+                            <FontSize>8pt</FontSize>
+                          </Style>
+                        </TextRun>
+                      </TextRuns>
+                      <Style />
+                    </Paragraph>
+                  </Paragraphs>
+                  <Top>0.2in</Top>
+                  <Height>0.4in</Height>
+                  <Width>2.4in</Width>
+                  <ZIndex>1</ZIndex>
+                  <Style>
+                    <Border>
+                      <Style>None</Style>
+                    </Border>
+                  </Style>
+                </Textbox>
+              </ReportItems>
+              <Top>0.08056in</Top>
+              <Left>7.3in</Left>
+              <Height>0.65in</Height>
+              <Width>2.5in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Rectangle>
+            <Textbox Name="Legend">
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>To be marked as follows:
+'H' for holidays allowed
+'W/D' for work on double wages
+'W/H' for work with substituted holiday
+'N/E' if not eligible for wages</Value>
+                      <Style>
+                        <FontSize>7pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.1in</Top>
+              <Left>0.1in</Left>
+              <Height>0.6in</Height>
+              <Width>2.5in</Width>
+              <ZIndex>1</ZIndex>
+              <Style />
+            </Textbox>
+            <Textbox Name="Title">
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Form No. VI</Value>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>[See sub - rule (1) of Rule 7]</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Register of National &amp; Festival Holidays</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="For the Year " &amp; First(Fields!Year.Value, "FormVIDataSet")</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.8in</Top>
+              <Height>0.8in</Height>
+              <Width>9.8in</Width>
+              <ZIndex>2</ZIndex>
+              <Style />
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>11in</PageWidth>
+        <LeftMargin>0.1in</LeftMargin>
+        <RightMargin>0.1in</RightMargin>
+        <TopMargin>0.2in</TopMargin>
+        <BottomMargin>0.2in</BottomMargin>
+        <Style />
       </Page>
     </ReportSection>
   </ReportSections>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>6045f8b6-2a07-4e8a-864b-bfd0635e99e1</rd:ReportID>
 </Report>

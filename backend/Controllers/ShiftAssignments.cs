@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Dapper;
 using System.Data;
+using System.Linq;
+using System.Collections.Generic;
 using backend.Models;
 using backend.Data;
 using backend.Hubs;
@@ -71,7 +73,7 @@ public class ShiftAssignmentsController : ControllerBase
             using var conn = _dataBaseConnection.CreateConnection();
             var parameters = new
             {
-                Id = (int?)null,
+                Id = 0,
                 OrganizationId = resolvedOrgId,
                 template.ShiftName,
                 template.ShiftType,
@@ -267,26 +269,9 @@ public class ShiftAssignmentsController : ControllerBase
         {
             using var conn = _dataBaseConnection.CreateConnection();
             var roster = await conn.QueryAsync<EmployeeSchedule>(
-                @"SELECT 
-                    s.Id, s.organization_id, s.employee_id, s.Date,
-                    s.shift_name, s.shift_type,
-                    CONVERT(VARCHAR(5), s.start_time, 108)       AS StartTime,
-                    CONVERT(VARCHAR(5), s.end_time, 108)         AS EndTime,
-                    s.unpaid_break, s.total_shift_hours,
-                    CONVERT(VARCHAR(5), s.earliest_punch_in, 108) AS EarliestPunchIn,
-                    CONVERT(VARCHAR(5), s.latest_punch_out, 108)  AS LatestPunchOut,
-                    s.late_grace_period, s.early_grace_period,
-                    s.is_override, s.source_assignment_id,
-                    s.created_at, s.updated_at,
-                    e.name AS EmployeeName,
-                    e.employee_code AS EmployeeCode
-                FROM EmployeeSchedules s
-                JOIN employees e ON s.employee_id = e.id
-                WHERE s.organization_id = @OrganizationId 
-                  AND s.Date >= @StartDate 
-                  AND s.Date <= @EndDate
-                ORDER BY s.Date, e.name",
-                new { OrganizationId = resolvedOrgId, StartDate = start, EndDate = end }
+                "sp_GetEmployeeSchedules",
+                new { OrganizationId = resolvedOrgId, StartDate = start, EndDate = end },
+                commandType: CommandType.StoredProcedure
             );
             return Ok(roster);
         }
@@ -347,11 +332,13 @@ public class ShiftAssignmentsController : ControllerBase
     {
         using var conn = _dataBaseConnection.CreateConnection();
         
-        List<DateTime> targetDates = new List<DateTime>();
+        // We'll use a list of objects to track both the date and its properties (Work/Holiday/WeekOff)
+        var schedulesToInsert = new List<dynamic>();
 
         if (assignment.AssignmentType == 1) // Single Date
         {
-            if (assignment.StartDate.HasValue) targetDates.Add(assignment.StartDate.Value);
+            if (assignment.StartDate.HasValue) 
+                schedulesToInsert.Add(new { Date = assignment.StartDate.Value, Type = assignment.ShiftType, IsWorkDay = true });
         }
         else if (assignment.AssignmentType == 2) // Multiple Dates
         {
@@ -360,18 +347,41 @@ public class ShiftAssignmentsController : ControllerBase
                 var dateStrings = assignment.SpecificDates.Split(',').Select(d => d.Trim());
                 foreach (var ds in dateStrings)
                 {
-                    if (DateTime.TryParse(ds, out var parsedDate)) targetDates.Add(parsedDate);
+                    if (DateTime.TryParse(ds, out var parsedDate)) 
+                        schedulesToInsert.Add(new { Date = parsedDate, Type = assignment.ShiftType, IsWorkDay = true });
                 }
             }
         }
         else if (assignment.AssignmentType == 3) // Range / Recurring
         {
             var startDate = assignment.StartDate ?? DateTime.Today;
-            var endDate = assignment.EndDate ?? DateTime.Today.AddDays(30); // Default to 30 days if no end date
-            
-            // Robust WorkDays matching
+            var endDate = assignment.EndDate ?? DateTime.Today.AddDays(30); 
             var workDaysStr = (assignment.WorkDays ?? "Mon,Tue,Wed,Thu,Fri").ToLower();
             
+            // Fetch holidays that apply to this employee
+            var holidays = (await conn.QueryAsync<DateTime>(
+                @"IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'HolidayAssignments')
+                  BEGIN
+                      DECLARE @sql NVARCHAR(MAX) = 'SELECT DISTINCT CAST(h.HolidayDate AS DATE) 
+                            FROM Holidays h
+                            LEFT JOIN HolidayAssignments ha ON h.HolidayID = ha.holiday_id
+                            LEFT JOIN employees e ON e.id = @e_id
+                            WHERE h.OrganizationID = @o_id
+                            AND (
+                                h.AssignmentType = ''All'' OR 
+                                (ha.target_type = ''Employee'' AND ha.target_id = @e_id) OR
+                                (ha.target_type = ''Department'' AND ha.target_id = e.department_id) OR
+                                (ha.target_type = ''Designation'' AND ha.target_id = e.designation_id)
+                            )';
+                      EXEC sp_executesql @sql, N'@e_id INT, @o_id INT', @e_id = @EmpId, @o_id = @OrgId;
+                  END
+                  ELSE
+                  BEGIN
+                      SELECT DISTINCT CAST(HolidayDate AS DATE) FROM Holidays WHERE OrganizationID = @OrgId AND AssignmentType = 'All'
+                  END",
+                new { OrgId = orgId, EmpId = assignment.EmployeeId }
+            )).ToHashSet();
+
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 var dayFull = date.ToString("dddd").ToLower();
@@ -387,51 +397,61 @@ public class ShiftAssignmentsController : ControllerBase
                 }
                 else
                 {
-                    // If it's a concatenated string like "MTuWThF"
-                    // Special case for Tuesday/Thursday and Saturday/Sunday
                     if (day3 == "tue") isWorkDay = workDaysStr.Contains("tu");
                     else if (day3 == "thu") isWorkDay = workDaysStr.Contains("th");
                     else if (day3 == "sat") isWorkDay = workDaysStr.Contains("sa") || (workDaysStr.Contains("s") && !workDaysStr.Contains("su"));
                     else if (day3 == "sun") isWorkDay = workDaysStr.Contains("su");
-                    else isWorkDay = workDaysStr.Contains(day1); // m, w, f
+                    else isWorkDay = workDaysStr.Contains(day1);
                 }
 
-                if (isWorkDay) targetDates.Add(date);
+                string finalType = "WF";
+                bool isActualWork = false;
+
+                if (holidays.Contains(date.Date)) 
+                {
+                    finalType = "H";
+                }
+                else if (isWorkDay)
+                {
+                    finalType = assignment.ShiftType ?? "W/D";
+                    isActualWork = true;
+                }
+
+                schedulesToInsert.Add(new { Date = date, Type = finalType, IsWorkDay = isActualWork });
             }
         }
 
-        foreach (var date in targetDates)
+        foreach (var item in schedulesToInsert)
         {
             var parameters = new
             {
                 OrganizationId = orgId,
-                @EmployeeId = assignment.EmployeeId,
-                @Date = date.ToString("yyyy-MM-dd"),
-                @ShiftName = assignment.ShiftName,
-                @ShiftType = assignment.ShiftType,
-                @StartTime = assignment.StartTime,
-                @EndTime = assignment.EndTime,
-                @UnpaidBreak = assignment.UnpaidBreak,
-                @TotalShiftHours = assignment.TotalShiftHours,
-                @EarliestPunchIn = assignment.EarliestPunchIn,
-                @LatestPunchOut = assignment.LatestPunchOut,
-                @LateGracePeriod = assignment.LateGracePeriod,
-                @EarlyGracePeriod = assignment.EarlyGracePeriod,
-                @IsOverride = false,
-                @SourceAssignmentId = (int?)assignment.Id,
-                @CreatedBy = GetUserId(),
-                @LastUpdatedBy = GetUserId()
+                EmployeeId = assignment.EmployeeId,
+                Date = ((DateTime)item.Date).ToString("yyyy-MM-dd"),
+                ShiftName = (bool)item.IsWorkDay ? assignment.ShiftName : (string)item.Type == "H" ? "Holiday" : "Week Off",
+                ShiftType = (string)item.Type,
+                StartTime = (bool)item.IsWorkDay ? assignment.StartTime : (string?)null,
+                EndTime = (bool)item.IsWorkDay ? assignment.EndTime : (string?)null,
+                UnpaidBreak = (bool)item.IsWorkDay ? assignment.UnpaidBreak : 0,
+                TotalShiftHours = (bool)item.IsWorkDay ? assignment.TotalShiftHours : "00:00",
+                EarliestPunchIn = (bool)item.IsWorkDay ? assignment.EarliestPunchIn : (string?)null,
+                LatestPunchOut = (bool)item.IsWorkDay ? assignment.LatestPunchOut : (string?)null,
+                LateGracePeriod = (bool)item.IsWorkDay ? assignment.LateGracePeriod : 0,
+                EarlyGracePeriod = (bool)item.IsWorkDay ? assignment.EarlyGracePeriod : 0,
+                IsOverride = false,
+                SourceAssignmentId = (int?)assignment.Id,
+                CreatedBy = GetUserId(),
+                LastUpdatedBy = GetUserId()
             };
 
             // Don't overwrite manual overrides
             var exists = await conn.QueryFirstOrDefaultAsync<int?>(
-                "SELECT Id FROM EmployeeSchedules WHERE employee_id = @EmployeeId AND Date = @Date AND is_override = 1",
-                new { assignment.EmployeeId, Date = date.ToString("yyyy-MM-dd") }
+                "SELECT id FROM EmployeeSchedules WHERE employee_id = @EmployeeId AND Date = @Date AND is_override = 1",
+                new { assignment.EmployeeId, Date = ((DateTime)item.Date).ToString("yyyy-MM-dd") }
             );
 
             if (exists == null)
             {
-                // sp_UpsertEmployeeSchedule uses PascalCase parameters
                 await conn.ExecuteAsync("sp_UpsertEmployeeSchedule", parameters, commandType: CommandType.StoredProcedure);
             }
         }

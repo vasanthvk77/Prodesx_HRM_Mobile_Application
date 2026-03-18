@@ -63,4 +63,43 @@ class AuthProvider with ChangeNotifier {
     await _storage.delete(key: 'user_data');
     notifyListeners();
   }
+
+  Future<void> switchOrganization(String organizationId) async {
+    if (_token == null) return;
+    
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final data = await _authService.switchOrganization(_token!, organizationId);
+      _token = data['token'];
+      
+      // If backend returns user info, update it. 
+      // Otherwise, update the current user's organizationId locally.
+      if (data['user'] != null) {
+        _user = User.fromJson(data['user']);
+      } else if (_user != null) {
+        _user = User(
+          id: _user!.id,
+          name: _user!.name,
+          email: _user!.email,
+          role: _user!.role,
+          organizationId: int.tryParse(organizationId),
+          organizationLogo: _user!.organizationLogo,
+        );
+      }
+
+      await _storage.write(key: 'auth_token', value: _token);
+      if (_user != null) {
+        await _storage.write(key: 'user_data', value: jsonEncode(_user!.toJson()));
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
 }

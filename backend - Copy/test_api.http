@@ -1,0 +1,21 @@
+### Get all deals
+GET http://localhost:5000/api/DealForm
+
+### Create a new deal
+POST http://localhost:5000/api/DealForm
+Content-Type: application/json
+
+{
+    "leadContactName": "Test User",
+    "leadEmail": "test@example.com",
+    "leadPhone": "1234567890",
+    "dealName": "Test Deal",
+    "pipeline": "Sales Pipeline",
+    "dealStage": "Generated",
+    "dealValue": 50000.00,
+    "closeDate": "2026-03-29T00:00:00Z",
+    "dealCategory": "consulting",
+    "products": "HRM System",
+    "dealAgent": "Miza",
+    "dealWatcher": "Miza"
+}

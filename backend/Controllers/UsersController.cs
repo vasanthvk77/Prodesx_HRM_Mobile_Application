@@ -189,7 +189,7 @@ public class UsersController : ControllerBase
 
             // Insert user via SP
             var newUserId = await conn.ExecuteScalarAsync<int>("sp_CreateUser",
-                new { Name = request.Name, Email = request.Email, Hash = hash, Role = request.RoleName, OrgId = request.OrganizationId, CreatedBy = grantedByID },
+                new { Name = request.Name, Email = request.Email, Hash = hash, Role = request.RoleName, OrgId = request.OrganizationId},
                 commandType: CommandType.StoredProcedure);
 
             // Resolve RoleID from Roles table

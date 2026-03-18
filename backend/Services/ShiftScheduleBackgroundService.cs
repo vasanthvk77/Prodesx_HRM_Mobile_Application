@@ -81,6 +81,30 @@ namespace backend.Services
             {
                 if (stoppingToken.IsCancellationRequested) break;
 
+                // Fetch holidays that apply to this employee
+                var holidays = (await conn.QueryAsync<DateTime>(
+                    @"IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'HolidayAssignments')
+                      BEGIN
+                          DECLARE @sql NVARCHAR(MAX) = 'SELECT DISTINCT CAST(h.HolidayDate AS DATE) 
+                                FROM Holidays h
+                                LEFT JOIN HolidayAssignments ha ON h.HolidayID = ha.holiday_id
+                                LEFT JOIN employees e ON e.id = @e_id
+                                WHERE h.OrganizationID = @o_id
+                                AND (
+                                    h.AssignmentType = ''All'' OR 
+                                    (ha.target_type = ''Employee'' AND ha.target_id = @e_id) OR
+                                    (ha.target_type = ''Department'' AND ha.target_id = e.department_id) OR
+                                    (ha.target_type = ''Designation'' AND ha.target_id = e.designation_id)
+                                )';
+                          EXEC sp_executesql @sql, N'@e_id INT, @o_id INT', @e_id = @EmpId, @o_id = @OrgId;
+                      END
+                      ELSE
+                      BEGIN
+                          SELECT DISTINCT CAST(HolidayDate AS DATE) FROM Holidays WHERE OrganizationID = @OrgId AND AssignmentType = 'All'
+                      END",
+                    new { OrgId = assignment.OrganizationId, EmpId = assignment.EmployeeId }
+                )).ToHashSet();
+
                 // We want to ensure the next 30 days from today are generated
                 var startDate = DateTime.Today;
                 var endDate = DateTime.Today.AddDays(30);
@@ -92,9 +116,12 @@ namespace backend.Services
 
                 // Robust WorkDays matching
                 var workDaysStr = (assignment.WorkDays ?? "Mon,Tue,Wed,Thu,Fri").ToLower();
-                var targetDates = new List<DateTime>();
+                var targetDates = new List<(DateTime Date, string Type, bool IsWork)>();
 
-                for (var date = startDate; date <= endDate; date = date.AddDays(1))
+                // Ensure we only generate schedules from the assignment start date onwards
+                var currentStartDate = (assignment.StartDate ?? startDate) > startDate ? (assignment.StartDate ?? startDate) : startDate;
+
+                for (var date = currentStartDate; date <= endDate; date = date.AddDays(1))
                 {
                     var dayFull = date.ToString("dddd").ToLower();
                     var day3 = date.ToString("ddd").ToLower();
@@ -116,26 +143,37 @@ namespace backend.Services
                         else isWorkDay = workDaysStr.Contains(day1);
                     }
 
-                    if (isWorkDay) targetDates.Add(date);
+                    if (holidays.Contains(date.Date))
+                    {
+                        targetDates.Add((date, "H", false));
+                    }
+                    else if (isWorkDay)
+                    {
+                        targetDates.Add((date, assignment.ShiftType ?? "W/D", true));
+                    }
+                    else
+                    {
+                        targetDates.Add((date, "WF", false));
+                    }
                 }
 
-                foreach (var date in targetDates)
+                foreach (var item in targetDates)
                 {
                     var parameters = new
                     {
                         OrganizationId = assignment.OrganizationId,
                         EmployeeId = assignment.EmployeeId,
-                        Date = date.ToString("yyyy-MM-dd"),
-                        ShiftName = assignment.ShiftName,
-                        ShiftType = assignment.ShiftType,
-                        StartTime = assignment.StartTime,
-                        EndTime = assignment.EndTime,
-                        UnpaidBreak = assignment.UnpaidBreak,
-                        TotalShiftHours = assignment.TotalShiftHours,
-                        EarliestPunchIn = assignment.EarliestPunchIn,
-                        LatestPunchOut = assignment.LatestPunchOut,
-                        LateGracePeriod = assignment.LateGracePeriod,
-                        EarlyGracePeriod = assignment.EarlyGracePeriod,
+                        Date = item.Date.ToString("yyyy-MM-dd"),
+                        ShiftName = item.IsWork ? assignment.ShiftName : item.Type == "H" ? "Holiday" : "Week Off",
+                        ShiftType = item.Type,
+                        StartTime = item.IsWork ? assignment.StartTime : (string?)null,
+                        EndTime = item.IsWork ? assignment.EndTime : (string?)null,
+                        UnpaidBreak = item.IsWork ? assignment.UnpaidBreak : 0,
+                        TotalShiftHours = item.IsWork ? assignment.TotalShiftHours : "00:00",
+                        EarliestPunchIn = item.IsWork ? assignment.EarliestPunchIn : (string?)null,
+                        LatestPunchOut = item.IsWork ? assignment.LatestPunchOut : (string?)null,
+                        LateGracePeriod = item.IsWork ? assignment.LateGracePeriod : 0,
+                        EarlyGracePeriod = item.IsWork ? assignment.EarlyGracePeriod : 0,
                         IsOverride = false, // Background service creates base schedules
                         SourceAssignmentId = (int?)assignment.Id,
                         CreatedBy = (int?)null, // System generated
@@ -145,7 +183,7 @@ namespace backend.Services
                     // Don't overwrite if it already exists (specifically manual overrides or existing base schedule)
                     var exists = await conn.QueryFirstOrDefaultAsync<int?>(
                         "SELECT Id FROM EmployeeSchedules WHERE employee_id = @EmployeeId AND Date = @Date",
-                        new { EmployeeId = assignment.EmployeeId, Date = date.ToString("yyyy-MM-dd") }
+                        new { EmployeeId = assignment.EmployeeId, Date = item.Date.ToString("yyyy-MM-dd") }
                     );
 
                     if (exists == null)

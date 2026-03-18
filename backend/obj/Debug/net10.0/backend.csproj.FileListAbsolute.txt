@@ -190,13 +190,13 @@ C:\Repos_Work\HRM_Prodex\backend\bin\Debug\net10.0\ReportTemplate\Form_U.rdlc
 C:\Repos_Work\HRM_Prodex\backend\bin\Debug\net10.0\ReportTemplate\Form_VI.rdlc
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\appsettings.Development.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\appsettings.json
-C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.staticwebassets.endpoints.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_12.rdlc
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_26_A.rdlc
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_A.rdlc
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_U.rdlc
-C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_VI.rdlc
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.staticwebassets.runtime.json
-C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_26_A.rdlc
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.staticwebassets.endpoints.json
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Form_VI.rdlc
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.exe
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.deps.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\backend.runtimeconfig.json
@@ -362,6 +362,7 @@ C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.A
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.csproj.CoreCompileInputs.cache
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.MvcApplicationPartsAssemblyInfo.cs
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.MvcApplicationPartsAssemblyInfo.cache
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.sourcelink.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\rjimswa.dswa.cache.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json

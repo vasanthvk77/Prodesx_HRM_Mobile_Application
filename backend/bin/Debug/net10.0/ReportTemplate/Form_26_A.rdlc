@@ -289,7 +289,7 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
-                    <!-- <TablixCell>
+                    <TablixCell>
                       <CellContents>
                         <Textbox Name="H3">
                           <CanGrow>true</CanGrow>
@@ -345,103 +345,12 @@
                           </Style>
                         </Textbox>
                       </CellContents>
-                    </TablixCell> -->
+                    </TablixCell>
 
 
-                    <TablixCell>
-  <CellContents>
-
-    <Rectangle Name="RectH3">
-      <ReportItems>
-
-        <!-- Rotated Header Text -->
-        <Textbox Name="H3">
-          <Top>0cm</Top>
-          <Left>0cm</Left>
-          <Width>3cm</Width>
-          <Height>2cm</Height>
-          <CanGrow>true</CanGrow>
-
-          <Paragraphs>
-
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>விபத்து நடந்த தேதியும், நேரமும்</Value>
-                  <Style>
-                    <FontFamily>Nirmala UI</FontFamily>
-                    <FontSize>8pt</FontSize>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Date and hour of dangerous occurrence</Value>
-                  <Style>
-                    <FontFamily>Times New Roman</FontFamily>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-
-          </Paragraphs>
-
-          <Style>
-            <WritingMode>Rotate270</WritingMode>
-            <TextAlign>Center</TextAlign>
-          </Style>
-
-        </Textbox>
 
 
-        <!-- Column Number -->
-        <Textbox Name="H3_Number">
-          <Top>2.6cm</Top>
-          <Left>0cm</Left>
-          <Width>4cm</Width>
-          <Height>0.5cm</Height>
 
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>3</Value>
-                  <Style>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-
-        </Textbox>
-
-      </ReportItems>
-
-      <Style>
-        <Border>
-          <Style>Solid</Style>
-        </Border>
-      </Style>
-
-    </Rectangle>
-
-  </CellContents>
-</TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="H4">

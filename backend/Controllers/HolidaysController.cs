@@ -239,5 +239,74 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+        [HttpPost("bulk-update-status")]
+        [Authorize(Roles = "Admin,SuperAdmin")]
+        public async Task<IActionResult> BulkUpdateStatus([FromBody] BulkHolidayStatusUpdate request)
+        {
+            var orgId = GetOrgId();
+            var userId = GetUserId();
+
+            if (request.EmployeeIds == null || !request.EmployeeIds.Any())
+                return BadRequest(new { message = "No employees selected" });
+
+            if (request.HolidayId <= 0)
+                return BadRequest(new { message = "Invalid Holiday ID" });
+
+            try
+            {
+                using var conn = _db.CreateConnection();
+                var employeeIdsJson = System.Text.Json.JsonSerializer.Serialize(request.EmployeeIds);
+
+                await conn.ExecuteAsync(
+                    "sp_BulkUpdateHolidayStatus",
+                    new 
+                    { 
+                        OrganizationId = orgId, 
+                        HolidayId = request.HolidayId, 
+                        Status = request.Status, 
+                        Remarks = request.Remarks, 
+                        UserId = userId,
+                        EmployeeIds = employeeIdsJson
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+
+                // SignalR Notification
+                await _hubContext.Clients.Group($"Org_{orgId}").SendAsync("HolidayStatusChanged", new 
+                { 
+                    holidayId = request.HolidayId, 
+                    count = request.EmployeeIds.Count,
+                    status = request.Status
+                });
+
+                return Ok(new { message = $"Successfully updated status for {request.EmployeeIds.Count} employees" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in bulk holiday status update");
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("employee-statuses")]
+        public async Task<IActionResult> GetEmployeeStatuses([FromQuery] int holidayId)
+        {
+            var orgId = GetOrgId();
+            try
+            {
+                using var conn = _db.CreateConnection();
+                var statuses = await conn.QueryAsync<EmployeeHolidayStatus>(
+                    "sp_GetEmployeeHolidayStatuses", 
+                    new { OrganizationId = orgId, HolidayId = holidayId },
+                    commandType: CommandType.StoredProcedure
+                );
+                return Ok(statuses);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching employee statuses for holiday {HolidayId}", holidayId);
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }

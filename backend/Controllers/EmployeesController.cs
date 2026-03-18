@@ -152,11 +152,11 @@ public class EmployeesController : ControllerBase
                 DateOfExit          = req.DateOfExit,
                 ReasonForExit       = req.ReasonForExit,
                 Department          = req.Department,
-                DepartmentId        = req.DepartmentId,
-                DesignationId       = req.DesignationId,
                 Remarks             = req.Remarks,
                 CustomFieldsJson    = req.CustomFieldsJson,
-                CreatedBy           = GetUserId()
+                CreatedBy           = GetUserId(),
+                DepartmentId        = req.DepartmentId,
+                DesignationId       = req.DesignationId
             }, commandType: CommandType.StoredProcedure);
 
             // Validate that the stored procedure returned a valid ID
@@ -224,11 +224,11 @@ public class EmployeesController : ControllerBase
                 DateOfExit          = req.DateOfExit,
                 ReasonForExit       = req.ReasonForExit,
                 Department          = req.Department,
-                DepartmentId        = req.DepartmentId,
-                DesignationId       = req.DesignationId,
                 Remarks             = req.Remarks,
                 CustomFieldsJson    = req.CustomFieldsJson,
-                LastUpdatedBy       = GetUserId()
+                LastUpdatedBy       = GetUserId(),
+                DepartmentId        = req.DepartmentId,
+                DesignationId       = req.DesignationId
             }, commandType: CommandType.StoredProcedure);
 
             if (rowsAffected == 0)
