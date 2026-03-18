@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Dark Theme Colors (Based on PrivateDashboard and DrawerWidget)
-  static const Color darkBackground = Color(0xFF0A0E12);
-  static const Color darkSurface = Color(0xFF15191C);
-  static const Color darkSurfaceVariant = Color(0xFF1D2226);
-  static const Color darkDrawerBackground = Color(0xFF0E1624);
-  static const Color darkDrawerSelected = Color(0xFF1D293B);
+
+  static const Color darkBackground = Color(0xFF0F172A); // Rich Navy/Slate 900
+  static const Color darkSurface = Color(0xFF1E293B);    // Slate 800 (Lighter for cards)
+  static const Color darkSurfaceVariant = Color(0xFF334155); // Slate 700
+  static const Color darkDrawerBackground = Color(0xFF0F172A);
+  static const Color darkDrawerSelected = Color(0xFF1E293B);
   
   static const Color primaryBlue = Colors.blue;
   static const Color primaryBlueAccent = Colors.blueAccent;

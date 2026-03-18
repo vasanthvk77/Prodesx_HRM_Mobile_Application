@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../screens/login_screen.dart';
 import '../core/api_config.dart';
 
-class AppDrawer extends StatefulWidget {
+class AppDrawer extends ConsumerWidget {
   final dynamic user;
 
   const AppDrawer({super.key, required this.user});
 
   @override
-  State<AppDrawer> createState() => _AppDrawerState();
-}
-
-class _AppDrawerState extends State<AppDrawer> {
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = widget.user;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch relevant providers
+    final themeNotifier = ref.watch(themeProvider.notifier);
+    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+    final navNotifier = ref.read(navigationProvider.notifier);
+    final authNotifier = ref.read(authProvider.notifier);
 
     return Drawer(
       backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).drawerTheme.backgroundColor,
@@ -76,58 +73,59 @@ class _AppDrawerState extends State<AppDrawer> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
-                    _drawerItem(Icons.handshake_outlined, "Clients", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Clients Screen")));
+                    _drawerItem(context, Icons.handshake_outlined, "Clients", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Clients Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.work_outline, "Work", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Work Screen")));
+                    _drawerItem(context, Icons.work_outline, "Work", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Work Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.account_balance_wallet_outlined, "Finance", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Finance Screen")));
+                    _drawerItem(context, Icons.account_balance_wallet_outlined, "Finance", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Finance Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.shopping_cart_outlined, "Orders", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Orders Screen")));
+                    _drawerItem(context, Icons.shopping_cart_outlined, "Orders", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Orders Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.confirmation_num_outlined, "Tickets", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Tickets Screen")));
+                    _drawerItem(context, Icons.confirmation_num_outlined, "Tickets", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Tickets Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.event_outlined, "Events", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Events Screen")));
+                    _drawerItem(context, Icons.event_outlined, "Events", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Events Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.message_outlined, "Messages", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Messages Screen")));
+                    _drawerItem(context, Icons.message_outlined, "Messages", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Messages Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.campaign_outlined, "Notice Board", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Notice Board Screen")));
+                    _drawerItem(context, Icons.campaign_outlined, "Notice Board", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Notice Board Screen")));
                       Navigator.pop(context);
                     }),
-                    _drawerItem(Icons.book_outlined, "Knowledge Base", onTap: () {
-                      Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Knowledge Base Screen")));
+                    _drawerItem(context, Icons.book_outlined, "Knowledge Base", onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Knowledge Base Screen")));
                       Navigator.pop(context);
                     }),
 
                     /// Forms
                     _buildExpansionTile(
+                      context,
                       icon: Icons.description,
                       title: "Forms",
                       children: [
-                        _subItem("Form1", onTap: () {
-                          Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Form 1")));
+                        _subItem(context, "Form1", onTap: () {
+                          navNotifier.setDashboardContent(const Center(child: Text("Form 1")));
                           Navigator.pop(context);
                         }),
-                        _subItem("Form2", onTap: () {
-                          Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Form 2")));
+                        _subItem(context, "Form2", onTap: () {
+                          navNotifier.setDashboardContent(const Center(child: Text("Form 2")));
                           Navigator.pop(context);
                         }),
-                        _subItem("Form3", onTap: () {
-                          Provider.of<NavigationProvider>(context, listen: false).setDashboardContent(const Center(child: Text("Form 3")));
+                        _subItem(context, "Form3", onTap: () {
+                          navNotifier.setDashboardContent(const Center(child: Text("Form 3")));
                           Navigator.pop(context);
                         }),
                       ],
@@ -135,75 +133,72 @@ class _AppDrawerState extends State<AppDrawer> {
 
                     /// Settings
                     _buildExpansionTile(
+                      context,
                       icon: Icons.settings,
                       title: "Settings",
                       children: [
-                        Consumer<ThemeProvider>(
-                          builder: (context, themeProvider, child) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 30, right: 10, bottom: 10),
-                              child: InkWell(
-                                onTap: () => themeProvider.toggleTheme(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30, right: 10, bottom: 10),
+                          child: InkWell(
+                            onTap: () => themeNotifier.toggleTheme(),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).brightness == Brightness.light 
+                                    ? Colors.grey.shade50 
+                                    : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.light 
-                                        ? Colors.grey.shade50 
-                                        : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            themeProvider.isDarkMode ? Icons.nightlight_round : Icons.wb_sunny_rounded,
-                                            color: themeProvider.isDarkMode ? Colors.amber : Colors.orange,
-                                            size: 20,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          const Text(
-                                            "Appearance",
-                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                                          ),
-                                        ],
+                                      Icon(
+                                        isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
+                                        color: isDark ? Colors.amber : Colors.orange,
+                                        size: 20,
                                       ),
-                                      GestureDetector(
-                                        onTap: () => themeProvider.toggleTheme(),
-                                        child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 150),
-                                          width: 42,
-                                          height: 22,
-                                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20),
-                                            color: themeProvider.isDarkMode ? Colors.blue : Colors.grey.shade400,
-                                          ),
-                                          child: AnimatedAlign(
-                                            duration: const Duration(milliseconds: 150),
-                                            alignment: themeProvider.isDarkMode ? Alignment.centerRight : Alignment.centerLeft,
-                                            child: Container(
-                                              width: 18,
-                                              height: 18,
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                      const SizedBox(width: 12),
+                                      const Text(
+                                        "Appearance",
+                                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                                       ),
                                     ],
                                   ),
-                                ),
+                                  GestureDetector(
+                                    onTap: () => themeNotifier.toggleTheme(),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 150),
+                                      width: 42,
+                                      height: 22,
+                                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: isDark ? Colors.blue : Colors.grey.shade400,
+                                      ),
+                                      child: AnimatedAlign(
+                                        duration: const Duration(milliseconds: 150),
+                                        alignment: isDark ? Alignment.centerRight : Alignment.centerLeft,
+                                        child: Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                        _subItem("Notifications"),
-                        _subItem("Updates"),
+                        _subItem(context, "Notifications"),
+                        _subItem(context, "Updates"),
                       ],
                     ),
                   ],
@@ -217,7 +212,7 @@ class _AppDrawerState extends State<AppDrawer> {
               title: const Text("Sign Out",
                   style: TextStyle(color: Colors.red)),
               onTap: () {
-                authProvider.logout();
+                authNotifier.logout();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (_) => const LoginScreen()),
                 );
@@ -230,7 +225,8 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   /// Expansion tile for nested menus
-  Widget _buildExpansionTile({
+  Widget _buildExpansionTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required List<Widget> children,
@@ -269,7 +265,7 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   /// Drawer item
-  Widget _drawerItem(IconData icon, String title, {bool isSelected = false, VoidCallback? onTap}) {
+  Widget _drawerItem(BuildContext context, IconData icon, String title, {bool isSelected = false, VoidCallback? onTap}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       decoration: BoxDecoration(
@@ -300,7 +296,7 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   /// Sub menu
-  Widget _subItem(String title, {bool isSelected = false, VoidCallback? onTap}) {
+  Widget _subItem(BuildContext context, String title, {bool isSelected = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.only(left: 30, right: 10),
       child: Container(

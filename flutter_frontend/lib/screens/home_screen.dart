@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/drawer_widget.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  String searchText = "";
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the auth state
+    final authState = ref.watch(authProvider);
+    final user = authState.user;
 
     return Scaffold(
-      /// 🔥 MODERN DRAWER
+      /// MODERN DRAWER
       drawer: AppDrawer(user: user),
 
-      /// 🔥 APPBAR
+      /// APPBAR
       appBar: AppBar(
         automaticallyImplyLeading: false,
         titleSpacing: 0,
@@ -48,15 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(width: 15),
-
-              /// Search
-             
             ],
           ),
         ),
       ),
 
-      /// 🔥 BODY
+      /// BODY
       body: Container(
         padding: const EdgeInsets.all(24),
         width: double.infinity,
@@ -108,14 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold),
               ),
               backgroundColor: Colors.blue.shade700,
-            ),
-
-            const SizedBox(height: 24),
-
-            Text(
-              "Search: $searchText",
-              style:
-                  const TextStyle(fontSize: 16, color: Colors.grey),
             ),
 
             const SizedBox(height: 40),

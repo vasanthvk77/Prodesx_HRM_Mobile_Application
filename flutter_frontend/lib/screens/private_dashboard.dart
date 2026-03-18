@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/drawer_widget.dart';
 import '../core/api_config.dart';
 import 'package:http/http.dart' as http;
 
-class PrivateDashboard extends StatefulWidget {
+class PrivateDashboard extends ConsumerStatefulWidget {
   const PrivateDashboard({super.key});
 
   @override
-  State<PrivateDashboard> createState() => _PrivateDashboardState();
+  ConsumerState<PrivateDashboard> createState() => _PrivateDashboardState();
 }
 
-class _PrivateDashboardState extends State<PrivateDashboard> {
+class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
   // Mock/State data for the dashboard modules
   int pendingTasks = 0;
   int overdueTasks = 0;
@@ -50,29 +49,31 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
   }
 
   Future<void> _loadDashboardData() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token;
+    final authState = ref.read(authProvider);
+    final token = authState.token;
     
     if (token == null) return;
 
-    setState(() {
-      // Reset all stats to 0 as requested
-      pendingTasks = 0;
-      overdueTasks = 0;
-      inProgressProjects = 0;
-      overdueProjects = 0;
-      totalDeals = 0;
-      convertedDeals = 0;
-      pendingFollowUps = 0;
-      upcomingFollowUps = 0;
-      totalTickets = 0;
-      _shifts = [];
-      _tickets = [];
-      _birthdays = [];
-      _myEmployeeData = null;
-      _attendanceStatus = null;
-      _currentEmployeeId = null;
-    });
+    if (mounted) {
+      setState(() {
+        // Reset all stats to 0 as requested
+        pendingTasks = 0;
+        overdueTasks = 0;
+        inProgressProjects = 0;
+        overdueProjects = 0;
+        totalDeals = 0;
+        convertedDeals = 0;
+        pendingFollowUps = 0;
+        upcomingFollowUps = 0;
+        totalTickets = 0;
+        _shifts = [];
+        _tickets = [];
+        _birthdays = [];
+        _myEmployeeData = null;
+        _attendanceStatus = null;
+        _currentEmployeeId = null;
+      });
+    }
 
     final headers = {
       'Authorization': 'Bearer $token',
@@ -92,10 +93,12 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
       if (leadResponse.statusCode == 200) {
         final decoded = jsonDecode(leadResponse.body);
         if (decoded is List) {
-          setState(() {
-            totalDeals = decoded.length;
-            convertedDeals = decoded.where((l) => l is Map && l['createDeal'] == true).length;
-          });
+          if (mounted) {
+            setState(() {
+              totalDeals = decoded.length;
+              convertedDeals = decoded.where((l) => l is Map && l['createDeal'] == true).length;
+            });
+          }
         }
       }
 
@@ -111,12 +114,13 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
       // Note: Tasks, Projects, FollowUps, and Tickets endpoints are not yet fully implemented in the backend.
       // They remain 0 as requested until endpoints are available.
       
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
-      // debugPrint('Error loading dashboard data: $e');
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -135,19 +139,28 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded is List) {
-          setState(() {
-            _shifts = decoded;
-          });
+          if (mounted) {
+            setState(() {
+              _shifts = decoded;
+            });
+          }
         }
       }
     } catch (e) {
+      if (mounted) {
+        setState(() {
+          _shifts = [];
+        });
+      }
       // debugPrint('Error fetching shift data: $e');
     }
   }
 
   Future<void> _fetchAttendanceStatus(Map<String, String> headers, String? orgId) async {
     if (orgId == null || _currentEmployeeId == null) {
-      setState(() => _attendanceStatus = {'isScheduled': false, 'status': 'No Data'});
+      if (mounted) {
+        setState(() => _attendanceStatus = {'isScheduled': false, 'status': 'No Data'});
+      }
       return;
     }
 
@@ -157,13 +170,17 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
       final response = await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
-        setState(() {
-          _attendanceStatus = decoded;
-        });
+        if (mounted) {
+          setState(() {
+            _attendanceStatus = decoded;
+          });
+        }
       }
     } catch (e) {
       // debugPrint('Error fetching attendance status: $e');
-      setState(() => _attendanceStatus = {'isScheduled': false, 'status': 'Error'});
+      if (mounted) {
+        setState(() => _attendanceStatus = {'isScheduled': false, 'status': 'Error'});
+      }
     }
   }
 
@@ -177,8 +194,8 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded is List) {
-          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-          final user = authProvider.user;
+          final authState = ref.read(authProvider);
+          final user = authState.user;
           final userEmail = user?.email.toLowerCase();
           final userId = user?.id.toString();
           
@@ -190,10 +207,12 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
           );
 
           if (me != null) {
-            setState(() {
-              _myEmployeeData = me;
-              _currentEmployeeId = me['id'];
-            });
+            if (mounted) {
+              setState(() {
+                _myEmployeeData = me;
+                _currentEmployeeId = me['id'];
+              });
+            }
           }
 
           // 2. Process Birthdays (This month)
@@ -214,9 +233,11 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
             };
           }).toList();
 
-          setState(() {
-            _birthdays = bdays;
-          });
+          if (mounted) {
+            setState(() {
+              _birthdays = bdays;
+            });
+          }
         }
       }
     } catch (e) {
@@ -242,60 +263,62 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
             return <String, dynamic>{'name': org.toString(), 'id': org.toString()};
           }).toList();
 
-          setState(() {
-            _orgData = fetchedOrgs;
-            if (_orgData.isNotEmpty) {
-              _selectedOrgId = _orgData.first['id']?.toString();
-            } else {
-              _selectedOrgId = null;
-            }
-            _isLoadingOrgs = false;
-          });
+          if (mounted) {
+            setState(() {
+              _orgData = fetchedOrgs;
+              if (_orgData.isNotEmpty) {
+                _selectedOrgId = _orgData.first['id']?.toString();
+              } else {
+                _selectedOrgId = null;
+              }
+              _isLoadingOrgs = false;
+            });
+          }
         } else {
-          setState(() { _isLoadingOrgs = false; });
+          if (mounted) {
+            setState(() { _isLoadingOrgs = false; });
+          }
         }
       } else {
-        setState(() { _isLoadingOrgs = false; });
+        if (mounted) {
+          setState(() { _isLoadingOrgs = false; });
+        }
       }
     } catch (e) {
       // debugPrint('Error fetching organizations: $e');
-      setState(() {
-        _isLoadingOrgs = false;
-        _orgData = [];
-      });
+      if (mounted) {
+        setState(() {
+          _isLoadingOrgs = false;
+          _orgData = [];
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
+    final authState = ref.watch(authProvider);
+    final user = authState.user;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: AppDrawer(user: user),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          bool isLandscape = constraints.maxWidth > constraints.maxHeight;
-          
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                children: [
-                  _buildHeader(isLandscape),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: isLandscape 
-                      ? _buildLandscapeLayout(user)
-                      : _buildPortraitLayout(user),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isLandscape = constraints.maxWidth > constraints.maxHeight;
+        
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            children: [
+              _buildHeader(isLandscape),
+              const SizedBox(height: 10),
+              Expanded(
+                child: isLandscape 
+                  ? _buildLandscapeLayout(user)
+                  : _buildPortraitLayout(user),
               ),
-            ),
-          );
-        },
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -376,8 +399,8 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
   Future<void> _handlePunch() async {
     if (_currentEmployeeId == null || _selectedOrgId == null) return;
 
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token;
+    final authState = ref.read(authProvider);
+    final token = authState.token;
     if (token == null) return;
 
     final status = _attendanceStatus?['status'];
@@ -501,14 +524,17 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
                 ),
                 onChanged: (String? newValue) async {
                   if (newValue != null && newValue != _selectedOrgId) {
-                    final ap = Provider.of<AuthProvider>(context, listen: false);
+                    final authState = ref.read(authProvider);
+                    final authNotifier = ref.read(authProvider.notifier);
                     try {
                       // Perform backend organization switch
-                      await ap.switchOrganization(newValue);
+                      await authNotifier.switchOrganization(newValue);
                       
-                      setState(() {
-                        _selectedOrgId = newValue;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          _selectedOrgId = newValue;
+                        });
+                      }
                       
                       // Reload all dashboard data with the new token and orgId
                       await _loadDashboardData();
@@ -889,10 +915,10 @@ class _PrivateDashboardState extends State<PrivateDashboard> {
                 children: [
                   CircleAvatar(
                     radius: 12,
-                    backgroundColor: b['isSelf'] == true ? Colors.pinkAccent : Theme.of(context).dividerColor,
+                    backgroundColor: b['isSelf'] == true ? Colors.pinkAccent : Theme.of(context).scaffoldBackgroundColor,
                     child: Text(
                       b['name']?.toString().substring(0, 1).toUpperCase() ?? '?',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 10),

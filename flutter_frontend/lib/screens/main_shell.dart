@@ -1,5 +1,5 @@
- import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/navigation_provider.dart';
 import '../providers/auth_provider.dart';
 import 'private_dashboard.dart';
@@ -7,22 +7,18 @@ import 'hr_management_screen.dart';
 import 'user_management_screen.dart';
 import '../widgets/drawer_widget.dart';
 
-class MainShell extends StatefulWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key});
 
   @override
-  State<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends State<MainShell> {
-  @override
-  Widget build(BuildContext context) {
-    final navProvider = Provider.of<NavigationProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the navigation and auth providers
+    final navState = ref.watch(navigationProvider);
+    final authState = ref.watch(authProvider);
+    final user = authState.user;
 
     final List<Widget> screens = [
-      navProvider.dashboardContent ?? const PrivateDashboard(),
+      navState.dashboardContent ?? const PrivateDashboard(),
       const HRManagementScreen(),
       const UserManagementScreen(),
       const Center(child: Text('Tasks & Projects (Coming Soon)')),
@@ -31,12 +27,14 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       drawer: AppDrawer(user: user),
       body: IndexedStack(
-        index: navProvider.currentIndex,
+        index: navState.currentIndex,
         children: screens,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
+          color: Theme.of(context).brightness == Brightness.light 
+              ? Colors.white 
+              : Theme.of(context).scaffoldBackgroundColor,
           border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5))),
           boxShadow: [
             BoxShadow(
@@ -47,8 +45,8 @@ class _MainShellState extends State<MainShell> {
           ],
         ),
         child: BottomNavigationBar(
-          currentIndex: navProvider.currentIndex,
-          onTap: (index) => navProvider.setIndex(index),
+          currentIndex: navState.currentIndex,
+          onTap: (index) => ref.read(navigationProvider.notifier).setIndex(index),
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           elevation: 0,
