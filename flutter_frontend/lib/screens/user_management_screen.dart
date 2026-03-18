@@ -1,33 +1,55 @@
 import 'package:flutter/material.dart';
+import '../widgets/digital_clock.dart';
 
 class UserManagementScreen extends StatelessWidget {
   const UserManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('User Management'),
-        elevation: 0,
-        centerTitle: false,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader(context, 'USER MANAGEMENT'),
-            const SizedBox(height: 10),
-            _buildMenuItem(context, Icons.person_search_outlined, 'Manage Users'),
-            _buildMenuItem(context, Icons.person_add_outlined, 'Create New User'),
-            
-            const SizedBox(height: 30),
-            _sectionHeader(context, 'ORGANIZATION SETTINGS'),
-            const SizedBox(height: 10),
-            _buildMenuItem(context, Icons.calendar_month_outlined, 'Calendar Settings'),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        children: [
+          // Unified Header
+          Row(
+            children: [
+              Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  'User Management',
+                  style: Theme.of(context).appBarTheme.titleTextStyle,
+                ),
+              ),
+              const DigitalClock(),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _sectionHeader(context, 'USER MANAGEMENT'),
+                  const SizedBox(height: 10),
+                  _buildMenuItem(context, Icons.person_search_outlined, 'Manage Users'),
+                  _buildMenuItem(context, Icons.person_add_outlined, 'Create New User'),
+                  
+                  const SizedBox(height: 30),
+                  _sectionHeader(context, 'ORGANIZATION SETTINGS'),
+                  const SizedBox(height: 10),
+                  _buildMenuItem(context, Icons.calendar_month_outlined, 'Calendar Settings'),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

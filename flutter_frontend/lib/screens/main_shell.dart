@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import 'private_dashboard.dart';
 import 'hr_management_screen.dart';
 import 'user_management_screen.dart';
+import 'tasks_screen.dart';
 import '../widgets/drawer_widget.dart';
 
 class MainShell extends ConsumerWidget {
@@ -21,7 +22,7 @@ class MainShell extends ConsumerWidget {
       navState.dashboardContent ?? const PrivateDashboard(),
       const HRManagementScreen(),
       const UserManagementScreen(),
-      const Center(child: Text('Tasks & Projects (Coming Soon)')),
+      const TasksScreen(),
     ];
 
     return Scaffold(

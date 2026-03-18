@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
 import '../core/api_config.dart';
 import 'package:http/http.dart' as http;
+import '../widgets/digital_clock.dart';
 
 class PrivateDashboard extends ConsumerStatefulWidget {
   const PrivateDashboard({super.key});
@@ -578,9 +579,8 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
     );
   }
 
-  // ==========================================================
-  // UPDATED SECTION: Safe organization logo rendering
-  // ==========================================================
+  // Safe organization logo rendering
+  
   Widget _buildOrgLogo(String? url, double size) {
     return Container(
       width: size,
@@ -666,9 +666,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
     );
   }
 
-  // ==========================================================
-  // UPDATED SECTION: Safe profile image rendering
-  // ==========================================================
+  // Safe profile image rendering
   Widget _buildProfileCard(dynamic user) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1137,68 +1135,6 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
   }
 }
 
-class DigitalClock extends StatefulWidget {
-  const DigitalClock({super.key});
-
-  @override
-  State<DigitalClock> createState() => _DigitalClockState();
-}
-
-class _DigitalClockState extends State<DigitalClock> {
-  late Timer _timer;
-  String _currentTime = '';
-  String _currentDay = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) => _updateTime());
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  void _updateTime() {
-    final now = DateTime.now();
-    if (mounted) {
-      setState(() {
-        _currentTime = DateFormat('hh:mm a').format(now);
-        _currentDay = DateFormat('EEEE').format(now);
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          _currentTime,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
-            letterSpacing: -0.5,
-          ),
-        ),
-        Text(
-          _currentDay,
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class _DayBubble extends StatelessWidget {
   final String day;
