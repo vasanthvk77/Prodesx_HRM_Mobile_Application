@@ -61,8 +61,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     // Watch the auth state to react to loading changes
     final authState = ref.watch(authProvider);
-
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,

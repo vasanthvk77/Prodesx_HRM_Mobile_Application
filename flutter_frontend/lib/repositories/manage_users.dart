@@ -89,4 +89,71 @@ class ManageUsersRepository {
       return [];
     }
   }
+
+  Future<String?> grantAccess(int userId, int orgId, int roleId) async {
+    try {
+      final response = await http.put(
+        Uri.parse(ApiConfig.grantAccess(userId)),
+        headers: _headers,
+        body: jsonEncode({
+          'organizationId': orgId,
+          'roleId': roleId,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return null; // Success
+      }
+      try {
+        final data = jsonDecode(response.body);
+        return data['message']?.toString() ?? 'Grant access failed';
+      } catch (_) {
+        return 'Grant access failed with status ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error granting access: $e');
+      return 'Network error occurred';
+    }
+  }
+
+  Future<String?> revokeAccess(int userId, int orgId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse(ApiConfig.revokeAccess(userId, orgId)),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return null; // Success
+      }
+      try {
+        final data = jsonDecode(response.body);
+        return data['message']?.toString() ?? 'Revoke access failed';
+      } catch (_) {
+        return 'Revoke access failed with status ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error revoking access: $e');
+      return 'Network error occurred';
+    }
+  }
+
+  Future<String?> deleteUser(int userId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse(ApiConfig.deleteUser(userId)),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return null; // Success
+      }
+      try {
+        final data = jsonDecode(response.body);
+        return data['message']?.toString() ?? 'Delete user failed';
+      } catch (_) {
+        return 'Delete user failed with status ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error deleting user: $e');
+      return 'Network error occurred';
+    }
+  }
 }

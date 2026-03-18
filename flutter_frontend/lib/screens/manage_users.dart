@@ -7,6 +7,7 @@ import '../models/manage_users.dart';
 import '../widgets/digital_clock.dart';
 import '../core/api_config.dart';
 import '../widgets/org_dropdown.dart';
+import '../popups/manage_users_edit.dart';
 
 class ManageUsersScreen extends ConsumerStatefulWidget {
   const ManageUsersScreen({super.key});
@@ -461,13 +462,13 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 18),
-                      onPressed: () {},
+                      onPressed: () => _openEditPopup(user),
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(8),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.block_outlined, size: 18),
-                      onPressed: () {},
+                      icon: Icon(user.isActive ? Icons.block_outlined : Icons.restore, size: 18, color: user.isActive ? Colors.grey : Colors.green),
+                      onPressed: () => _revokeRestoreUserAccess(user),
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(8),
                     ),
@@ -477,7 +478,7 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
                         size: 18,
                         color: Colors.red,
                       ),
-                      onPressed: () {},
+                      onPressed: () => _deleteUserAccount(user),
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(8),
                     ),
@@ -489,6 +490,98 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _openEditPopup(ManageUser user) async {
+    final userAccesses = _users.where((u) => u.userID == user.userID).toList();
+
+    await showDialog(
+      context: context,
+      builder: (context) => ManageUsersEditPopup(
+        userId: user.userID,
+        userName: user.userName,
+        email: user.email,
+        userAccesses: userAccesses,
+        allOrganizations: _organizations,
+        allRoles: _roles,
+      ),
+    );
+
+    // Refresh data after popup closes to catch backend changes
+    _loadData();
+  }
+
+  Future<void> _revokeRestoreUserAccess(ManageUser user) async {
+    String? errorMsg;
+    if (user.isActive) {
+      errorMsg = await _repo.revokeAccess(user.userID, user.organizationID);
+    } else {
+      // Resolve role ID from role name to ensure it's not 0
+      final actualRole = _roles.firstWhere(
+        (r) => r.roleName.toLowerCase() == user.role.toLowerCase(),
+        orElse: () => _roles.isNotEmpty ? _roles.first : UserRole(roleID: user.roleID, roleName: user.role),
+      );
+      errorMsg = await _repo.grantAccess(user.userID, user.organizationID, actualRole.roleID);
+    }
+    
+    if (errorMsg == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(user.isActive ? 'Access revoked.' : 'Access restored.'),
+            backgroundColor: user.isActive ? Colors.red : Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      _loadData();
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text(errorMsg),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteUserAccount(ManageUser user) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Theme.of(context).cardTheme.color,
+        title: const Text('Delete Account', style: TextStyle(color: Colors.white)),
+        content: Text('Are you sure you want to permanently delete ${user.userName}?', style: const TextStyle(color: Colors.grey)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      final errorMsg = await _repo.deleteUser(user.userID);
+      if (errorMsg == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account deleted.'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+          );
+        }
+        _loadData();
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMsg), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+          );
+        }
+      }
+    }
   }
 
   Color _getRoleColor(String role) {

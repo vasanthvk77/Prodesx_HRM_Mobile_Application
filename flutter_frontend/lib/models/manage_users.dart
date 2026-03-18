@@ -27,10 +27,10 @@ class ManageUser {
 
   factory ManageUser.fromJson(Map<String, dynamic> json) {
     return ManageUser(
-      accessID: json['accessID'] ?? 0,
-      userID: json['userID'] ?? 0,
-      organizationID: json['organizationID'] ?? 0,
-      roleID: json['roleID'] ?? 0,
+      accessID: json['accessID'] ?? json['accessId'] ?? 0,
+      userID: json['userID'] ?? json['userId'] ?? 0,
+      organizationID: json['organizationID'] ?? json['organizationId'] ?? 0,
+      roleID: json['roleID'] ?? json['roleId'] ?? 0,
       grantedDate: json['grantedDate'] != null 
           ? DateTime.parse(json['grantedDate']) 
           : DateTime.now(),
@@ -52,7 +52,7 @@ class UserRole {
 
   factory UserRole.fromJson(Map<String, dynamic> json) {
     return UserRole(
-      roleID: json['roleID'] ?? 0,
+      roleID: json['roleID'] ?? json['roleId'] ?? 0,
       roleName: json['roleName'] ?? '',
     );
   }

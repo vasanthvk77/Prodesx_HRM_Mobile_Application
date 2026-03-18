@@ -29,6 +29,10 @@ class ApiConfig {
   static const String roles = '$baseUrl/users/roles';
   static const String loginSessions = '$baseUrl/users/login-sessions';
 
+  static String grantAccess(int userId) => '$users/$userId/access';
+  static String revokeAccess(int userId, int orgId) => '$users/$userId/access/$orgId';
+  static String deleteUser(int userId) => '$users/$userId';
+
   static String getFullImageUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     if (path.startsWith('http')) return path;
