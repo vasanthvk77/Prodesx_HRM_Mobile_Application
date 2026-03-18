@@ -8,6 +8,8 @@ import '../widgets/digital_clock.dart';
 import '../core/api_config.dart';
 import '../widgets/org_dropdown.dart';
 import '../popups/manage_users_edit.dart';
+import '../popups/create_user_popup.dart';
+
 
 class ManageUsersScreen extends ConsumerStatefulWidget {
   const ManageUsersScreen({super.key});
@@ -168,9 +170,17 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CreateUserPopup(
+                      onUserCreated: _loadData,
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Create New User'),
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,

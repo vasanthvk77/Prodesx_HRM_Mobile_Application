@@ -24,6 +24,12 @@ class ApiConfig {
   static const String organizations = '$baseUrl/organizations';
   static const String userOrganizations = '$baseUrl/users/organizations';
 
+  // Designations
+  static const String designations = '$baseUrl/designations';
+  static const String parentDesignations = '$baseUrl/designations/parents';
+  static String designation(int id) => '$designations/$id';
+
+
   // User Management
   static const String users = '$baseUrl/users';
   static const String roles = '$baseUrl/users/roles';

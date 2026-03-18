@@ -156,4 +156,99 @@ class ManageUsersRepository {
       return 'Network error occurred';
     }
   }
+
+  /// Creates a new user in the system.
+  /// Returns null on success, or an error message on failure.
+  Future<String?> createUser({
+    required String name,
+    required String email,
+    required String password,
+    required String roleName,
+    required int organizationId,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.users),
+        headers: _headers,
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'roleName': roleName,
+          'organizationId': organizationId,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return null; // Success
+      }
+
+      // Try to parse error message from backend
+      try {
+        final data = jsonDecode(response.body);
+        return data['message']?.toString() ?? 'Failed to create user';
+      } catch (_) {
+        return 'Error: ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error creating user: $e');
+      return 'Network error: could not reach server';
+    }
+  }
+
+  /// Creates a new organization.
+  /// Returns the created organization on success, or throws an exception on failure.
+  Future<UserOrganization> createOrganization({
+    required String name,
+    required String email,
+    required String phone,
+    required String address,
+    dynamic logo, // Can be an XFile or null
+  }) async {
+    try {
+      final uri = Uri.parse(ApiConfig.organizations);
+      final request = http.MultipartRequest('POST', uri);
+      
+      // Add only Authorization header
+      request.headers['Authorization'] = 'Bearer $token';
+
+      
+      // Add text fields
+      request.fields['name'] = name;
+      request.fields['email'] = email;
+      request.fields['phone'] = phone;
+      request.fields['address'] = address;
+
+      // Add logo file if provided
+      if (logo != null) {
+        final multipartFile = await http.MultipartFile.fromPath(
+          'logo',
+          logo.path,
+          filename: logo.name,
+        );
+        request.files.add(multipartFile);
+      }
+
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return UserOrganization.fromJson(data);
+      } else {
+        String errorMessage = 'Failed to create organization';
+        try {
+          final error = jsonDecode(response.body);
+          errorMessage = error['message'] ?? errorMessage;
+        } catch (_) {}
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      print('Error creating organization: $e');
+      if (e is Exception) rethrow;
+      throw Exception('Network error or server unavailable');
+    }
+  }
+
 }
