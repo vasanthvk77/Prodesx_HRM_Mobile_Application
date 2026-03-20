@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/navigation_provider.dart';
 import '../widgets/digital_clock.dart';
 import 'designation_list_screen.dart';
 import 'department_list_screen.dart';
+import 'employee_list_screen.dart';
 
-
-
-class HRManagementScreen extends StatelessWidget {
+class HRManagementScreen extends ConsumerWidget {
   const HRManagementScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -38,13 +39,13 @@ class HRManagementScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 10),
               children: [
-                _buildMenuItem(context, Icons.people_outline, 'Employees'),
-                _buildMenuItem(context, Icons.event_busy_outlined, 'Leaves'),
-                _buildMenuItem(context, Icons.assignment_ind_outlined, 'Shift Assignments'),
-                _buildMenuItem(context, Icons.fingerprint, 'Attendance'),
-                _buildMenuItem(context, Icons.event_outlined, 'Holiday'),
-                _buildMenuItem(context, Icons.badge_outlined, 'Designation'),
-                _buildMenuItem(context, Icons.domain_outlined, 'Department'),
+                _buildMenuItem(context, ref, Icons.people_outline, 'Employees'),
+                _buildMenuItem(context, ref, Icons.event_busy_outlined, 'Leaves'),
+                _buildMenuItem(context, ref, Icons.assignment_ind_outlined, 'Shift Assignments'),
+                _buildMenuItem(context, ref, Icons.fingerprint, 'Attendance'),
+                _buildMenuItem(context, ref, Icons.event_outlined, 'Holiday'),
+                _buildMenuItem(context, ref, Icons.badge_outlined, 'Designation'),
+                _buildMenuItem(context, ref, Icons.domain_outlined, 'Department'),
               ],
             ),
           ),
@@ -53,7 +54,7 @@ class HRManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, IconData icon, String title) {
+  Widget _buildMenuItem(BuildContext context, WidgetRef ref, IconData icon, String title) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
@@ -83,19 +84,14 @@ class HRManagementScreen extends StatelessWidget {
         ),
         trailing: Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
         onTap: () {
-          if (title == 'Designation') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DesignationListScreen()),
-            );
+          if (title == 'Employees') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const EmployeeListScreen());
+          } else if (title == 'Designation') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const DesignationListScreen());
           } else if (title == 'Department') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DepartmentListScreen()),
-            );
+            ref.read(navigationProvider.notifier).setHRManagementContent(const DepartmentListScreen());
           }
         },
-
       ),
     );
   }

@@ -8,6 +8,7 @@ import '../core/api_config.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/digital_clock.dart';
 import '../widgets/org_dropdown.dart';
+import '../widgets/custom_snackbar.dart';
 
 class PrivateDashboard extends ConsumerStatefulWidget {
   const PrivateDashboard({super.key});
@@ -437,8 +438,9 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
 
       if (response.statusCode == 200) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(isPunchIn ? 'Punched in successfully' : 'Punched out successfully')),
+          CustomSnackbar.show(
+            context: context,
+            message: isPunchIn ? 'Punched in successfully' : 'Punched out successfully',
           );
         }
         _loadDashboardData();
@@ -491,14 +493,17 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
             await _loadDashboardData();
             
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Switched organization successfully'), duration: Duration(seconds: 2)),
+              CustomSnackbar.show(
+                context: context,
+                message: 'Switched organization successfully',
               );
             }
           } catch (e) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to switch: $e'), backgroundColor: Colors.red),
+              CustomSnackbar.show(
+                context: context,
+                message: 'Failed to switch: $e',
+                isError: true,
               );
             }
           }

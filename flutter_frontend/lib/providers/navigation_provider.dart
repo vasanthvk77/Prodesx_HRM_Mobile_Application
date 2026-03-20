@@ -7,24 +7,29 @@ class NavigationState {
   final int currentIndex;
   final Widget? dashboardContent;
   final Widget? manageUsersContent;
+  final Widget? hrManagementContent;
 
   NavigationState({
     this.currentIndex = 0,
     this.dashboardContent,
     this.manageUsersContent,
+    this.hrManagementContent,
   });
 
   NavigationState copyWith({
     int? currentIndex,
     Widget? dashboardContent,
     Widget? manageUsersContent,
+    Widget? hrManagementContent,
     bool? clearDashboard,
     bool? clearManageUsers,
+    bool? clearHRManagement,
   }) {
     return NavigationState(
       currentIndex: currentIndex ?? this.currentIndex,
       dashboardContent: (clearDashboard == true) ? null : (dashboardContent ?? this.dashboardContent),
       manageUsersContent: (clearManageUsers == true) ? null : (manageUsersContent ?? this.manageUsersContent),
+      hrManagementContent: (clearHRManagement == true) ? null : (hrManagementContent ?? this.hrManagementContent),
     );
   }
 }
@@ -58,6 +63,15 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
       manageUsersContent: content,
       clearManageUsers: content == null,
       currentIndex: 2, // Switch to User Management tab (index 2 for Admin)
+    );
+  }
+
+  /// Switches the HR Management's content.
+  void setHRManagementContent(Widget? content) {
+    state = state.copyWith(
+      hrManagementContent: content,
+      clearHRManagement: content == null,
+      currentIndex: 1, // Switch to HR Management tab (index 1 for Admin)
     );
   }
 

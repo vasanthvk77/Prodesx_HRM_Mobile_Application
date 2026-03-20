@@ -9,6 +9,23 @@ class ApiConfig {
 
   // Employees
   static const String employees = '$baseUrl/employees';
+  static const String unlinkedUsers = '$baseUrl/employees/unlinked-users';
+  static String employee(int id) => '$employees/$id';
+  static String employeePhoto(int id) => '$employees/$id/photo';
+  static String employeeSignature(int id) => '$employees/$id/signature';
+  static String employeeBankDetails(int id) => '$employees/$id/bank-details';
+  static const String exportEmployeesExcel = '$baseUrl/employees/export-excel';
+  static const String exportEmployeesPdf = '$baseUrl/employees/export-pdf';
+
+  // Dynamic Form (Employee Fields)
+  static const String employeeFields = '$baseUrl/DynamicForm/employee-fields';
+  static const String updateEmployeeFields = '$baseUrl/DynamicForm/update-fields';
+  static const String createMasterField = '$baseUrl/DynamicForm/create-field';
+  static String deleteMasterField(int id) => '$baseUrl/DynamicForm/delete-field/$id';
+
+  // SignalR Hubs
+  static const String employeesHub = '$serverUrl/hubs/employees';
+
 
   // Attendance
   static const String attendanceStatus = '$baseUrl/Attendance/status';

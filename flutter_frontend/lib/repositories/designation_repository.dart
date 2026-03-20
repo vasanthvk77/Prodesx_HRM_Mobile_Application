@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/api_config.dart';
 import '../models/designation.dart';
 import '../services/auth_service.dart';
 
+final designationRepositoryProvider = Provider((ref) => DesignationRepository());
+
 class DesignationRepository {
+
   final AuthService _authService = AuthService();
 
   Future<List<Designation>> getDesignations(int? organizationId) async {

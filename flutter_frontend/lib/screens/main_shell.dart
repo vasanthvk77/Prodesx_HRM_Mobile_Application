@@ -33,8 +33,12 @@ class MainShell extends ConsumerWidget {
     ));
 
     if (isAdmin) {
-      // HR Management
-      screens.add(const HRManagementScreen());
+      // HR Management (with sub-page support)
+      screens.add(
+        navState.hrManagementContent != null
+          ? navState.hrManagementContent!
+          : const HRManagementScreen()
+      );
       navItems.add(const BottomNavigationBarItem(
         icon: Icon(Icons.badge_outlined),
         activeIcon: Icon(Icons.badge),
@@ -77,13 +81,30 @@ class MainShell extends ConsumerWidget {
       // The IndexedStack will handle it for this frame.
     }
 
+    final bool isDesktop = MediaQuery.of(context).size.width >= 900;
+    
+    Widget bodyContent = IndexedStack(
+      index: safeIndex,
+      children: screens,
+    );
+
+    if (isDesktop) {
+      bodyContent = Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 250,
+            child: AppDrawer(user: user),
+          ),
+          Expanded(child: bodyContent),
+        ],
+      );
+    }
+
     return Scaffold(
-      drawer: AppDrawer(user: user),
-      body: IndexedStack(
-        index: safeIndex,
-        children: screens,
-      ),
-      bottomNavigationBar: Container(
+      drawer: isDesktop ? null : AppDrawer(user: user),
+      body: bodyContent,
+      bottomNavigationBar: isDesktop ? null : Container(
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.light 
               ? Colors.white 

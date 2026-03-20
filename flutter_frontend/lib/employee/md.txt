@@ -1,0 +1,41 @@
+Employees UI File Structure
+Here is the breakdown of the files involved in the Employees module as shown in your UI.
+
+1. Frontend (React)
+Main Page & List View
+pages\Employees.jsx
+: The primary coordinate for the Employees module. It contains the logic for:
+Rendering the main table (List View).
+Search and filter functionality (Designation/Department).
+Action buttons (Add Employee, Manage Fields, Export).
+Role-based access (e.g., hiding "Manage Fields" for non-SuperAdmins).
+utils\api.js
+: Centralized file containing all Redux/Axios API call definitions for the frontend.
+Forms & Modals
+components\Forms\AddEmployeeForm.jsx
+: The form used for adding/editing employee details. It is loaded inside a 
+Drawer
+ component from the main page.
+components\Forms\SuperAdminFieldsModal.jsx
+: The UI for the "Manage Fields" button. This allows SuperAdmins to define master data fields that apply across the system.
+2. Backend (.NET)
+Controllers & Business Logic
+Controllers\EmployeesController.cs
+: The main API controller for employee operations.
+GetEmployees
+: Fetches the list for the main UI.
+CreateEmployee
+ / 
+UpdateEmployee
+: Handles form submissions from AddEmployeeForm.
+ExportExcel
+ / 
+ExportPdf
+: The endpoints triggered when you click the Export button.
+Controllers\DynamicFormController.cs
+: Handles the backend logic for "Manage Fields", allowing the creation and deletion of custom master fields.
+Services\ExportService.cs
+: Contains the core logic for generating Excel spreadsheets and PDF documents for the export feature.
+Real-time Updates
+Hubs\EmployeesHub.cs
+: A SignalR Hub that ensures the UI updates instantly (e.g., showing a toast notification) when another user adds or modifies an employee.

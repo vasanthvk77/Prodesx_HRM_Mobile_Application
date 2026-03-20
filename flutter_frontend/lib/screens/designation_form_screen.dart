@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/designation.dart';
 import '../repositories/designation_repository.dart';
+import '../widgets/custom_snackbar.dart';
 
 class DesignationFormScreen extends StatefulWidget {
   final int organizationId;
@@ -49,9 +50,11 @@ class _DesignationFormScreenState extends State<DesignationFormScreen> {
       final all = await _repository.getDesignations(widget.organizationId);
       _prepareParentOptions(all);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load parents: $e')));
-      }
+        CustomSnackbar.show(
+          context: context,
+          message: 'Failed to load parents: $e',
+          isError: true,
+        );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -94,15 +97,17 @@ class _DesignationFormScreenState extends State<DesignationFormScreen> {
       if (widget.editData != null) {
         await _repository.updateDesignation(widget.editData!.id, data);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Designation updated successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: 'Designation updated successfully',
           );
         }
       } else {
         await _repository.createDesignation(data);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Designation created successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: 'Designation created successfully',
           );
         }
       }
@@ -110,9 +115,11 @@ class _DesignationFormScreenState extends State<DesignationFormScreen> {
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
       setState(() => _isSaving = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
-      }
+        CustomSnackbar.show(
+          context: context,
+          message: 'Save failed: $e',
+          isError: true,
+        );
     }
   }
 

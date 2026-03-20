@@ -9,6 +9,8 @@ import '../core/api_config.dart';
 import '../widgets/org_dropdown.dart';
 import '../popups/manage_users_edit.dart';
 import '../popups/create_user_popup.dart';
+import '../widgets/custom_snackbar.dart';
+import '../widgets/custom_pagination.dart';
 
 
 class ManageUsersScreen extends ConsumerStatefulWidget {
@@ -33,6 +35,19 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
   String? _selectedOrganizationId;
   String? _selectedRole;
   String? _selectedStatus;
+
+  // Pagination state
+  int _currentPage = 1;
+  int _pageSize = 10;
+  List<ManageUser> _paginatedUsers = [];
+  
+  final ScrollController _horizontalScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -64,7 +79,7 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
 
   void _applyFilters() {
     setState(() {
-      _filteredUsers = _users.where((user) {
+      final filtered = _users.where((user) {
         final matchesOrg = _selectedOrganizationId == null || user.organizationID.toString() == _selectedOrganizationId;
         final matchesRole = _selectedRole == null || user.role == _selectedRole;
         
@@ -78,10 +93,27 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
         return matchesOrg && matchesRole && matchesStatus;
       }).toList();
 
+      _filteredUsers = filtered;
       _totalUsers = _filteredUsers.length;
       _activeAccess = _filteredUsers.where((u) => u.isActive).length;
       _revokedAccess = _filteredUsers.where((u) => !u.isActive).length;
+      
+      _currentPage = 1;
+      _updatePagination();
     });
+  }
+
+  void _updatePagination() {
+    final startIndex = (_currentPage - 1) * _pageSize;
+    final endIndex = (startIndex + _pageSize) > _filteredUsers.length 
+        ? _filteredUsers.length 
+        : (startIndex + _pageSize);
+    
+    if (startIndex >= _filteredUsers.length) {
+      _paginatedUsers = [];
+    } else {
+      _paginatedUsers = _filteredUsers.sublist(startIndex, endIndex);
+    }
   }
 
   @override
@@ -103,11 +135,34 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
             const SizedBox(height: 20),
             _buildFilters(),
             const SizedBox(height: 20),
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _buildUserList(),
-            ),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : Column(
+                            children: [
+                              Expanded(child: _buildUserList()),
+                              if (!_isLoading && _filteredUsers.isNotEmpty)
+                                CustomPagination(
+                                  totalItems: _filteredUsers.length,
+                                  pageSize: _pageSize,
+                                  currentPage: _currentPage,
+                                  onPageChanged: (page) {
+                                    setState(() {
+                                      _currentPage = page;
+                                      _updatePagination();
+                                    });
+                                  },
+                                  onPageSizeChanged: (size) {
+                                    setState(() {
+                                      _pageSize = size;
+                                      _currentPage = 1;
+                                      _updatePagination();
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                  ),
           ],
         ),
       ),
@@ -115,6 +170,47 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
   }
 
   Widget _buildHeader() {
+    final bool isDesktopOrTablet = MediaQuery.of(context).size.width >= 600;
+    
+    if (isDesktopOrTablet) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, size: 22, color: Colors.white),
+                onPressed: () => ref.read(navigationProvider.notifier).setManageUsersContent(null),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('User Management', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                  const SizedBox(height: 4),
+                  const Text('Manage users and their organisation access rights', style: TextStyle(fontSize: 12, color: Colors.white70)),
+                ],
+              ),
+            ],
+          ),
+          ElevatedButton.icon(
+            onPressed: () => showDialog(context: context, builder: (context) => CreateUserPopup(onUserCreated: _loadData)),
+            icon: const Icon(Icons.add, size: 16),
+            label: const Text('Create New User'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0F172A), // Match dark theme button
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.white24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,22 +247,7 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
         const SizedBox(height: 0),
         Row(
           children: [
-           Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          "Manage users and their organisation access rights",
-          style: const TextStyle(fontSize: 10, color: Color.fromARGB(255, 255, 255, 255)),
-          softWrap: true,
-        ),
-      ),
-    ),
-
-            const SizedBox(width: 3),
+           
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
@@ -382,115 +463,242 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
 
   Widget _buildUserList() {
     if (_filteredUsers.isEmpty) {
-      return const Center(child: Text('No users match these filters'));
+      return const Center(child: Text('No users match these filters', style: TextStyle(color: Colors.white70)));
+    }
+
+    final bool isDesktopOrTablet = MediaQuery.of(context).size.width >= 600;
+
+    if (isDesktopOrTablet) {
+      return _buildDesktopTable();
     }
 
     return ListView.builder(
-      itemCount: _filteredUsers.length,
+      itemCount: _paginatedUsers.length,
       itemBuilder: (context, index) {
-        final user = _filteredUsers[index];
+        final user = _paginatedUsers[index];
         return _buildUserListItem(user);
       },
     );
   }
 
-  Widget _buildUserListItem(ManageUser user) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
+  Widget _buildDesktopTable() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Scrollbar(
+            controller: _horizontalScrollController,
+            thumbVisibility: true,
+            trackVisibility: true,
+            thickness: 8.0,
+            radius: const Radius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0), // Space for scrollbar
+              child: SingleChildScrollView(
+                controller: _horizontalScrollController,
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    columnSpacing: 16,
+                    horizontalMargin: 16,
+                    headingRowColor: MaterialStateProperty.all(const Color(0xFF1E293B)), // Match dark slate
+            dataRowMaxHeight: 65,
+            dataRowMinHeight: 65,
+            columns: const [
+              DataColumn(label: Text('USER', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('EMAIL', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('ORGANISATION', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('ROLE', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('GRANTED', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('STATUS', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+              DataColumn(label: Text('ACTIONS', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11))),
+            ],
+            rows: _paginatedUsers.map((user) {
+              return DataRow(
+                cells: [
+                  DataCell(
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          backgroundImage: user.organizationLogo != null && user.organizationLogo!.isNotEmpty ? NetworkImage(ApiConfig.getFullImageUrl(user.organizationLogo)) : null,
+                          child: (user.organizationLogo == null || user.organizationLogo!.isEmpty) ? Text(user.userName.isNotEmpty ? user.userName[0].toUpperCase() : 'U', style: const TextStyle(fontSize: 12)) : null,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(user.userName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                  DataCell(Text(user.email, style: const TextStyle(color: Colors.white70))),
+                  DataCell(Text(user.organizationName, style: const TextStyle(color: Colors.white))),
+                  DataCell(_buildBadge(user.role, _getRoleColor(user.role))),
+                  DataCell(Text('${user.grantedDate.day.toString().padLeft(2, '0')}/${user.grantedDate.month.toString().padLeft(2, '0')}/${user.grantedDate.year}', style: const TextStyle(color: Colors.white70))),
+                  DataCell(_buildBadge(user.isActive ? 'Active' : 'Revoked', user.isActive ? Colors.green : Colors.red)),
+                  DataCell(
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.white54),
+                          onPressed: () => _openEditPopup(user),
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        IconButton(
+                          icon: Icon(user.isActive ? Icons.block_flipped : Icons.check_circle_outline, size: 16, color: user.isActive ? Colors.redAccent.withOpacity(0.8) : Colors.green),
+                          onPressed: () => _revokeRestoreUserAccess(user),
+                          tooltip: user.isActive ? 'Revoke Access' : 'Restore Access',
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, size: 16, color: Colors.white54),
+                          onPressed: () => _deleteUserAccount(user),
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget _buildUserListItem(ManageUser user) {
+    return Card(
+      color: const Color(0xFF1E293B),
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primary.withOpacity(0.1),
-                  backgroundImage: user.organizationLogo != null
-                      ? NetworkImage(
-                          ApiConfig.getFullImageUrl(user.organizationLogo),
-                        )
-                      : null,
-                  child: user.organizationLogo == null
-                      ? Text(user.userName[0].toUpperCase())
-                      : null,
-                ),
-                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        user.userName,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        backgroundImage: user.organizationLogo != null
+                            ? NetworkImage(ApiConfig.getFullImageUrl(user.organizationLogo))
+                            : null,
+                        child: user.organizationLogo == null
+                            ? Text(user.userName.isNotEmpty ? user.userName[0].toUpperCase() : 'U')
+                            : null,
                       ),
-                      Text(
-                        user.email,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(user.userName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15), overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 2),
+                            Text(user.email, style: const TextStyle(color: Colors.white54, fontSize: 12), overflow: TextOverflow.ellipsis),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-                _buildBadge(user.role, _getRoleColor(user.role)),
+                Theme(
+                  data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                  child: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white54, size: 20),
+                    color: const Color(0xFF1E293B),
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+                    offset: const Offset(0, 40),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        _openEditPopup(user);
+                      } else if (value == 'revoke_restore') {
+                        _revokeRestoreUserAccess(user);
+                      } else if (value == 'delete') {
+                        _deleteUserAccount(user);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, color: Colors.blue, size: 18),
+                            SizedBox(width: 12),
+                            Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'revoke_restore',
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Icon(user.isActive ? Icons.block_flipped : Icons.check_circle_outline, color: user.isActive ? Colors.redAccent.withOpacity(0.8) : Colors.green, size: 18),
+                            const SizedBox(width: 12),
+                            Text(user.isActive ? 'Revoke Access' : 'Restore Access', style: TextStyle(color: user.isActive ? Colors.redAccent.withOpacity(0.8) : Colors.green, fontSize: 13, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                            SizedBox(width: 12),
+                            Text('Delete', style: TextStyle(color: Colors.redAccent, fontSize: 13, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: Colors.white12),
+            const SizedBox(height: 12),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Expanded(child: _buildMobileDetailColumn('Organization', user.organizationName)),
                 Expanded(
-                  flex: 3,
-                  child: Text(
-                    user.organizationName,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Role', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                      const SizedBox(height: 4),
+                      _buildBadge(user.role, _getRoleColor(user.role)),
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: _buildBadge(
-                      user.isActive ? 'Active' : 'Inactive',
-                      user.isActive ? Colors.green : Colors.red,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined, size: 18),
-                      onPressed: () => _openEditPopup(user),
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                    IconButton(
-                      icon: Icon(user.isActive ? Icons.block_outlined : Icons.restore, size: 18, color: user.isActive ? Colors.grey : Colors.green),
-                      onPressed: () => _revokeRestoreUserAccess(user),
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        size: 18,
-                        color: Colors.red,
-                      ),
-                      onPressed: () => _deleteUserAccount(user),
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(8),
+                    const Text('Status', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(color: user.isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: user.isActive ? Colors.green : Colors.red)),
+                      child: Text(user.isActive ? 'Active' : 'Inactive', style: TextStyle(color: user.isActive ? Colors.green : Colors.red, fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -499,6 +707,17 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMobileDetailColumn(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+      ],
     );
   }
 
@@ -522,11 +741,40 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
   }
 
   Future<void> _revokeRestoreUserAccess(ManageUser user) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Theme.of(context).cardTheme.color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(user.isActive ? Icons.block_flipped : Icons.check_circle_outline, color: user.isActive ? Colors.redAccent : Colors.green),
+            const SizedBox(width: 12),
+            Text(user.isActive ? 'Revoke Access' : 'Restore Access', style: const TextStyle(color: Colors.white, fontSize: 18)),
+          ],
+        ),
+        content: Text('Are you sure you want to ${user.isActive ? 'revoke' : 'restore'} access to ${user.userName}?', style: const TextStyle(color: Colors.grey)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: user.isActive ? Colors.redAccent : Colors.green,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(user.isActive ? 'Revoke' : 'Restore'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
     String? errorMsg;
     if (user.isActive) {
       errorMsg = await _repo.revokeAccess(user.userID, user.organizationID);
     } else {
-      // Resolve role ID from role name to ensure it's not 0
       final actualRole = _roles.firstWhere(
         (r) => r.roleName.toLowerCase() == user.role.toLowerCase(),
         orElse: () => _roles.isNotEmpty ? _roles.first : UserRole(roleID: user.roleID, roleName: user.role),
@@ -534,27 +782,20 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
       errorMsg = await _repo.grantAccess(user.userID, user.organizationID, actualRole.roleID);
     }
     
+    if (!mounted) return;
+    
     if (errorMsg == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(user.isActive ? 'Access revoked.' : 'Access restored.'),
-            backgroundColor: user.isActive ? Colors.red : Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      CustomSnackbar.show(
+        context: context, 
+        message: user.isActive ? 'Access revoked successfully.' : 'Access restored successfully.'
+      );
       _loadData();
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
-            content: Text(errorMsg),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      CustomSnackbar.show(
+        context: context, 
+        message: errorMsg,
+        isError: true,
+      );
     }
   }
 
@@ -563,34 +804,47 @@ class _ManageUsersScreenState extends ConsumerState<ManageUsersScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Theme.of(context).cardTheme.color,
-        title: const Text('Delete Account', style: TextStyle(color: Colors.white)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
+            SizedBox(width: 8),
+            Text('Delete Account', style: TextStyle(color: Colors.white, fontSize: 18)),
+          ],
+        ),
         content: Text('Are you sure you want to permanently delete ${user.userName}?', style: const TextStyle(color: Colors.grey)),
         actions: [
           TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
-          TextButton(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            child: const Text('Delete'),
           ),
         ],
       ),
     );
 
-    if (confirm == true) {
-      final errorMsg = await _repo.deleteUser(user.userID);
-      if (errorMsg == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Account deleted.'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
-          );
-        }
-        _loadData();
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMsg), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
-          );
-        }
-      }
+    if (confirm != true) return;
+
+    final errorMsg = await _repo.deleteUser(user.userID);
+    if (!mounted) return;
+    
+    if (errorMsg == null) {
+      CustomSnackbar.show(
+        context: context, 
+        message: 'Account deleted successfully.'
+      );
+      _loadData();
+    } else {
+      CustomSnackbar.show(
+        context: context, 
+        message: errorMsg,
+        isError: true,
+      );
     }
   }
 

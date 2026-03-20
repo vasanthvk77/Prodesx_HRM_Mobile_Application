@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/department.dart';
 import '../repositories/department_repository.dart';
+import '../widgets/custom_snackbar.dart';
 
 class DepartmentFormScreen extends StatefulWidget {
   final int organizationId;
@@ -49,9 +50,11 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
       final all = await _repository.getDepartments(widget.organizationId);
       _prepareParentOptions(all);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load parents: $e')));
-      }
+        CustomSnackbar.show(
+          context: context,
+          message: 'Failed to load parents: $e',
+          isError: true,
+        );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -92,24 +95,28 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
       if (widget.editData != null) {
         await _repository.updateDepartment(widget.editData!.id, data);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Department updated successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: 'Department updated successfully',
           );
         }
       } else {
         await _repository.createDepartment(data);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Department created successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: 'Department created successfully',
           );
         }
       }
 
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
-      }
+        CustomSnackbar.show(
+          context: context,
+          message: 'Save failed: $e',
+          isError: true,
+        );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

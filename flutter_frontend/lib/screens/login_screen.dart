@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/screens/main_shell.dart';
+import '../widgets/custom_snackbar.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -49,9 +50,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+          CustomSnackbar.show(
+            context: context,
+            message: 'Login failed: $e',
+            isError: true,
+          );
         }
       }
     }

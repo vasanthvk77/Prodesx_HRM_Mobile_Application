@@ -5,6 +5,9 @@ import '../repositories/department_repository.dart';
 import '../repositories/auth_repository.dart';
 import '../widgets/org_dropdown.dart';
 import 'department_form_screen.dart';
+import '../providers/navigation_provider.dart';
+import '../widgets/custom_pagination.dart';
+import '../widgets/custom_snackbar.dart';
 
 class DepartmentListScreen extends ConsumerStatefulWidget {
   const DepartmentListScreen({super.key});
@@ -29,6 +32,11 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
 
   final Set<int> _selectedIds = {};
   bool _isHierarchyView = false;
+
+  // Pagination state
+  int _currentPage = 1;
+  int _pageSize = 10;
+  List<Department> _paginatedDepartments = [];
 
   @override
   void initState() {
@@ -65,8 +73,10 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
       _loadDepartments();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading organizations: $e')),
+        CustomSnackbar.show(
+          context: context,
+          message: 'Error loading organizations: $e',
+          isError: true,
         );
       }
     }
@@ -86,8 +96,10 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading departments: $e')),
+        CustomSnackbar.show(
+          context: context,
+          message: 'Error loading departments: $e',
+          isError: true,
         );
       }
     }
@@ -95,7 +107,7 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
 
   void _applyFilters() {
     setState(() {
-      _filteredDepartments = _allDepartments.where((d) {
+      final filtered = _allDepartments.where((d) {
         final matchesSearch = d.departmentName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
             (d.parentDepartmentName?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
         
@@ -108,7 +120,24 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
 
         return matchesSearch && matchesParent;
       }).toList();
+
+      _filteredDepartments = filtered;
+      _currentPage = 1; // Reset to page 1 on filter change
+      _updatePagination();
     });
+  }
+
+  void _updatePagination() {
+    final startIndex = (_currentPage - 1) * _pageSize;
+    final endIndex = (startIndex + _pageSize) > _filteredDepartments.length 
+        ? _filteredDepartments.length 
+        : (startIndex + _pageSize);
+    
+    if (startIndex >= _filteredDepartments.length) {
+      _paginatedDepartments = [];
+    } else {
+      _paginatedDepartments = _filteredDepartments.sublist(startIndex, endIndex);
+    }
   }
 
   List<String> _getParentOptions() {
@@ -138,14 +167,19 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
       try {
         await _repository.deleteDepartment(id);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Department deleted successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: 'Department deleted successfully',
           );
         }
         _loadDepartments();
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
+          CustomSnackbar.show(
+            context: context,
+            message: 'Delete failed: $e',
+            isError: true,
+          );
         }
       }
     }
@@ -168,15 +202,20 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
       try {
         await _repository.bulkDelete(_selectedIds.toList());
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${_selectedIds.length} departments deleted successfully'), backgroundColor: Colors.green),
+          CustomSnackbar.show(
+            context: context,
+            message: '${_selectedIds.length} departments deleted successfully',
           );
         }
         setState(() => _selectedIds.clear());
         _loadDepartments();
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bulk delete failed: $e')));
+          CustomSnackbar.show(
+            context: context,
+            message: 'Bulk delete failed: $e',
+            isError: true,
+          );
         }
       }
     }
@@ -185,29 +224,46 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
   @override
   Widget build(BuildContext context) {
     const navyBg = Color(0xFF0F172A);
+    const slateBg = Color(0xFF1E293B);
 
-    return Scaffold(
-      backgroundColor: navyBg,
-      body: SafeArea(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        ref.read(navigationProvider.notifier).setHRManagementContent(null);
+      },
+      child: Material(
+        color: navyBg,
         child: Column(
           children: [
-            Padding(
+            // Custom Header
+            Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'Department Management',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              color: slateBg,
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.white),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
                     ),
-                  ),
-                  if (_isLoading) 
-                    const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-                ],
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                      onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Department Management',
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (_isLoading) 
+                      const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                  ],
+                ),
               ),
             ),
 
@@ -327,19 +383,7 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                 child: Row(
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DepartmentFormScreen(
-                              organizationId: int.parse(_selectedOrgId!),
-                              organizationName: _selectedOrgName!,
-                              allDepartments: _allDepartments,
-                            ),
-                          ),
-                        );
-                        if (result == true) _loadDepartments();
-                      },
+                      onPressed: () => _navigateToForm(null),
                       icon: const Icon(Icons.add, size: 18),
                       label: const Text('Add Department'),
                       style: ElevatedButton.styleFrom(
@@ -364,7 +408,10 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                     OutlinedButton.icon(
                       onPressed: () {
                          // Export logic (placeholder or snackbar)
-                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exporting departments...')));
+                         CustomSnackbar.show(
+                           context: context,
+                           message: 'Exporting departments...',
+                         );
                       },
                       icon: const Icon(Icons.download, size: 18, color: Colors.grey),
                       label: const Text('Export', style: TextStyle(color: Colors.grey)),
@@ -377,29 +424,243 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
 
+            // List / Table
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: _loadDepartments,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: _isLoading 
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator(color: Colors.blue))
                 : _filteredDepartments.isEmpty 
                   ? const Center(child: Text('No departments found', style: TextStyle(color: Colors.grey)))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _filteredDepartments.length,
-                      itemBuilder: (context, index) {
-                        final d = _filteredDepartments[index];
-                        final isSelected = _selectedIds.contains(d.id);
-                        return _buildDepartmentCard(d, isSelected);
+                  : LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 900) {
+                          return _buildMobileListView();
+                        }
+                        return _buildDesktopTable(constraints.maxWidth);
                       },
                     ),
+              ),
+            ),
+
+            // Pagination Footer
+            if (!_isLoading && _filteredDepartments.isNotEmpty)
+              CustomPagination(
+                totalItems: _filteredDepartments.length,
+                pageSize: _pageSize,
+                currentPage: _currentPage,
+                onPageChanged: (page) {
+                  setState(() {
+                    _currentPage = page;
+                    _updatePagination();
+                  });
+                },
+                onPageSizeChanged: (size) {
+                  setState(() {
+                    _pageSize = size;
+                    _currentPage = 1;
+                    _updatePagination();
+                  });
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopTable(double availableWidth) {
+    final tableWidth = availableWidth < 1000 ? 1000.0 : availableWidth;
+    
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: tableWidth,
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1E293B),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 40, child: Icon(Icons.check_box_outline_blank, color: Colors.white24, size: 18)),
+                  Expanded(flex: 4, child: _buildSortableHeader('NAME')),
+                  Expanded(flex: 4, child: _buildSortableHeader('PARENT DEPARTMENT')),
+                  const SizedBox(width: 120, child: Text('ACTION', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11), textAlign: TextAlign.right)),
+                ],
+              ),
+            ),
+            // Body
+            Expanded(
+              child: ListView.builder(
+                itemCount: _paginatedDepartments.length,
+                itemBuilder: (context, index) {
+                  final d = _paginatedDepartments[index];
+                  final isSelected = _selectedIds.contains(d.id);
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: const BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.white10)),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Checkbox(
+                            value: isSelected,
+                            onChanged: (val) {
+                              setState(() {
+                                if (val == true) _selectedIds.add(d.id);
+                                else _selectedIds.remove(d.id);
+                              });
+                            },
+                            side: const BorderSide(color: Colors.white24),
+                            activeColor: Colors.blue,
+                          ),
+                        ),
+                        Expanded(flex: 4, child: Text(d.departmentName, style: const TextStyle(color: Colors.white, fontSize: 13))),
+                        Expanded(flex: 4, child: Text(d.parentDepartmentName ?? '-', style: const TextStyle(color: Colors.white54, fontSize: 13))),
+                        SizedBox(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () => _navigateToForm(d),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  side: const BorderSide(color: Colors.white12),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                                ),
+                                child: const Text('View', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                              ),
+                              const SizedBox(width: 4),
+                              Theme(
+                                data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                                child: PopupMenuButton<String>(
+                                  icon: const Icon(Icons.more_vert, color: Colors.white54, size: 18),
+                                  color: const Color(0xFF1E293B),
+                                  elevation: 8,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+                                  offset: const Offset(0, 30),
+                                  onSelected: (val) {
+                                    if (val == 'edit') _navigateToForm(d);
+                                    else if (val == 'delete') _handleDelete(d.id);
+                                  },
+                                  itemBuilder: (context) => [
+                                    const PopupMenuItem(
+                                      value: 'edit',
+                                      child: Row(children: [Icon(Icons.edit_outlined, color: Colors.blue, size: 16), SizedBox(width: 10), Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13))]),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Row(children: [Icon(Icons.delete_outline, color: Colors.redAccent, size: 16), SizedBox(width: 10), Text('Delete', style: TextStyle(color: Colors.redAccent, fontSize: 13))]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSortableHeader(String title) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(title, style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11)),
+        const SizedBox(width: 4),
+        const Icon(Icons.unfold_more, color: Colors.white24, size: 14),
+      ],
+    );
+  }
+
+  Widget _buildMobileListView() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: _paginatedDepartments.length,
+      itemBuilder: (context, index) {
+        final d = _paginatedDepartments[index];
+        return Card(
+          color: const Color(0xFF1E293B),
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(d.departmentName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                          const SizedBox(height: 4),
+                          Text(d.parentDepartmentName != null ? 'Parent: ${d.parentDepartmentName}' : 'No Parent', style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    Theme(
+                      data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                      child: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert, color: Colors.white54, size: 20),
+                        color: const Color(0xFF1E293B),
+                        offset: const Offset(0, 40),
+                        onSelected: (val) {
+                          if (val == 'edit') _navigateToForm(d);
+                          else if (val == 'delete') _handleDelete(d.id);
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_outlined, color: Colors.blue, size: 18), SizedBox(width: 12), Text('Edit', style: TextStyle(color: Colors.white))])),
+                          const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline, color: Colors.redAccent, size: 18), SizedBox(width: 12), Text('Delete', style: TextStyle(color: Colors.white))])),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _navigateToForm(Department? editData) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DepartmentFormScreen(
+          organizationId: int.parse(_selectedOrgId!),
+          organizationName: _selectedOrgName!,
+          allDepartments: _allDepartments,
+          editData: editData,
+        ),
+      ),
+    );
+    if (result == true) _loadDepartments();
   }
 
   Widget _viewToggleIcon(IconData icon, bool isActive, VoidCallback onTap) {
@@ -412,65 +673,6 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
           borderRadius: BorderRadius.circular(6),
         ),
         child: Icon(icon, size: 18, color: isActive ? Colors.blue : Colors.grey),
-      ),
-    );
-  }
-
-  Widget _buildDepartmentCard(Department d, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isSelected ? Colors.blue : Colors.white10),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        leading: Checkbox(
-          value: isSelected,
-          onChanged: (val) {
-            setState(() {
-              if (val == true) _selectedIds.add(d.id);
-              else _selectedIds.remove(d.id);
-            });
-          },
-          side: const BorderSide(color: Colors.white24),
-          activeColor: Colors.blue,
-        ),
-        title: Text(
-          d.departmentName,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        subtitle: Text(
-          d.parentDepartmentName != null ? 'Parent: ${d.parentDepartmentName}' : 'No Parent',
-          style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12),
-        ),
-        trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.grey, size: 20),
-          color: const Color(0xFF1E293B),
-          onSelected: (val) async {
-            if (val == 'edit') {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DepartmentFormScreen(
-                    organizationId: d.organizationId,
-                    organizationName: _selectedOrgName!,
-                    editData: d,
-                    allDepartments: _allDepartments,
-                  ),
-                ),
-              );
-              if (result == true) _loadDepartments();
-            } else if (val == 'delete') {
-              _handleDelete(d.id);
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit, size: 16, color: Colors.blue), SizedBox(width: 8), Text('Edit', style: TextStyle(color: Colors.white))])),
-            const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, size: 16, color: Colors.red), SizedBox(width: 8), Text('Delete', style: TextStyle(color: Colors.white))])),
-          ],
-        ),
       ),
     );
   }

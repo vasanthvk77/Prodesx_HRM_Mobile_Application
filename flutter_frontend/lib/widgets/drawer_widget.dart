@@ -17,6 +17,7 @@ class AppDrawer extends ConsumerWidget {
     final themeNotifier = ref.watch(themeProvider.notifier);
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     final navNotifier = ref.read(navigationProvider.notifier);
+    final navState = ref.watch(navigationProvider);
     final authNotifier = ref.read(authProvider.notifier);
 
     return Drawer(
@@ -73,41 +74,70 @@ class AppDrawer extends ConsumerWidget {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
+                    _drawerItem(context, Icons.dashboard_outlined, "Dashboard", isSelected: navState.currentIndex == 0, onTap: () {
+                      navNotifier.setIndex(0);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                    }),
+                    if (user?.role == 'SuperAdmin' || user?.role == 'Admin') ...[
+                      _drawerItem(context, Icons.badge_outlined, "HR Management", isSelected: navState.currentIndex == 1, onTap: () {
+                        navNotifier.setIndex(1);
+                        if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                      }),
+                      _drawerItem(context, Icons.person_outline, "User Management", isSelected: navState.currentIndex == 2, onTap: () {
+                        navNotifier.setIndex(2);
+                        if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                      }),
+                    ] else ...[
+                      _drawerItem(context, Icons.fingerprint, "Attendance", isSelected: navState.currentIndex == 1, onTap: () {
+                        navNotifier.setIndex(1);
+                        if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                      }),
+                    ],
+                    _drawerItem(context, Icons.task_alt_outlined, "Tasks", isSelected: navState.currentIndex == 3, onTap: () {
+                      navNotifier.setIndex(3);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                    }),
+                    
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Divider(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+                    ),
+
                     _drawerItem(context, Icons.handshake_outlined, "Clients", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Clients Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.work_outline, "Work", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Work Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.account_balance_wallet_outlined, "Finance", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Finance Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.shopping_cart_outlined, "Orders", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Orders Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.confirmation_num_outlined, "Tickets", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Tickets Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.event_outlined, "Events", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Events Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.message_outlined, "Messages", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Messages Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.campaign_outlined, "Notice Board", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Notice Board Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     _drawerItem(context, Icons.book_outlined, "Knowledge Base", onTap: () {
                       navNotifier.setDashboardContent(const Center(child: Text("Knowledge Base Screen")));
-                      Navigator.pop(context);
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
 
                     /// Forms
@@ -118,15 +148,15 @@ class AppDrawer extends ConsumerWidget {
                       children: [
                         _subItem(context, "Form1", onTap: () {
                           navNotifier.setDashboardContent(const Center(child: Text("Form 1")));
-                          Navigator.pop(context);
+                          if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                         }),
                         _subItem(context, "Form2", onTap: () {
                           navNotifier.setDashboardContent(const Center(child: Text("Form 2")));
-                          Navigator.pop(context);
+                          if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                         }),
                         _subItem(context, "Form3", onTap: () {
                           navNotifier.setDashboardContent(const Center(child: Text("Form 3")));
-                          Navigator.pop(context);
+                          if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                         }),
                       ],
                     ),
