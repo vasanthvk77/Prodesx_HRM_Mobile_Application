@@ -89,6 +89,8 @@ try
     builder.Services.AddSingleton(new DataBaseConnection(connectionString));
 
     var app = builder.Build();
+    
+    // Move CORS to the very top of the pipeline
     app.UseCors("AllowAll");
 
     // Auto-Initialize Database
@@ -108,7 +110,6 @@ try
     app.UseStaticFiles();
 
     // Configure the HTTP request pipeline
-    app.UseCors("AllowAll");
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseHttpsRedirection();

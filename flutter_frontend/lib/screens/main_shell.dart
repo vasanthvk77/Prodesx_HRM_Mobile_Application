@@ -7,6 +7,7 @@ import 'hr_management_screen.dart';
 import 'user_management_screen.dart';
 import 'manage_users.dart';
 import 'tasks_screen.dart';
+import 'face_attendance_screen.dart';
 import '../widgets/drawer_widget.dart';
 
 class MainShell extends ConsumerWidget {
@@ -57,8 +58,8 @@ class MainShell extends ConsumerWidget {
         label: 'User Management',
       ));
     } else {
-      // For regular Users, show attendance-related options instead of management
-      screens.add(const Center(child: Text('My Attendance (Coming Soon)')));
+      // For regular Users, show real Face Attendance screen instead of placeholder
+      screens.add(const FaceAttendanceScreen());
       navItems.add(const BottomNavigationBarItem(
         icon: Icon(Icons.fingerprint),
         label: 'Attendance',

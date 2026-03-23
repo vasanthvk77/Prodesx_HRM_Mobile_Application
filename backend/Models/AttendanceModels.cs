@@ -45,3 +45,10 @@ public class AttendanceStatusResponse
     public DateTime? PunchInTime { get; set; }
     public DateTime? PunchOutTime { get; set; }
 }
+
+public class FaceAttendanceRequest
+{
+    public string EmployeeId { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string PunchedInType { get; set; } = "face";
+}

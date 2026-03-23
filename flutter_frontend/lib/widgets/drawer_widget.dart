@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../screens/login_screen.dart';
+import '../screens/employee_registration_screen.dart';
 import '../core/api_config.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -85,6 +86,11 @@ class AppDrawer extends ConsumerWidget {
                       }),
                       _drawerItem(context, Icons.person_outline, "User Management", isSelected: navState.currentIndex == 2, onTap: () {
                         navNotifier.setIndex(2);
+                        if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                      }),
+                      // Add Face Registration for Admins
+                      _drawerItem(context, Icons.camera_front, "Face Management", onTap: () {
+                        navNotifier.setDashboardContent(const EmployeeRegistrationScreen());
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
                     ] else ...[
