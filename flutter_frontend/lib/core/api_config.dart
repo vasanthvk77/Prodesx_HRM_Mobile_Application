@@ -1,5 +1,6 @@
 class ApiConfig {
-  static const String serverUrl = 'http://localhost:5217';
+  static const String serverUrl = 'http://192.168.0.2:5217';
+  static const String pythonServerUrl = 'http://192.168.0.2:8000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
@@ -19,13 +20,14 @@ class ApiConfig {
 
   // Dynamic Form (Employee Fields)
   static const String employeeFields = '$baseUrl/DynamicForm/employee-fields';
-  static const String updateEmployeeFields = '$baseUrl/DynamicForm/update-fields';
+  static const String updateEmployeeFields =
+      '$baseUrl/DynamicForm/update-fields';
   static const String createMasterField = '$baseUrl/DynamicForm/create-field';
-  static String deleteMasterField(int id) => '$baseUrl/DynamicForm/delete-field/$id';
+  static String deleteMasterField(int id) =>
+      '$baseUrl/DynamicForm/delete-field/$id';
 
   // SignalR Hubs
   static const String employeesHub = '$serverUrl/hubs/employees';
-
 
   // Attendance
   static const String attendanceStatus = '$baseUrl/Attendance/status';
@@ -40,8 +42,8 @@ class ApiConfig {
   // Organizations
   static const String organizations = '$baseUrl/organizations';
   static const String userOrganizations = '$baseUrl/users/organizations';
-  static const String designationBulkDelete = '$baseUrl/designations/bulk-delete';
-
+  static const String designationBulkDelete =
+      '$baseUrl/designations/bulk-delete';
 
   // Designations
   static const String designations = '$baseUrl/designations';
@@ -53,14 +55,14 @@ class ApiConfig {
   static const String departmentBulkDelete = '$baseUrl/departments/bulk-delete';
   static String department(int id) => '$departments/$id';
 
-
   // User Management
   static const String users = '$baseUrl/users';
   static const String roles = '$baseUrl/users/roles';
   static const String loginSessions = '$baseUrl/users/login-sessions';
 
   static String grantAccess(int userId) => '$users/$userId/access';
-  static String revokeAccess(int userId, int orgId) => '$users/$userId/access/$orgId';
+  static String revokeAccess(int userId, int orgId) =>
+      '$users/$userId/access/$orgId';
   static String deleteUser(int userId) => '$users/$userId';
 
   static String getFullImageUrl(String? path) {

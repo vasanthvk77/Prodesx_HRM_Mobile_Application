@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/designation.dart';
 import '../repositories/designation_repository.dart';
@@ -152,16 +153,38 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
   }
 
   Future<void> _handleDelete(int id) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this designation?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
-        ],
-      ),
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    final confirmed = await (isIOS 
+      ? showCupertinoDialog<bool>(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Confirm Delete'),
+            content: const Text('Are you sure you want to delete this designation?'),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        )
+      : showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirm Delete'),
+            content: const Text('Are you sure you want to delete this designation?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
+            ],
+          ),
+        )
     );
 
     if (confirmed == true) {
@@ -212,8 +235,10 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const navyBg = Color(0xFF0F172A);
-    const slateBg = Color(0xFF1E293B);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final isIOS = theme.platform == TargetPlatform.iOS;
 
     return PopScope(
       canPop: false,
@@ -222,35 +247,52 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
         ref.read(navigationProvider.notifier).setHRManagementContent(null);
       },
       child: Material(
-        color: navyBg,
+        color: theme.scaffoldBackgroundColor,
         child: Column(
           children: [
             // Custom Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: slateBg,
+              color: isIOS ? (isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.9)) : theme.cardColor,
               child: SafeArea(
                 bottom: false,
                 child: Row(
                   children: [
-                    Builder(
-                      builder: (context) => IconButton(
-                        icon: const Icon(Icons.menu, color: Colors.white),
+                    if (isIOS) ...[
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.bars, size: 22),
                         onPressed: () => Scaffold.of(context).openDrawer(),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-                      onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
-                    ),
-                    const Expanded(
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.back, size: 22),
+                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                      ),
+                    ] else ...[
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: theme.iconTheme.color, size: 20),
+                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                      ),
+                    ],
+                    Expanded(
                       child: Text(
                         'Designation Management',
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: isIOS 
+                            ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)
+                            : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     if (_isLoading) 
-                      const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                      isIOS 
+                          ? const CupertinoActivityIndicator()
+                          : const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
                   ],
                 ),
               ),
@@ -262,9 +304,16 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
+                  color: theme.cardTheme.color,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: theme.dividerColor),
+                  boxShadow: isDark ? [] : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -275,15 +324,16 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                           child: Container(
                             height: 36,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0F172A),
+                              color: theme.colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                             ),
                             child: TextField(
                               onChanged: (val) {
                                 _searchQuery = val;
                                 _applyFilters();
                               },
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: theme.textTheme.bodyMedium,
                               decoration: const InputDecoration(
                                 hintText: 'Search designations...',
                                 hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
@@ -299,8 +349,9 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                         Container(
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A),
+                            color: theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                           ),
                           child: Row(
                             children: [
@@ -337,17 +388,17 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                             height: 36,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0F172A),
+                              color: theme.colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.white10),
+                              border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: _parentFilter,
-                                dropdownColor: const Color(0xFF1E293B),
-                                isExpanded: true,
-                                icon: const Icon(Icons.filter_list, size: 16, color: Colors.grey),
-                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                                  dropdownColor: theme.cardColor,
+                                  isExpanded: true,
+                                  icon: Icon(Icons.filter_list, size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
+                                  style: theme.textTheme.bodySmall,
                                 items: _getParentOptions().map((opt) {
                                   return DropdownMenuItem(value: opt, child: Text(opt));
                                 }).toList(),
@@ -371,17 +422,32 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Row(
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _navigateToForm(null),
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Add Designation'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade600,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
+                  isIOS 
+                      ? CupertinoButton.filled(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          minSize: 0,
+                          borderRadius: BorderRadius.circular(8),
+                          onPressed: () => _navigateToForm(null),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.add, size: 18),
+                              SizedBox(width: 8),
+                              Text('Add Designation', style: TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: () => _navigateToForm(null),
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text('Add Designation'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade600,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
                   const SizedBox(width: 8),
                   if (_selectedIds.isNotEmpty)
                     OutlinedButton.icon(
@@ -411,7 +477,7 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                         if (constraints.maxWidth < 900) {
                           return _buildMobileListView();
                         }
-                        return _buildDesktopTable(constraints.maxWidth);
+                        return _buildDesktopTable(constraints.maxWidth, theme);
                       },
                     ),
               ),
@@ -443,7 +509,7 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
     );
   }
 
-  Widget _buildDesktopTable(double availableWidth) {
+  Widget _buildDesktopTable(double availableWidth, ThemeData theme) {
     final tableWidth = availableWidth < 1000 ? 1000.0 : availableWidth;
     
     return SingleChildScrollView(
@@ -455,16 +521,17 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
             // Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1E293B),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                border: Border(bottom: BorderSide(color: theme.dividerColor)),
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 40, child: Icon(Icons.check_box_outline_blank, color: Colors.white24, size: 18)),
-                  Expanded(flex: 4, child: _buildSortableHeader('NAME')),
-                  Expanded(flex: 4, child: _buildSortableHeader('PARENT DESIGNATION')),
-                  const SizedBox(width: 120, child: Text('ACTION', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11), textAlign: TextAlign.right)),
+                  SizedBox(width: 40, child: Icon(Icons.check_box_outline_blank, color: theme.iconTheme.color?.withOpacity(0.2), size: 18)),
+                  Expanded(flex: 4, child: _buildSortableHeader('NAME', theme)),
+                  Expanded(flex: 4, child: _buildSortableHeader('PARENT DESIGNATION', theme)),
+                  SizedBox(width: 120, child: Text('ACTION', style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.0), textAlign: TextAlign.right)),
                 ],
               ),
             ),
@@ -477,8 +544,8 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                   final isSelected = _selectedIds.contains(d.id);
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white10)),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.5))),
                     ),
                     child: Row(
                       children: [
@@ -492,12 +559,12 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                                 else _selectedIds.remove(d.id);
                               });
                             },
-                            side: const BorderSide(color: Colors.white24),
-                            activeColor: Colors.blue,
+                            side: BorderSide(color: theme.dividerColor),
+                            activeColor: theme.colorScheme.primary,
                           ),
                         ),
-                        Expanded(flex: 4, child: Text(d.designationName, style: const TextStyle(color: Colors.white, fontSize: 13))),
-                        Expanded(flex: 4, child: Text(d.parentDesignationName ?? '-', style: const TextStyle(color: Colors.white54, fontSize: 13))),
+                        Expanded(flex: 4, child: Text(d.designationName, style: theme.textTheme.bodyMedium)),
+                        Expanded(flex: 4, child: Text(d.parentDesignationName ?? '-', style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.7)))),
                         SizedBox(
                           width: 120,
                           child: Row(
@@ -515,30 +582,7 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                                 child: const Text('View', style: TextStyle(color: Colors.white70, fontSize: 12)),
                               ),
                               const SizedBox(width: 4),
-                              Theme(
-                                data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                                child: PopupMenuButton<String>(
-                                  icon: const Icon(Icons.more_vert, color: Colors.white54, size: 18),
-                                  color: const Color(0xFF1E293B),
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
-                                  offset: const Offset(0, 30),
-                                  onSelected: (val) {
-                                    if (val == 'edit') _navigateToForm(d);
-                                    else if (val == 'delete') _handleDelete(d.id);
-                                  },
-                                  itemBuilder: (context) => [
-                                    const PopupMenuItem(
-                                      value: 'edit',
-                                      child: Row(children: [Icon(Icons.edit_outlined, color: Colors.blue, size: 16), SizedBox(width: 10), Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13))]),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'delete',
-                                      child: Row(children: [Icon(Icons.delete_outline, color: Colors.redAccent, size: 16), SizedBox(width: 10), Text('Delete', style: TextStyle(color: Colors.redAccent, fontSize: 13))]),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              _buildActionMenu(d, theme),
                             ],
                           ),
                         ),
@@ -554,13 +598,13 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
     );
   }
 
-  Widget _buildSortableHeader(String title) {
+  Widget _buildSortableHeader(String title, ThemeData theme) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11)),
+        Text(title, style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(width: 4),
-        const Icon(Icons.unfold_more, color: Colors.white24, size: 14),
+        Icon(Icons.unfold_more, color: theme.iconTheme.color?.withOpacity(0.3), size: 14),
       ],
     );
   }
@@ -571,11 +615,16 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
       itemCount: _paginatedDesignations.length,
       itemBuilder: (context, index) {
         final d = _paginatedDesignations[index];
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
         return Card(
-          color: const Color(0xFF1E293B),
+          color: theme.cardTheme.color,
           margin: const EdgeInsets.only(bottom: 12),
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: theme.dividerColor),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -588,28 +637,13 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(d.designationName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text(d.designationName, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
-                          Text(d.parentDesignationName != null ? 'Parent: ${d.parentDesignationName}' : 'No Parent', style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                          Text(d.parentDesignationName != null ? 'Parent: ${d.parentDesignationName}' : 'No Parent', style: theme.textTheme.bodySmall),
                         ],
                       ),
                     ),
-                    Theme(
-                      data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                      child: PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, color: Colors.white54, size: 20),
-                        color: const Color(0xFF1E293B),
-                        offset: const Offset(0, 40),
-                        onSelected: (val) {
-                          if (val == 'edit') _navigateToForm(d);
-                          else if (val == 'delete') _handleDelete(d.id);
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_outlined, color: Colors.blue, size: 18), SizedBox(width: 12), Text('Edit', style: TextStyle(color: Colors.white))])),
-                          const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline, color: Colors.redAccent, size: 18), SizedBox(width: 12), Text('Delete', style: TextStyle(color: Colors.white))])),
-                        ],
-                      ),
-                    ),
+                    _buildActionMenu(d, theme),
                   ],
                 ),
               ],
@@ -635,16 +669,97 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
     if (result == true) _loadDesignations();
   }
 
+  Widget _buildActionMenu(Designation d, ThemeData theme) {
+    final isIOS = theme.platform == TargetPlatform.iOS;
+    if (isIOS) {
+      return CupertinoButton(
+        padding: EdgeInsets.zero,
+        child: Icon(CupertinoIcons.ellipsis_circle, color: theme.iconTheme.color?.withOpacity(0.5), size: 22),
+        onPressed: () => _showCupertinoActions(d),
+      );
+    }
+
+    return Theme(
+      data: theme.copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+      child: PopupMenuButton<String>(
+        icon: Icon(Icons.more_vert, color: theme.iconTheme.color?.withOpacity(0.5), size: 20),
+        color: theme.cardColor,
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: theme.dividerColor)),
+        offset: const Offset(0, 40),
+        onSelected: (val) {
+          if (val == 'edit') _navigateToForm(d);
+          else if (val == 'delete') _handleDelete(d.id);
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'edit',
+            child: Row(children: [Icon(Icons.edit_outlined, color: theme.colorScheme.primary, size: 18), const SizedBox(width: 12), Text('Edit', style: theme.textTheme.bodyMedium)]),
+          ),
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(children: [const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18), const SizedBox(width: 12), Text('Delete', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent))]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCupertinoActions(Designation d) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(d.designationName),
+        message: const Text('Select an action'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _navigateToForm(d);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.pencil, size: 20),
+                SizedBox(width: 10),
+                Text('Edit Designation'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              _handleDelete(d.id);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed, size: 20),
+                SizedBox(width: 10),
+                Text('Delete Designation'),
+              ],
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
   Widget _viewToggleIcon(IconData icon, bool isActive, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue.withOpacity(0.2) : Colors.transparent,
+          color: isActive ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
-        child: Icon(icon, size: 18, color: isActive ? Colors.blue : Colors.grey),
+        child: Icon(icon, size: 18, color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).iconTheme.color?.withOpacity(0.4)),
       ),
     );
   }

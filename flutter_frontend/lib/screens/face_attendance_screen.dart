@@ -2,34 +2,118 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// Removed permission_handler (handled by browser on Web)
+import 'package:geolocator/geolocator.dart';
 import '../widgets/custom_snackbar.dart';
 import '../services/face_service.dart';
 import '../providers/auth_provider.dart';
+import '../repositories/organization_repository.dart';
+import '../models/organization.dart';
 
 class FaceAttendanceScreen extends ConsumerStatefulWidget {
-  const FaceAttendanceScreen({super.key});
+  final int? organizationId;
+  const FaceAttendanceScreen({super.key, this.organizationId});
 
   @override
-  ConsumerState<FaceAttendanceScreen> createState() => _FaceAttendanceScreenState();
+  ConsumerState<FaceAttendanceScreen> createState() =>
+      _FaceAttendanceScreenState();
 }
 
 class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
   CameraController? _controller;
   bool _isInitialized = false;
   bool _isVerifying = false;
+  bool _isCheckingLocation = true;
+  bool _isInRange = false;
   String _statusMessage = 'Align your face to mark attendance';
+  String _locationStatus = 'Checking location...';
   double _verifyProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _checkPermissions();
+    _checkGeofence();
   }
 
-  Future<void> _checkPermissions() async {
-    // On Web/Antigravity, browser handles camera permissions.
-    _initializeCamera();
+  Future<void> _checkGeofence() async {
+    setState(() {
+      _isCheckingLocation = true;
+      _locationStatus = 'Verifying office location...';
+    });
+
+    try {
+      // 1. Get Organization Details for Coordinates
+      final auth = ref.read(authProvider);
+      final orgId = widget.organizationId ?? auth.user?.organizationId ?? 0;
+
+      if (orgId == 0) {
+        throw Exception('No organization selected');
+      }
+
+      final org = await ref.read(organizationRepositoryProvider).getOrganizationById(orgId);
+
+      // If no coordinates are set, we might want to skip or enforce. 
+      // User said "IF YES THEN ONLY ASK FOR CAMERA PERMISSION"
+      if (org.latitude == null || org.longitude == null) {
+        debugPrint('Geofencing: No coordinates set for organization ${org.name}. Defaulting to IN RANGE.');
+        setState(() {
+          _isInRange = true;
+          _isCheckingLocation = false;
+        });
+        _initializeCamera();
+        return;
+      }
+
+      // 2. Check Permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Location permissions are permanently denied');
+      }
+
+      // 3. Get Current Position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // 4. Calculate Distance
+      double distanceInMeters = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        org.latitude!,
+        org.longitude!,
+      );
+
+      int allowedRadius = org.allowedRadius ?? 100;
+
+      if (distanceInMeters <= allowedRadius) {
+        setState(() {
+          _isInRange = true;
+          _isCheckingLocation = false;
+        });
+        _initializeCamera(); // Only ask for camera if in range
+      } else {
+        setState(() {
+          _isInRange = false;
+          _isCheckingLocation = false;
+          _locationStatus = 'OUTSIDE OFFICE RANGE';
+          _statusMessage = 'Please reach your office to mark attendance.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isCheckingLocation = false;
+          _locationStatus = 'LOCATION ERROR';
+          _statusMessage = 'Could not verify location: $e';
+        });
+      }
+    }
   }
 
   Future<void> _initializeCamera() async {
@@ -64,7 +148,7 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
   }
 
   Future<void> _markAttendance() async {
-    if (_isVerifying) return;
+    if (_isVerifying || !_isInRange) return;
 
     setState(() {
       _isVerifying = true;
@@ -74,7 +158,6 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
 
     try {
       List<Uint8List> images = [];
-      // Quick capture of 3 images
       for (int i = 0; i < 3; i++) {
         final XFile image = await _controller!.takePicture();
         final bytes = await image.readAsBytes();
@@ -88,37 +171,40 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
         _verifyProgress = 0.8;
       });
 
-      final result = await ref.read(faceServiceProvider).verifyFace(images);
+      final auth = ref.read(authProvider);
+      final orgId = widget.organizationId ?? auth.user?.organizationId ?? 0;
+
+      final result = await ref
+          .read(faceServiceProvider)
+          .verifyFace(images, organizationId: orgId);
 
       if (mounted) {
         if (result['status'] == 'success') {
-          // Now call .NET backend to record attendance
           setState(() => _statusMessage = 'Recording in database...');
-          
-          final auth = ref.read(authProvider);
+
           final dbResult = await ref.read(faceServiceProvider).markAttendance(
-            employeeId: result['employee_code'], // Use official code instead of PK
-            role: result['role'] ?? 'User',
-            userId: auth.user?.id,
-          );
+                employeeId: result['employee_code'],
+                role: result['role'] ?? 'User',
+                organizationId: orgId,
+                userId: auth.user?.id,
+              );
 
           if (mounted) {
             if (dbResult['status'] != 'error') {
-               setState(() {
+              setState(() {
                 _statusMessage = 'Attendance Marked: ${result['name']}';
                 _verifyProgress = 1.0;
                 _isVerifying = false;
               });
               CustomSnackbar.show(
-                context: context, 
-                message: 'Attendance Marked Successfully for ${result['name']} (${result['employee_code']})'
+                context: context,
+                message: 'Attendance Marked Successfully for ${result['name']}',
               );
             } else {
-               setState(() {
+              setState(() {
                 _statusMessage = 'Database Error';
                 _isVerifying = false;
               });
-              CustomSnackbar.show(context: context, message: 'Recognition success, but DB record failed.', isError: true);
             }
           }
         } else {
@@ -127,16 +213,19 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
             _verifyProgress = 0.0;
             _isVerifying = false;
           });
-          CustomSnackbar.show(context: context, message: 'Recognition failed. Please try again.', isError: true);
+          CustomSnackbar.show(
+            context: context,
+            message: 'Recognition failed. Please try again.',
+            isError: true,
+          );
         }
       }
     } catch (e) {
-       if (mounted) {
+      if (mounted) {
         setState(() {
           _isVerifying = false;
           _statusMessage = 'Error occurred';
         });
-        CustomSnackbar.show(context: context, message: 'Error: $e', isError: true);
       }
     }
   }
@@ -144,20 +233,48 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          onPressed: () {
+            _controller?.dispose();
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Attendance',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+      backgroundColor: Colors.black,
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // Camera Preview
-          if (_isInitialized)
+          // Camera Preview (only if in range)
+          if (_isInRange && _isInitialized)
             Positioned.fill(
               child: AspectRatio(
                 aspectRatio: _controller!.value.aspectRatio,
                 child: CameraPreview(_controller!),
               ),
             )
-          else
-            const Center(child: CircularProgressIndicator()),
+          else if (_isCheckingLocation)
+            const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(color: Colors.blueAccent),
+                  SizedBox(height: 20),
+                  Text(
+                    'Verifying Office Location...',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
 
           // Immersive Overlay
           Container(
@@ -166,89 +283,139 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.4),
+                  Colors.black.withOpacity(0.6),
                   Colors.transparent,
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withOpacity(0.8),
                 ],
               ),
             ),
           ),
 
-          // Face Scanner UI
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 280,
-                  height: 380,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _isVerifying ? Colors.blue : Colors.white24,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(140),
-                  ),
-                  child: Stack(
-                    children: [
-                      if (_isVerifying)
-                        const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.blue,
+          // Main UI
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_isInRange && !_isCheckingLocation)
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      margin: const EdgeInsets.symmetric(horizontal: 40),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+                      ),
+                      child: const Column(
+                        children: [
+                          Icon(Icons.location_off, color: Colors.redAccent, size: 60),
+                          SizedBox(height: 20),
+                          Text(
+                            'Access Denied',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Please reach your office to mark attendance.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (_isInRange)
+                    Container(
+                      width: 280,
+                      height: 380,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _isVerifying ? Colors.blueAccent : Colors.white24,
+                          width: 3,
                         ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Text(
-                  _statusMessage,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                if (_isVerifying)
+                        borderRadius: BorderRadius.circular(140),
+                        boxShadow: [
+                          if (_isVerifying)
+                            BoxShadow(
+                              color: Colors.blueAccent.withOpacity(0.3),
+                              blurRadius: 30,
+                              spreadRadius: 5,
+                            ),
+                        ],
+                      ),
+                    ),
+                  
+                  const SizedBox(height: 40),
+                  
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-                    child: LinearProgressIndicator(
-                      value: _verifyProgress,
-                      backgroundColor: Colors.white10,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      _statusMessage,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-              ],
+
+                  if (_isVerifying)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 25),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          value: _verifyProgress,
+                          minHeight: 10,
+                          backgroundColor: Colors.white10,
+                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
 
           // Action Button
-          Positioned(
-            bottom: 50,
-            child: GestureDetector(
-              onTap: _isVerifying ? null : _markAttendance,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: _isVerifying ? Colors.grey : Colors.blueAccent,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blueAccent.withOpacity(0.4),
-                      blurRadius: 20,
-                      spreadRadius: 5,
+          if (_isInRange && _isInitialized)
+            Positioned(
+              bottom: 60,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: _isVerifying ? null : _markAttendance,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: _isVerifying ? Colors.grey : Colors.blueAccent,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blueAccent.withOpacity(0.5),
+                          blurRadius: 25,
+                          spreadRadius: 5,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.face,
-                  color: Colors.white,
-                  size: 40,
+                    child: const Icon(Icons.face, color: Colors.white, size: 45),
+                  ),
                 ),
               ),
             ),
-          ),
+          
+          if (!_isInRange && !_isCheckingLocation)
+            Positioned(
+              bottom: 60,
+              child: TextButton.icon(
+                onPressed: _checkGeofence,
+                icon: const Icon(Icons.refresh, color: Colors.blueAccent),
+                label: const Text('Retry Location Check', style: TextStyle(color: Colors.blueAccent)),
+              ),
+            ),
         ],
       ),
     );

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../screens/login_screen.dart';
 import '../screens/employee_registration_screen.dart';
+import '../screens/organization_list_screen.dart';
+import '../screens/attendance_list_screen.dart';
 import '../core/api_config.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -21,9 +24,13 @@ class AppDrawer extends ConsumerWidget {
     final navState = ref.watch(navigationProvider);
     final authNotifier = ref.read(authProvider.notifier);
 
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Drawer(
-      backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).drawerTheme.backgroundColor,
-      elevation: Theme.of(context).brightness == Brightness.light ? 0 : 16,
+      backgroundColor: isIOS 
+          ? (isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.9))
+          : (Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).drawerTheme.backgroundColor),
+      elevation: (Theme.of(context).brightness == Brightness.light || isIOS) ? 0 : 16,
       child: SafeArea(
         child: Column(
           children: [
@@ -91,6 +98,10 @@ class AppDrawer extends ConsumerWidget {
                       // Add Face Registration for Admins
                       _drawerItem(context, Icons.camera_front, "Face Management", onTap: () {
                         navNotifier.setDashboardContent(const EmployeeRegistrationScreen());
+                        if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                      }),
+                      _drawerItem(context, Icons.history, "Attendance Logs", onTap: () {
+                        navNotifier.setDashboardContent(const AttendanceListScreen());
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
                     ] else ...[
@@ -235,6 +246,11 @@ class AppDrawer extends ConsumerWidget {
                         ),
                         _subItem(context, "Notifications"),
                         _subItem(context, "Updates"),
+                        if (user?.role == 'SuperAdmin')
+                          _subItem(context, "Organizations", onTap: () {
+                            navNotifier.setDashboardContent(const OrganizationListScreen());
+                            if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                          }),
                       ],
                     ),
                   ],
@@ -244,9 +260,17 @@ class AppDrawer extends ConsumerWidget {
 
             /// LOGOUT
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text("Sign Out",
-                  style: TextStyle(color: Colors.red)),
+              leading: Icon(
+                isIOS ? CupertinoIcons.square_arrow_right : Icons.logout, 
+                color: CupertinoColors.destructiveRed
+              ),
+              title: Text(
+                "Sign Out",
+                style: TextStyle(
+                  color: CupertinoColors.destructiveRed,
+                  fontWeight: isIOS ? FontWeight.w500 : FontWeight.normal,
+                )
+              ),
               onTap: () {
                 authNotifier.logout();
                 Navigator.of(context).pushReplacement(
@@ -302,26 +326,33 @@ class AppDrawer extends ConsumerWidget {
 
   /// Drawer item
   Widget _drawerItem(BuildContext context, IconData icon, String title, {bool isSelected = false, VoidCallback? onTap}) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      margin: EdgeInsets.symmetric(horizontal: isIOS ? 12 : 10, vertical: 2),
       decoration: BoxDecoration(
-        color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.08) : Colors.transparent,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-        border: isSelected 
+        color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(isIOS ? 0.12 : 0.08) : Colors.transparent,
+        borderRadius: BorderRadius.circular(isIOS ? 12 : 24),
+        border: (isSelected && !isIOS) 
             ? Border(left: BorderSide(color: Theme.of(context).colorScheme.primary, width: 4)) 
             : null,
       ),
       child: ListTile(
-        visualDensity: const VisualDensity(vertical: -2),
-        leading: Icon(icon, color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color, size: 20),
+        visualDensity: VisualDensity(vertical: isIOS ? -1 : -2),
+        leading: Icon(
+          isIOS ? _getCupertinoIcon(icon) : icon, 
+          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color, 
+          size: 20
+        ),
         title: Text(
           title,
-          style: TextStyle(color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color, fontSize: 13, fontWeight: FontWeight.w400),
+          style: TextStyle(
+            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color, 
+            fontSize: isIOS ? 14 : 13, 
+            fontWeight: isSelected ? (isIOS ? FontWeight.w600 : FontWeight.w400) : FontWeight.w400
+          ),
         ),
-        trailing: Icon(
+        trailing: isIOS ? null : Icon(
           Icons.chevron_right, 
           color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade400 : Theme.of(context).dividerColor, 
           size: 14
@@ -329,6 +360,25 @@ class AppDrawer extends ConsumerWidget {
         onTap: onTap ?? () {},
       ),
     );
+  }
+
+  IconData _getCupertinoIcon(IconData materialIcon) {
+    if (materialIcon == Icons.dashboard_outlined) return CupertinoIcons.square_grid_2x2;
+    if (materialIcon == Icons.badge_outlined) return CupertinoIcons.person_badge_minus;
+    if (materialIcon == Icons.person_outline) return CupertinoIcons.person_2;
+    if (materialIcon == Icons.camera_front) return CupertinoIcons.camera_viewfinder;
+    if (materialIcon == Icons.fingerprint) return CupertinoIcons.hand_raised;
+    if (materialIcon == Icons.task_alt_outlined) return CupertinoIcons.checkmark_circle;
+    if (materialIcon == Icons.handshake_outlined) return CupertinoIcons.person_3;
+    if (materialIcon == Icons.work_outline) return CupertinoIcons.briefcase;
+    if (materialIcon == Icons.account_balance_wallet_outlined) return CupertinoIcons.creditcard;
+    if (materialIcon == Icons.shopping_cart_outlined) return CupertinoIcons.cart;
+    if (materialIcon == Icons.confirmation_num_outlined) return CupertinoIcons.ticket;
+    if (materialIcon == Icons.event_outlined) return CupertinoIcons.calendar;
+    if (materialIcon == Icons.message_outlined) return CupertinoIcons.bubble_left;
+    if (materialIcon == Icons.campaign_outlined) return CupertinoIcons.speaker_2;
+    if (materialIcon == Icons.book_outlined) return CupertinoIcons.book;
+    return materialIcon;
   }
 
   /// Sub menu

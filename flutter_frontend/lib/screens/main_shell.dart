@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/navigation_provider.dart';
 import '../providers/auth_provider.dart';
@@ -83,7 +84,35 @@ class MainShell extends ConsumerWidget {
     }
 
     final bool isDesktop = MediaQuery.of(context).size.width >= 900;
-    
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    if (isIOS && !isDesktop) {
+      return Scaffold(
+        drawer: AppDrawer(user: user),
+        body: CupertinoTabScaffold(
+          tabBar: CupertinoTabBar(
+            currentIndex: safeIndex,
+            onTap: (index) => ref.read(navigationProvider.notifier).setIndex(index),
+            activeColor: Theme.of(context).colorScheme.primary,
+            inactiveColor: CupertinoColors.systemGrey,
+            backgroundColor: Theme.of(context).brightness == Brightness.light 
+                ? CupertinoColors.white.withOpacity(0.9) 
+                : CupertinoColors.black.withOpacity(0.8),
+            items: navItems.map((item) => BottomNavigationBarItem(
+              icon: item.icon,
+              activeIcon: item.activeIcon,
+              label: item.label,
+            )).toList(),
+          ),
+          tabBuilder: (context, index) {
+            return CupertinoPageScaffold(
+              child: SafeArea(child: screens[index]),
+            );
+          },
+        ),
+      );
+    }
+
     Widget bodyContent = IndexedStack(
       index: safeIndex,
       children: screens,
@@ -104,7 +133,7 @@ class MainShell extends ConsumerWidget {
 
     return Scaffold(
       drawer: isDesktop ? null : AppDrawer(user: user),
-      body: bodyContent,
+      body: SafeArea(child: bodyContent),
       bottomNavigationBar: isDesktop ? null : Container(
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.light 

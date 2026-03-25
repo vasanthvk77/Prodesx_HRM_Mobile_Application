@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -217,6 +218,14 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
       );
     }
 
+    final theme = Theme.of(context);
+    final isIOS = theme.platform == TargetPlatform.iOS;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final navyBg = isDark ? const Color(0xFF0F172A) : Colors.white;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.grey.shade100;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     final sections = <String, List<EmployeeField>>{};
     for (var field in _fields.where((f) => f.isVisible)) {
       sections.putIfAbsent(field.sectionName, () => []).add(field);
@@ -228,22 +237,81 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
       return orderA.compareTo(orderB);
     });
 
+    if (isIOS) {
+      return CupertinoPageScaffold(
+        backgroundColor: navyBg,
+        navigationBar: CupertinoNavigationBar(
+          backgroundColor: navyBg.withOpacity(0.8),
+          middle: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.employee == null ? 'New Employee' : 'Edit Profile',
+                style: TextStyle(color: textColor, fontSize: 16),
+              ),
+              if (widget.organizationName != null)
+                Text(
+                  widget.organizationName!,
+                  style: const TextStyle(color: CupertinoColors.activeBlue, fontSize: 11),
+                ),
+            ],
+          ),
+          leading: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: const Icon(CupertinoIcons.back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          trailing: _isSaving 
+            ? const CupertinoActivityIndicator() 
+            : CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: _save,
+                child: const Text('Save'),
+              ),
+        ),
+        child: SafeArea(
+          child: Material(
+            color: Colors.transparent,
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...sortedSectionNames.map((sectionName) => _buildSection(sectionName, sections[sectionName]!, constraints, isIOS, isDark, cardColor)),
+                        const SizedBox(height: 16),
+                        _buildSignatureSection(isIOS, isDark, cardColor),
+                        const SizedBox(height: 48),
+                      ],
+                    );
+                  }
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: navyBg,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.employee == null ? 'New Employee Registration' : 'Edit Employee Profile', 
-              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 4),
+              style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
             if (widget.organizationName != null)
               Text(widget.organizationName!, 
                 style: const TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
           ],
         ),
-        backgroundColor: const Color(0xFF1E293B),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        iconTheme: IconThemeData(color: textColor),
         elevation: 0,
         actions: [
           if (_isSaving)
@@ -267,9 +335,9 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...sortedSectionNames.map((sectionName) => _buildSection(sectionName, sections[sectionName]!, constraints)),
+                  ...sortedSectionNames.map((sectionName) => _buildSection(sectionName, sections[sectionName]!, constraints, isIOS, isDark, cardColor)),
                   const SizedBox(height: 16),
-                  _buildSignatureSection(),
+                  _buildSignatureSection(isIOS, isDark, cardColor),
                   const SizedBox(height: 48),
                 ],
               );
@@ -280,7 +348,7 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     );
   }
 
-  Widget _buildSection(String title, List<EmployeeField> fields, BoxConstraints constraints) {
+  Widget _buildSection(String title, List<EmployeeField> fields, BoxConstraints constraints, bool isIOS, bool isDark, Color cardColor) {
     fields.sort((a, b) => a.fieldOrder.compareTo(b.fieldOrder));
     final isPersonalInfo = title == 'Personal Information';
     final isLargeScreen = constraints.maxWidth > 600;
@@ -289,9 +357,9 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withOpacity(0.4),
+        color: isDark ? const Color(0xFF1E293B).withOpacity(0.4) : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,25 +379,25 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
               children: [
                 Expanded(
                   flex: 3,
-                  child: _buildFieldsGrid(fields, constraints),
+                  child: _buildFieldsGrid(fields, constraints, isIOS, isDark, cardColor),
                 ),
                 const SizedBox(width: 24),
                 SizedBox(
                   width: 140,
-                  child: _buildImageSection(),
+                  child: _buildImageSection(isDark, cardColor),
                 ),
               ],
             )
           else if (isPersonalInfo)
             Column(
               children: [
-                _buildImageSection(),
+                _buildImageSection(isDark, cardColor),
                 const SizedBox(height: 24),
-                _buildFieldsGrid(fields, constraints),
+                _buildFieldsGrid(fields, constraints, isIOS, isDark, cardColor),
               ],
             )
           else
-            _buildFieldsGrid(fields, constraints),
+            _buildFieldsGrid(fields, constraints, isIOS, isDark, cardColor),
         ],
       ),
     );
@@ -347,12 +415,12 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     return Icon(icon, color: Colors.blue, size: 18);
   }
 
-  Widget _buildFieldsGrid(List<EmployeeField> fields, BoxConstraints constraints) {
+  Widget _buildFieldsGrid(List<EmployeeField> fields, BoxConstraints constraints, bool isIOS, bool isDark, Color cardColor) {
     final isLargeScreen = constraints.maxWidth > 600;
     
     if (!isLargeScreen) {
       return Column(
-        children: fields.map((f) => _buildField(f)).toList(),
+        children: fields.map((f) => _buildField(f, isIOS, isDark, cardColor)).toList(),
       );
     }
 
@@ -365,10 +433,10 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _buildField(fields[i])),
+              Expanded(child: _buildField(fields[i], isIOS, isDark, cardColor)),
               const SizedBox(width: 16),
               if (i + 1 < fields.length)
-                Expanded(child: _buildField(fields[i + 1]))
+                Expanded(child: _buildField(fields[i + 1], isIOS, isDark, cardColor))
               else
                 const Expanded(child: SizedBox()),
             ],
@@ -379,22 +447,22 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     return Column(children: rows);
   }
 
-  Widget _buildField(EmployeeField field) {
+  Widget _buildField(EmployeeField field, bool isIOS, bool isDark, Color cardColor) {
     Widget input;
 
     switch (field.componentType) {
       case 'dropdown':
       case 'select':
-        input = _buildDropdownField(field);
+        input = _buildDropdownField(field, isIOS, isDark, cardColor);
         break;
       case 'date':
-        input = _buildDateField(field);
+        input = _buildDateField(field, isIOS, isDark, cardColor);
         break;
       case 'textarea':
-        input = _buildTextField(field, maxLines: 3);
+        input = _buildTextField(field, isIOS, isDark, cardColor, maxLines: 3);
         break;
       default:
-        input = _buildTextField(field);
+        input = _buildTextField(field, isIOS, isDark, cardColor);
     }
 
     return Column(
@@ -409,7 +477,7 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
                 child: RichText(
                   text: TextSpan(
                     text: field.displayLabel,
-                    style: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 13, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: isDark ? const Color(0xFFCBD5E1) : Colors.black87, fontSize: 13, fontWeight: FontWeight.w600),
                     children: [
                       if (field.isMandatory)
                         const TextSpan(text: ' *', style: TextStyle(color: Colors.red, fontSize: 14)),
@@ -451,15 +519,37 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     );
   }
 
-  Widget _buildTextField(EmployeeField field, {int maxLines = 1}) {
+  Widget _buildTextField(EmployeeField field, bool isIOS, bool isDark, Color cardColor, {int maxLines = 1}) {
+    final initial = _values[field.fieldKey]?.toString() ?? '';
+    
+    if (isIOS) {
+      return Column(
+        children: [
+          CupertinoTextField(
+            key: field.fieldKey == 'permanentAddress' ? ValueKey('perm_addr_${initial.hashCode}') : null,
+            controller: (field.fieldKey == 'permanentAddress') ? null : TextEditingController(text: initial),
+            onChanged: (val) => setState(() => _values[field.fieldKey] = val),
+            placeholder: 'Enter ${field.displayLabel}',
+            maxLines: maxLines,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+            ),
+          ),
+        ],
+      );
+    }
+
     if (field.fieldKey == 'permanentAddress') {
-        final initial = _values[field.fieldKey]?.toString() ?? '';
         return TextFormField(
           key: ValueKey('perm_addr_${initial.hashCode}'),
           initialValue: initial,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
           maxLines: maxLines,
-          decoration: _inputDecoration(field.displayLabel),
+          decoration: _inputDecoration(field.displayLabel, isDark),
           validator: (val) => field.isMandatory && (val == null || val.trim().isEmpty) ? '${field.displayLabel} is required' : null,
           onSaved: (val) => _values[field.fieldKey] = val,
           onChanged: (val) => _values[field.fieldKey] = val,
@@ -467,9 +557,9 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     }
     return TextFormField(
       initialValue: _values[field.fieldKey]?.toString(),
-      style: const TextStyle(color: Colors.white, fontSize: 14),
+      style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
       maxLines: maxLines,
-      decoration: _inputDecoration(field.displayLabel),
+      decoration: _inputDecoration(field.displayLabel, isDark),
       validator: (val) {
         if (field.isMandatory && (val == null || val.trim().isEmpty)) return '${field.displayLabel} is required';
         if (val != null && val.trim().isNotEmpty) {
@@ -498,33 +588,57 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     );
   }
 
-  Widget _buildDropdownField(EmployeeField field) {
-    List<DropdownMenuItem<dynamic>> items = [];
+  Widget _buildDropdownField(EmployeeField field, bool isIOS, bool isDark, Color cardColor) {
+    List<dynamic> options = [];
     
     if (field.fieldKey == 'designationId' || field.fieldKey == 'designation') {
-      items = _designations.map((d) => DropdownMenuItem(value: d.designationName, child: Text(d.designationName, style: const TextStyle(fontSize: 14)))).toList();
+      options = _designations.map((d) => d.designationName).toList();
     } else if (field.fieldKey == 'departmentId' || field.fieldKey == 'department') {
-      items = _departments.map((d) => DropdownMenuItem(value: d.departmentName, child: Text(d.departmentName, style: const TextStyle(fontSize: 14)))).toList();
+      options = _departments.map((d) => d.departmentName).toList();
     } else if (field.fieldKey == 'salutation') {
-      items = ['Mr.', 'Mrs.', 'Ms.', 'Dr.'].map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 14)))).toList();
+      options = ['Mr.', 'Mrs.', 'Ms.', 'Dr.'];
     } else if (field.fieldKey == 'gender') {
-      items = ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(g, style: const TextStyle(fontSize: 14)))).toList();
+      options = ['Male', 'Female', 'Other'];
     } else if (field.options != null) {
-      items = field.options!.map((o) => DropdownMenuItem(value: o, child: Text(o, style: const TextStyle(fontSize: 14)))).toList();
+      options = field.options!;
+    }
+
+    if (isIOS) {
+      return GestureDetector(
+        onTap: () => _showCupertinoPicker(field, options),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _values[field.fieldKey]?.toString() ?? 'Select ${field.displayLabel}',
+                style: TextStyle(color: _values[field.fieldKey] != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26), fontSize: 14),
+              ),
+              Icon(CupertinoIcons.chevron_down, size: 16, color: isDark ? Colors.white54 : Colors.black54),
+            ],
+          ),
+        ),
+      );
     }
 
     return DropdownButtonFormField<dynamic>(
       value: _values[field.fieldKey],
-      dropdownColor: const Color(0xFF1E293B),
-      style: const TextStyle(color: Colors.white, fontSize: 14),
-      decoration: _inputDecoration(field.displayLabel),
-      items: items,
+      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
+      decoration: _inputDecoration(field.displayLabel, isDark),
+      items: options.map((o) => DropdownMenuItem(value: o, child: Text(o.toString(), style: const TextStyle(fontSize: 14)))).toList(),
       onChanged: (val) => setState(() => _values[field.fieldKey] = val),
       validator: (val) => field.isMandatory && (val == null || val.toString().trim().isEmpty) ? '${field.displayLabel} is required' : null,
     );
   }
 
-  Widget _buildDateField(EmployeeField field) {
+  Widget _buildDateField(EmployeeField field, bool isIOS, bool isDark, Color cardColor) {
     final dynamic rawVal = _values[field.fieldKey];
     DateTime? currentVal;
     if (rawVal is DateTime) {
@@ -534,6 +648,30 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     }
     
     final String labelText = currentVal != null ? DateFormat('yyyy-MM-dd').format(currentVal) : 'Select Date';
+
+    if (isIOS) {
+      return GestureDetector(
+        onTap: () => _showCupertinoDatePicker(field, currentVal),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                labelText,
+                style: TextStyle(color: currentVal != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26), fontSize: 14),
+              ),
+              Icon(CupertinoIcons.calendar, size: 16, color: isDark ? Colors.white54 : Colors.black54),
+            ],
+          ),
+        ),
+      );
+    }
 
     return FormField<DateTime>(
       initialValue: currentVal,
@@ -546,9 +684,8 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
               initialDate: currentVal ?? DateTime.now(),
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
-              builder: (context, child) => Theme(data: ThemeData.dark().copyWith(
-                colorScheme: const ColorScheme.dark(primary: Colors.blue, onPrimary: Colors.white, surface: Color(0xFF1E293B), onSurface: Colors.white),
-                dialogBackgroundColor: const Color(0xFF0F172A),
+              builder: (context, child) => Theme(data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: isDark ? Brightness.dark : Brightness.light),
               ), child: child!),
             );
             if (date != null) {
@@ -557,12 +694,12 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
             }
           },
           child: InputDecorator(
-            decoration: _inputDecoration(field.displayLabel).copyWith(errorText: state.errorText),
+            decoration: _inputDecoration(field.displayLabel, isDark).copyWith(errorText: state.errorText),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(labelText, style: TextStyle(color: currentVal != null ? Colors.white : Colors.white38, fontSize: 14)),
-                const Icon(Icons.calendar_today, size: 16, color: Colors.white38),
+                Text(labelText, style: TextStyle(color: currentVal != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white38 : Colors.black38), fontSize: 14)),
+                Icon(Icons.calendar_today, size: 16, color: isDark ? Colors.white38 : Colors.black38),
               ],
             ),
           ),
@@ -571,7 +708,7 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     );
   }
 
-  Widget _buildImageSection() {
+  Widget _buildImageSection(bool isDark, Color cardColor) {
     return Column(
       children: [
         Stack(
@@ -580,15 +717,15 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: const Color(0xFF1E293B),
+                color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade200,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white12, width: 2),
+                border: Border.all(color: isDark ? Colors.white12 : Colors.black12, width: 2),
                 image: _profileImageBytes != null 
                     ? DecorationImage(image: MemoryImage(_profileImageBytes!), fit: BoxFit.cover) 
                     : (_profileImageUrl != null ? DecorationImage(image: NetworkImage(ApiConfig.getFullImageUrl(_profileImageUrl!)), fit: BoxFit.cover) : null),
               ),
               child: (_profileImageBytes == null && _profileImageUrl == null) 
-                  ? const Icon(Icons.person, size: 50, color: Colors.white24) 
+                  ? Icon(Icons.person, size: 50, color: isDark ? Colors.white24 : Colors.black26) 
                   : null,
             ),
             Positioned(
@@ -606,27 +743,27 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        const Text('Profile Photo', style: TextStyle(color: Colors.white54, fontSize: 11)),
+        Text('Profile Photo', style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11)),
       ],
     );
   }
 
-  Widget _buildSignatureSection() {
+  Widget _buildSignatureSection(bool isIOS, bool isDark, Color cardColor) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withOpacity(0.4),
+        color: isDark ? const Color(0xFF1E293B).withOpacity(0.4) : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.history_edu, color: Colors.blue, size: 18),
+              const Icon(Icons.history_edu, color: Colors.blue, size: 18),
               const SizedBox(width: 10),
-              Text('SIGNATURE / THUMB IMPRESSION', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1.2)),
+              Text('SIGNATURE / THUMB IMPRESSION', style: TextStyle(color: isDark ? Colors.blue : Colors.blue.shade700, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1.2)),
             ],
           ),
           const SizedBox(height: 16),
@@ -634,9 +771,9 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
             height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B).withOpacity(0.5),
+              color: isDark ? const Color(0xFF1E293B).withOpacity(0.5) : Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white12, width: 1),
+              border: Border.all(color: isDark ? Colors.white12 : Colors.black12, width: 1),
             ),
             child: InkWell(
               onTap: _pickSignatureImage,
@@ -645,12 +782,12 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
                   ? ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.memory(_signatureImageBytes!, fit: BoxFit.contain)) 
                   : (_signatureImageUrl != null 
                       ? ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.network(ApiConfig.getFullImageUrl(_signatureImageUrl!), fit: BoxFit.contain)) 
-                      : const Column(
+                      : Column(
                           mainAxisAlignment: MainAxisAlignment.center, 
                           children: [
-                            Icon(Icons.upload_file, color: Colors.white24, size: 28),
-                            SizedBox(height: 8),
-                            Text('Tap to upload signature', style: TextStyle(color: Colors.white24, fontSize: 13))
+                            Icon(Icons.upload_file, color: isDark ? Colors.white24 : Colors.black26, size: 28),
+                            const SizedBox(height: 8),
+                            Text('Tap to upload signature', style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 13))
                           ]
                         )),
             ),
@@ -660,18 +797,18 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
     );
   }
 
-  InputDecoration _inputDecoration(String label) {
+  InputDecoration _inputDecoration(String label, bool isDark) {
     return InputDecoration(
       filled: true,
-      fillColor: Colors.white.withOpacity(0.03),
+      fillColor: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.white12),
+        borderSide: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.white12),
+        borderSide: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -682,7 +819,104 @@ class _EmployeeFormScreenState extends ConsumerState<EmployeeFormScreen> {
         borderSide: const BorderSide(color: Colors.redAccent),
       ),
       hintText: 'Enter $label',
-      hintStyle: const TextStyle(color: Colors.white24, fontSize: 14),
+      hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 14),
+    );
+  }
+
+  void _showCupertinoPicker(EmployeeField field, List<dynamic> options) {
+    int selectedIndex = options.indexOf(_values[field.fieldKey]);
+    if (selectedIndex == -1) selectedIndex = 0;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        height: 300,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: Column(
+          children: [
+            Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: CupertinoColors.separator, width: 0.5)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Done'),
+                    onPressed: () {
+                      setState(() => _values[field.fieldKey] = options[selectedIndex]);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: CupertinoPicker(
+                itemExtent: 40,
+                scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                onSelectedItemChanged: (index) => selectedIndex = index,
+                children: options.map((o) => Center(child: Text(o.toString()))).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCupertinoDatePicker(EmployeeField field, DateTime? currentVal) {
+    DateTime tempDate = currentVal ?? DateTime.now();
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        height: 300,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: Column(
+          children: [
+            Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: CupertinoColors.separator, width: 0.5)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text('Done'),
+                    onPressed: () {
+                      setState(() => _values[field.fieldKey] = tempDate);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: tempDate,
+                onDateTimeChanged: (date) => tempDate = date,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

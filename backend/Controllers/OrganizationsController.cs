@@ -57,9 +57,10 @@ public class OrganizationsController : ControllerBase
                 Id    = (int)r.OrganizationID,
                 Name  = (string)r.OrganizationName,
                 Email = (string?)r.OrganizationEmail,
-                // Stored procedure exposes logo_url as OrganizationLogo; if that changes,
-                // this will simply remain null rather than breaking.
-                LogoUrl = (string?)r.OrganizationLogo
+                LogoUrl = (string?)r.OrganizationLogo,
+                Latitude = (decimal?)r.Latitude,
+                Longitude = (decimal?)r.Longitude,
+                AllowedRadius = (int)(r.AllowedRadius ?? 100)
             });
 
             return Ok(myOrgs);
@@ -87,7 +88,8 @@ public class OrganizationsController : ControllerBase
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> CreateOrganization([FromForm] CreateOrganizationRequest request)
     {
-        _logger.LogInformation("[Orgs] CREATE requested | Name={Name}", request.Name);
+        _logger.LogInformation("[Orgs] CREATE requested | Name={Name} | Email={Email} | Lat={Lat} | Lng={Lng} | Radius={Radius}", 
+            request.Name, request.Email, request.Latitude, request.Longitude, request.AllowedRadius);
         try
         {
             using var conn = _db.CreateConnection();
@@ -104,7 +106,17 @@ public class OrganizationsController : ControllerBase
             }
 
             var newId = await conn.ExecuteScalarAsync<int>("sp_CreateOrganization",
-                new { request.Name, request.Email, request.Phone, request.Address, LogoUrl = logoUrl },
+                new { 
+                    request.Name, 
+                    request.Email, 
+                    request.Phone, 
+                    request.Address, 
+                    LogoUrl = logoUrl,
+                    request.Latitude,
+                    request.Longitude,
+                    request.AllowedRadius,
+                    CreatedBy = GetUserId()
+                },
                 commandType: CommandType.StoredProcedure);
 
 
@@ -147,7 +159,11 @@ public class OrganizationsController : ControllerBase
                     request.Email, 
                     request.Phone, 
                     request.Address, 
-                    LogoUrl = logoUrl
+                    LogoUrl = logoUrl,
+                    request.Latitude,
+                    request.Longitude,
+                    request.AllowedRadius,
+                    LastUpdatedBy = GetUserId()
                 },
                 commandType: CommandType.StoredProcedure);
 
@@ -221,4 +237,9 @@ public class UpdateOrganizationRequest
     public string? Phone { get; set; }
     public string? Address { get; set; }
     public IFormFile? Logo { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public int AllowedRadius { get; set; } = 100;
 }
+
+public class CreateOrganizationRequest : UpdateOrganizationRequest { }

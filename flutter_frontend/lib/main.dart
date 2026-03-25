@@ -27,8 +27,11 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Prodesx HRM',
       debugShowCheckedModeBanner: false,
+      // theme: AppTheme.lightTheme.copyWith(platform: TargetPlatform.iOS), // ADD THIS
+      // darkTheme: AppTheme.darkTheme.copyWith(platform: TargetPlatform.iOS),
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
+      
       themeMode: currentThemeMode,
       home: authState.isAuthenticated ? const MainShell() : const LoginScreen(),
       routes: {

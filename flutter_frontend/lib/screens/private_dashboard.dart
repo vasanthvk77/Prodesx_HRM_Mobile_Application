@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
@@ -302,6 +304,71 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    if (isIOS) {
+      final brightness = Theme.of(context).brightness;
+      final isDark = brightness == Brightness.dark;
+      
+      return CupertinoPageScaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(
+            'Dashboard',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.7),
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor.withOpacity(0.1),
+              width: 0.5,
+            ),
+          ),
+          leading: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Icon(
+              CupertinoIcons.bars,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+          trailing: _buildPunchButton(),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              bool isLandscape = constraints.maxWidth > constraints.maxHeight;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Column(
+                  children: [
+                    if (!isLandscape) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(child: DigitalClock()),
+                          const SizedBox(width: 10),
+                          _buildOrgSelector(),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                    Expanded(
+                      child: isLandscape 
+                        ? _buildLandscapeLayout(user)
+                        : _buildPortraitLayout(user),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -371,6 +438,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
   Widget _buildPunchButton() {
     final status = _attendanceStatus?['status'] ?? 'Loading...';
     final isScheduled = _attendanceStatus?['isScheduled'] ?? false;
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     
     String label = 'Punch In';
     Color color = Colors.blueAccent;
@@ -381,6 +449,20 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
       color = Colors.orange;
     } else if (status == 'ShiftCompleted') {
       label = 'Completed';
+    }
+
+    if (isIOS) {
+      return CupertinoButton(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        color: color == Colors.blueAccent ? CupertinoColors.activeBlue : color,
+        borderRadius: BorderRadius.circular(10),
+        onPressed: disabled ? null : _handlePunch,
+        minSize: 32,
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+      );
     }
 
     return ElevatedButton(
@@ -463,7 +545,15 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+        child: Center(
+          child: SizedBox(
+            width: 16, 
+            height: 16, 
+            child: Theme.of(context).platform == TargetPlatform.iOS
+              ? const CupertinoActivityIndicator(radius: 8)
+              : const CircularProgressIndicator(strokeWidth: 2)
+          )
+        ),
       );
     }
 
@@ -577,17 +667,36 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
 
   // Safe profile image rendering
   Widget _buildProfileCard(dynamic user) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).dividerColor),
-        boxShadow: Theme.of(context).brightness == Brightness.light
-            ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))]
-            : [],
-      ),
-      child: Column(
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isIOS ? 20 : 16),
+      child: Stack(
+        children: [
+          if (isIOS)
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isIOS 
+                ? (isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7))
+                : Theme.of(context).cardTheme.color,
+              border: Border.all(
+                color: isIOS 
+                  ? (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))
+                  : Theme.of(context).dividerColor
+              ),
+              boxShadow: (Theme.of(context).brightness == Brightness.light && !isIOS)
+                  ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))]
+                  : [],
+            ),
+            child: Column(
         children: [
           Row(
             children: [
@@ -599,9 +708,9 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
+                      errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(isIOS),
                     )
-                  : _buildDefaultAvatar(),
+                  : _buildDefaultAvatar(isIOS),
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -646,8 +755,11 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  ],
+),
+);
+}
 
   Widget _buildProfileStat(String label, String value) {
     return Column(
@@ -664,12 +776,15 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
     );
   }
 
-  Widget _buildDefaultAvatar() {
+  Widget _buildDefaultAvatar(bool isIOS) {
     return Container(
       width: 60,
       height: 60,
       color: Colors.blueGrey,
-      child: const Icon(Icons.person, color: Colors.white),
+      child: Icon(
+        isIOS ? CupertinoIcons.person_fill : Icons.person, 
+        color: Colors.white
+      ),
     );
   }
 
@@ -703,21 +818,46 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
   }
 
   Widget _buildKPIContainer(String title, List<Map<String, dynamic>> stats) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-      child: Column(
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isIOS ? 18 : 16),
+      child: Stack(
+        children: [
+          if (isIOS)
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isIOS 
+                ? (isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7))
+                : Theme.of(context).cardTheme.color,
+              border: Border.all(
+                color: isIOS 
+                  ? (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))
+                  : Theme.of(context).dividerColor
+              ),
+            ),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(child: Text(title, style: TextStyle(color: Theme.of(context).textTheme.titleSmall?.color, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis)),
-              Icon(Icons.more_horiz, color: Theme.of(context).textTheme.bodySmall?.color, size: 14),
+              Icon(
+                Theme.of(context).platform == TargetPlatform.iOS 
+                  ? CupertinoIcons.ellipsis 
+                  : Icons.more_horiz, 
+                color: Theme.of(context).textTheme.bodySmall?.color, 
+                size: 14
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -747,8 +887,11 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  ],
+),
+);
+}
 
   Widget _buildShiftSchedule() {
     final personalShifts = _shifts.where((shift) {
@@ -769,7 +912,13 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
             children: [
               Row(
                 children: [
-                   Icon(Icons.calendar_today, color: Theme.of(context).colorScheme.primary, size: 16),
+                   Icon(
+                    Theme.of(context).platform == TargetPlatform.iOS 
+                      ? CupertinoIcons.calendar 
+                      : Icons.calendar_today, 
+                    color: Theme.of(context).colorScheme.primary, 
+                    size: 16
+                  ),
                   const SizedBox(width: 8),
                   Text('Shift Schedule', style: TextStyle(color: Theme.of(context).textTheme.titleSmall?.color, fontWeight: FontWeight.bold)),
                 ],

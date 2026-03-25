@@ -23,18 +23,21 @@ public class FaceAttendanceController : ControllerBase
     [HttpPost("mark")]
     public async Task<IActionResult> MarkFaceAttendance([FromBody] FaceAttendanceRequest request)
     {
+        _logger.LogInformation("ENDPOINT HIT: MarkFaceAttendance for {EmployeeId}", request.EmployeeId);
         try
         {
             _logger.LogInformation("Marking attendance for {EmployeeId}", request.EmployeeId);
             using var conn = _dataBaseConnection.CreateConnection();
-            
+
             await conn.ExecuteAsync(
-                "sp_MarkFaceAttendance", 
-                new { 
-                    request.EmployeeId, 
-                    Role = request.Role ?? "Unknown", 
-                    PunchedInType = request.PunchedInType ?? "face",
-                    UserId = request.UserId ?? 1 // Use provided UserId or default to system
+                "sp_MarkFaceAttendance",
+                new
+                {
+                    EmployeeId = request.EmployeeId,
+                   
+                    Role = request.Role,
+                    PunchedInType = request.PunchedInType,
+                    UserId = request.UserId
                 },
                 commandType: CommandType.StoredProcedure
             );
@@ -51,16 +54,19 @@ public class FaceAttendanceController : ControllerBase
     [HttpPost("register-embedding")]
     public async Task<IActionResult> RegisterEmbedding([FromBody] FaceEmbeddingRequest request)
     {
+        _logger.LogInformation("ENDPOINT HIT: RegisterEmbedding for {EmployeeId}", request.EmployeeId);
         try
         {
             _logger.LogInformation("Registering embedding for {EmployeeId}", request.EmployeeId);
             using var conn = _dataBaseConnection.CreateConnection();
             var embeddingJson = JsonSerializer.Serialize(request.Embedding);
-            
+
             await conn.ExecuteAsync(
-                "sp_UpsertFaceEmbedding", 
-                new { 
-                    request.EmployeeId, 
+                "sp_UpsertFaceEmbedding",
+                new
+                {
+                    request.EmployeeId,
+                    OrganizationId = request.OrganizationId,
                     Role = request.Role,
                     Embedding = embeddingJson,
                     UserId = request.UserId
@@ -80,13 +86,15 @@ public class FaceAttendanceController : ControllerBase
     [HttpPost("match-embedding")]
     public async Task<IActionResult> MatchEmbedding([FromBody] FaceMatchRequest request)
     {
+        _logger.LogInformation("ENDPOINT HIT: MatchEmbedding started.");
         try
         {
             _logger.LogInformation("Matching face embedding using stored procedure...");
             using var conn = _dataBaseConnection.CreateConnection();
-            
+
             var allEmbeddings = await conn.QueryAsync<dynamic>(
-                "sp_GetAllFaceEmbeddings", 
+                "sp_GetAllFaceEmbeddings",
+                new { OrganizationId = request.OrganizationId },
                 commandType: CommandType.StoredProcedure
             );
 
@@ -95,23 +103,33 @@ public class FaceAttendanceController : ControllerBase
             string? bestMatchName = null;
             string? bestMatchCode = null;
             double maxSimilarity = -1.0;
-            double threshold = 0.75; 
+            double threshold = 0.85; // Increased to 0.85 to prevent false matches from background patterns
 
             foreach (var row in allEmbeddings)
             {
-                try {
-                    float[] storedEmbedding = JsonSerializer.Deserialize<float[]>(row.embedding);
+                try
+                {
+                    // Handle dynamic property names (PascalCase or camelCase)
+                    var embeddingObj = row.embedding ?? row.Embedding;
+                    if (embeddingObj == null) continue;
+
+                    float[] storedEmbedding = JsonSerializer.Deserialize<float[]>(embeddingObj.ToString());
                     double similarity = CalculateCosineSimilarity(request.QueryEmbedding, storedEmbedding);
+
+                    var empId = (row.employee_id ?? row.EmployeeId)?.ToString() ?? "Unknown";
+                    _logger.LogInformation("DEBUG: Comparing with employee {EmpId}. Similarity: {Similarity}", (object)empId, (object)Math.Round(similarity, 4));
 
                     if (similarity > maxSimilarity)
                     {
                         maxSimilarity = similarity;
-                        bestMatchEmployeeId = row.employee_id?.ToString();
-                        bestMatchRole = row.role?.ToString();
-                        bestMatchName = row.EmployeeName?.ToString();
-                        bestMatchCode = row.EmployeeCode?.ToString();
+                        bestMatchEmployeeId = empId;
+                        bestMatchRole = (row.role ?? row.Role)?.ToString();
+                        bestMatchName = (row.EmployeeName ?? row.name)?.ToString();
+                        bestMatchCode = (row.EmployeeCode ?? row.employee_code)?.ToString();
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     string empId = row.employee_id?.ToString() ?? "Unknown";
                     _logger.LogWarning("Skipping invalid embedding for employee {EmpId}: {Msg}", empId, ex.Message);
                 }
@@ -120,9 +138,10 @@ public class FaceAttendanceController : ControllerBase
             if (maxSimilarity >= threshold)
             {
                 _logger.LogInformation("Match found: {EmployeeName} ({EmployeeCode}) Conf: {Conf}%", bestMatchName, bestMatchCode, Math.Round(maxSimilarity * 100, 2));
-                return Ok(new { 
-                    status = "success", 
-                    employee_id = bestMatchEmployeeId, 
+                return Ok(new
+                {
+                    status = "success",
+                    employee_id = bestMatchEmployeeId,
                     employee_code = bestMatchCode,
                     name = bestMatchName,
                     role = bestMatchRole,
@@ -158,6 +177,7 @@ public class FaceAttendanceController : ControllerBase
     public class FaceEmbeddingRequest
     {
         public string EmployeeId { get; set; } = string.Empty;
+        public int OrganizationId { get; set; }
         public string Role { get; set; } = string.Empty;
         public List<float> Embedding { get; set; } = new();
         public int? UserId { get; set; }
@@ -166,13 +186,35 @@ public class FaceAttendanceController : ControllerBase
     public class FaceMatchRequest
     {
         public float[] QueryEmbedding { get; set; } = Array.Empty<float>();
+        public int OrganizationId { get; set; }
     }
 
     public class FaceAttendanceRequest
     {
         public string EmployeeId { get; set; } = string.Empty;
+        public int OrganizationId { get; set; }
         public string Role { get; set; } = string.Empty;
         public string PunchedInType { get; set; } = "face";
         public int? UserId { get; set; }
+    }
+
+    [HttpGet("logs")]
+    public async Task<IActionResult> GetAttendanceLogs([FromQuery] int organizationId)
+    {
+        try
+        {
+            using var conn = _dataBaseConnection.CreateConnection();
+            var logs = await conn.QueryAsync(
+                "sp_GetAttendanceLogs",
+                new { OrganizationId = organizationId },
+                commandType: CommandType.StoredProcedure
+            );
+            return Ok(logs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching attendance logs");
+            return StatusCode(500, new { status = "error", message = ex.Message });
+        }
     }
 }

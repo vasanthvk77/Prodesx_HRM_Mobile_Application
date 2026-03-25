@@ -2159,3 +2159,99 @@ GO
 
 PRINT '[Migration] Migration 51: Form 26 A completed successfully.';
 GO
+
+-- ── Migration 52: Face Recognition Schema ───────────────────
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'FaceEmbeddings')
+BEGIN
+    CREATE TABLE FaceEmbeddings (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        employee_id INT NOT NULL,
+        role NVARCHAR(50) NULL,
+        embedding NVARCHAR(MAX) NOT NULL, -- Stored as JSON array
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_FaceEmbeddings_Employees FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+    );
+    PRINT '[Migration] FaceEmbeddings table created.';
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpsertFaceEmbedding
+    @EmployeeId VARCHAR(50),
+    @OrganizationId INT,
+    @Role VARCHAR(50), -- Designation
+    @Embedding NVARCHAR(MAX),
+    @UserId INT = 1
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM employee_face_embeddings WHERE employee_id = @EmployeeId AND organization_id = @OrganizationId)
+    BEGIN
+        UPDATE employee_face_embeddings 
+        SET embedding = @Embedding, 
+            role = @Role, 
+            updated_at = GETDATE(),
+            updated_by = @UserId
+        WHERE employee_id = @EmployeeId AND organization_id = @OrganizationId;
+    END
+    ELSE
+    BEGIN
+        INSERT INTO employee_face_embeddings (employee_id, organization_id, role, embedding, created_at, created_by, updated_at, updated_by)
+        VALUES (@EmployeeId, @OrganizationId, @Role, @Embedding, GETDATE(), @UserId, GETDATE(), @UserId);
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetAllFaceEmbeddings
+    @OrganizationId INT
+AS
+BEGIN
+    SELECT 
+        fe.employee_id,
+        fe.role,
+        fe.embedding,
+        e.name as EmployeeName,
+        e.employee_code as EmployeeCode
+    FROM employee_face_embeddings fe
+    LEFT JOIN employees e ON (CAST(e.id AS VARCHAR(50)) = fe.employee_id OR e.employee_code = fe.employee_id)
+    WHERE fe.organization_id = @OrganizationId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_MarkFaceAttendance
+    @EmployeeId VARCHAR(50),
+    @OrganizationId INT = NULL,
+    @Role NVARCHAR(50) = NULL,
+    @PunchedInType NVARCHAR(50) = 'face',
+    @UserId INT = 1
+AS
+BEGIN
+    INSERT INTO attendance (employee_id, organization_id, punch_in_time, punch_in_note, created_by)
+    SELECT id, organization_id, GETDATE(), 'Face Recognition Match', @UserId
+    FROM employees 
+    WHERE (CAST(id AS VARCHAR(50)) = @EmployeeId OR employee_code = @EmployeeId)
+      AND (@OrganizationId IS NULL OR organization_id = @OrganizationId);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetAttendanceLogs
+    @OrganizationId INT
+AS
+BEGIN
+    SELECT 
+        a.id,
+        a.employee_id AS EmployeeCode,
+        e.name AS EmployeeName,
+        a.role AS Role,
+        a.punchedin_type AS PunchType,
+        a.created_at AS PunchTime,
+        u.name AS CreatedBy
+    FROM employee_attendance a
+    LEFT JOIN employees e ON (a.employee_id = e.employee_code OR CAST(e.id AS VARCHAR(50)) = a.employee_id)
+    LEFT JOIN users u ON a.created_by = u.id
+    WHERE e.organization_id = @OrganizationId
+    ORDER BY a.created_at DESC;
+END;
+GO
+
+PRINT '[Migration] Migration 53: Attendance Logs procedure added.';
+GO

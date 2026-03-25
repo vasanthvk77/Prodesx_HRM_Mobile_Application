@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../core/api_config.dart';
 
 class OrgDropdownItem {
@@ -14,7 +15,7 @@ class OrgDropdown extends StatelessWidget {
   final List<OrgDropdownItem> items;
   final Function(String?) onChanged;
   final bool isLoading;
-  final bool showLabel; 
+  final bool showLabel;
   final bool isCompact;
 
   const OrgDropdown({
@@ -41,8 +42,11 @@ class OrgDropdown extends StatelessWidget {
             ? Image.network(
                 ApiConfig.getFullImageUrl(url),
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.business, color: Theme.of(context).iconTheme.color, size: size * 0.6),
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.business,
+                  color: Theme.of(context).iconTheme.color,
+                  size: size * 0.6,
+                ),
               )
             : Icon(Icons.business, color: Colors.white70, size: size * 0.6),
       ),
@@ -59,34 +63,103 @@ class OrgDropdown extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(isCompact ? 8 : 12),
         ),
-        child: const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+        child: const Center(
+          child: SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
       );
     }
 
     if (items.isEmpty) return const SizedBox();
 
-    final currentValue = items.any((e) => e.id == value) ? value : items.first.id;
+    final currentValue = items.any((e) => e.id == value)
+        ? value
+        : items.first.id;
+
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    if (isIOS) {
+      return GestureDetector(
+        onTap: () => _showCupertinoOptions(context, items),
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: isCompact
+                ? Theme.of(context).scaffoldBackgroundColor
+                : Theme.of(context).cardTheme.color,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isCompact && value != null && value != ''
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).dividerColor,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (currentValue != '') ...[
+                _buildOrgLogo(
+                  context,
+                  items.firstWhere((e) => e.id == currentValue).logoUrl,
+                  18,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                items.firstWhere((e) => e.id == currentValue).name,
+                style: TextStyle(
+                  color:
+                      Theme.of(context).textTheme.bodyMedium?.color ??
+                      Colors.white,
+                  fontSize: 12,
+                  fontWeight: isCompact ? FontWeight.normal : FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                CupertinoIcons.chevron_down,
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
+                size: 12,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     Widget dropdownContainer = Container(
       height: 36,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: isCompact ? Theme.of(context).scaffoldBackgroundColor : Theme.of(context).cardTheme.color,
+        color: isCompact
+            ? Theme.of(context).scaffoldBackgroundColor
+            : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isCompact && value != null && value != '' 
-            ? Theme.of(context).colorScheme.primary 
-            : Theme.of(context).dividerColor
+          color: isCompact && value != null && value != ''
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).dividerColor,
         ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: currentValue,
-          dropdownColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).cardTheme.color,
-          icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color?.withOpacity(0.5), size: 16),
+          dropdownColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Theme.of(context).cardTheme.color,
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
+            size: 16,
+          ),
           isDense: true,
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
+            color:
+                Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
             fontSize: 12,
             fontWeight: isCompact ? FontWeight.normal : FontWeight.w600,
           ),
@@ -113,11 +186,21 @@ class OrgDropdown extends StatelessWidget {
         height: 38,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.light ? Colors.white : Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
+          ),
           boxShadow: Theme.of(context).brightness == Brightness.light
-              ? [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 4, offset: const Offset(0, 2))]
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
               : [],
         ),
         child: Row(
@@ -129,13 +212,21 @@ class OrgDropdown extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                     Icon(Icons.business, color: Theme.of(context).iconTheme.color?.withOpacity(0.5), size: 14),
+                    Icon(
+                      Icons.business,
+                      color: Theme.of(
+                        context,
+                      ).iconTheme.color?.withOpacity(0.5),
+                      size: 14,
+                    ),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
                         'Organization',
                         style: TextStyle(
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.color?.withOpacity(0.7),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -167,5 +258,128 @@ class OrgDropdown extends StatelessWidget {
     }
 
     return dropdownContainer;
+  }
+
+  void _showCupertinoOptions(
+    BuildContext context,
+    List<OrgDropdownItem> items,
+  ) {
+    if (items.length <= 6) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+          title: const Text('Select Organization'),
+          actions: items
+              .map(
+                (org) => CupertinoActionSheetAction(
+                  onPressed: () {
+                    onChanged(org.id);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (org.id != '') _buildOrgLogo(context, org.logoUrl, 20),
+                      if (org.id != '') const SizedBox(width: 10),
+                      Text(org.name, style: const TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+          cancelButton: CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ),
+      );
+    } else {
+      // Use CupertinoPicker for more than 6 items
+      int selectedIndex = items.indexWhere((e) => e.id == value);
+      if (selectedIndex == -1) selectedIndex = 0;
+
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => Container(
+          height: 300,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.secondarySystemBackground.resolveFrom(
+                    context,
+                  ),
+                  border: const Border(
+                    bottom: BorderSide(
+                      color: CupertinoColors.separator,
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const Text(
+                      'Select Organization',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Text('Done'),
+                      onPressed: () {
+                        onChanged(items[selectedIndex].id);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoPicker(
+                  itemExtent: 44,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: selectedIndex,
+                  ),
+                  onSelectedItemChanged: (index) => selectedIndex = index,
+                  children: items
+                      .map(
+                        (org) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (org.id != '')
+                                  _buildOrgLogo(context, org.logoUrl, 20),
+                                if (org.id != '') const SizedBox(width: 12),
+                                Flexible(
+                                  child: Text(
+                                    org.name,
+                                    style: const TextStyle(fontSize: 18),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

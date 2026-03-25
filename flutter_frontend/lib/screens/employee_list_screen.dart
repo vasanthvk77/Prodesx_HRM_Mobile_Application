@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/employee.dart';
 import '../models/organization.dart';
@@ -195,8 +196,10 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const navyBg = Color(0xFF0F172A);
-    const slateBg = Color(0xFF1E293B);
+    final theme = Theme.of(context);
+
+    final isIOS = theme.platform == TargetPlatform.iOS;
+    final isDark = theme.brightness == Brightness.dark;
 
     return PopScope(
       canPop: false,
@@ -205,40 +208,61 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
         ref.read(navigationProvider.notifier).setHRManagementContent(null);
       },
       child: Material(
-        color: navyBg,
+        color: theme.scaffoldBackgroundColor,
         child: Column(
           children: [
             // Custom Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: slateBg,
+              color: isIOS ? (isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.9)) : theme.cardColor,
               child: SafeArea(
                 bottom: false,
                 child: Row(
                   children: [
-                    Builder(
-                      builder: (context) {
-                        return MediaQuery.of(context).size.width >= 900 ? const SizedBox.shrink() : IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-                      onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
-                    ),
-                    const Expanded(
+                    if (isIOS) ...[
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.bars, size: 22),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.back, size: 22),
+                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                      ),
+                    ] else ...[
+                      Builder(
+                        builder: (context) {
+                          return MediaQuery.of(context).size.width >= 900 ? const SizedBox.shrink() : IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.white),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: theme.iconTheme.color, size: 20),
+                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                      ),
+                    ],
+                    Expanded(
                       child: Text(
                         'Employees',
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: isIOS 
+                            ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)
+                            : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     if (MediaQuery.of(context).size.width < 900)
-                      IconButton(
-                        icon: Icon(_isGridView ? Icons.list : Icons.grid_view, color: Colors.blue),
-                        onPressed: () => setState(() => _isGridView = !_isGridView),
-                      ),
+                      isIOS 
+                          ? CupertinoButton(
+                              padding: EdgeInsets.zero,
+                              child: Icon(_isGridView ? CupertinoIcons.list_bullet : CupertinoIcons.square_grid_2x2, size: 22),
+                              onPressed: () => setState(() => _isGridView = !_isGridView),
+                            )
+                          : IconButton(
+                              icon: Icon(_isGridView ? Icons.list : Icons.grid_view, color: theme.colorScheme.primary),
+                              onPressed: () => setState(() => _isGridView = !_isGridView),
+                            ),
                   ],
                 ),
               ),
@@ -250,7 +274,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                   _buildActionBar(context),
                   Expanded(
                     child: _isLoading
-                        ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+                        ? Center(child: isIOS ? const CupertinoActivityIndicator() : const CircularProgressIndicator(color: Colors.blue))
                         : _filteredEmployees.isEmpty
                             ? const Center(child: Text('No employees found', style: TextStyle(color: Colors.white70)))
                             : _isGridView 
@@ -289,6 +313,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   Widget _buildFilterBar(BuildContext context) {
+    final theme = Theme.of(context);
     final bool isDesktop = MediaQuery.of(context).size.width >= 900;
     
     Widget buildOrgDropdown() => _organizations.isNotEmpty ? OrgDropdown(
@@ -307,12 +332,15 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     Widget buildDesigDrop() => _buildCompactDropdown<int?>(label: 'Designation', value: _selectedDesignationId, items: [const DropdownMenuItem(value: null, child: Text('All')), ..._designations.map((d) => DropdownMenuItem(value: d.id, child: Text(d.designationName)))], onChanged: (val) => setState(() { _selectedDesignationId = val; _applyFilters(); }));
     Widget buildDeptDrop() => _buildCompactDropdown<int?>(label: 'Department', value: _selectedDepartmentId, items: [const DropdownMenuItem(value: null, child: Text('All')), ..._departments.map((d) => DropdownMenuItem(value: d.id, child: Text(d.departmentName)))], onChanged: (val) => setState(() { _selectedDepartmentId = val; _applyFilters(); }));
     
-    Widget buildSearch() => Container(height: 36, decoration: BoxDecoration(color: const Color(0xFF0F172A), borderRadius: BorderRadius.circular(8)), child: TextField(controller: _searchController, onChanged: (val) => setState(() { _searchQuery = val; _applyFilters(); }), style: const TextStyle(color: Colors.white, fontSize: 13), decoration: const InputDecoration(hintText: 'Start typing to search', hintStyle: TextStyle(color: Colors.white38, fontSize: 13), prefixIcon: Icon(Icons.search, color: Colors.white38, size: 16), border: InputBorder.none, contentPadding: EdgeInsets.only(top: 0, bottom: 8))));
-    Widget buildFilterBtn() => ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.filter_list, size: 16), label: const Text('Filters', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F172A), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), minimumSize: const Size(0, 36)));
+    Widget buildSearch() => Container(height: 36, decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(8), border: Border.all(color: theme.dividerColor.withOpacity(0.1))), child: TextField(controller: _searchController, onChanged: (val) => setState(() { _searchQuery = val; _applyFilters(); }), style: theme.textTheme.bodyMedium, decoration: InputDecoration(hintText: 'Start typing to search', hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)), prefixIcon: Icon(Icons.search, color: theme.iconTheme.color?.withOpacity(0.5), size: 16), border: InputBorder.none, contentPadding: const EdgeInsets.only(top: 0, bottom: 12))));
+    Widget buildFilterBtn() => ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.filter_list, size: 16), label: const Text('Filters', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.surface, foregroundColor: theme.colorScheme.primary, padding: const EdgeInsets.symmetric(horizontal: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: theme.dividerColor.withOpacity(0.1))), elevation: 0, minimumSize: const Size(0, 36)));
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFF1E293B), border: Border.all(color: Colors.white10)),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+      ),
       child: isDesktop ? 
         Row(
           children: [
@@ -334,30 +362,31 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   Widget _buildCompactDropdown<T>({required String label, required T value, required List<DropdownMenuItem<T>> items, required ValueChanged<T> onChanged}) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 2),
-          child: Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold)),
+          child: Text(label, style: theme.textTheme.labelSmall?.copyWith(fontSize: 9, fontWeight: FontWeight.bold)),
         ),
         Container(
           height: 36,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<T>(
               value: value,
               items: items,
               onChanged: (val) => onChanged(val as T),
-              dropdownColor: const Color(0xFF1E293B),
+              dropdownColor: theme.cardColor,
               isExpanded: true,
-              icon: const Icon(Icons.arrow_drop_down, size: 16, color: Colors.grey),
-              style: const TextStyle(color: Colors.white, fontSize: 12),
+              icon: Icon(Icons.arrow_drop_down, size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
+              style: theme.textTheme.bodySmall,
             ),
           ),
         ),
@@ -366,37 +395,69 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   Widget _buildActionBar(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     final bool isDesktop = MediaQuery.of(context).size.width >= 900;
     
     Widget actions = Row(
       children: [
-        ElevatedButton.icon(
-          onPressed: () => _navigateToForm(),
-          icon: const Icon(Icons.add, size: 18),
-          label: const Text('Add Employee', style: TextStyle(fontSize: 13)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue[600],
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-        ),
+        isIOS 
+            ? CupertinoButton.filled(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                minSize: 0,
+                borderRadius: BorderRadius.circular(8),
+                onPressed: () => _navigateToForm(),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(CupertinoIcons.add, size: 18),
+                    SizedBox(width: 8),
+                    Text('Add Employee', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              )
+            : ElevatedButton.icon(
+                onPressed: () => _navigateToForm(),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('Add Employee', style: TextStyle(fontSize: 13)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
         const SizedBox(width: 12),
-        OutlinedButton.icon(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ManageFieldsScreen(organizationId: _selectedOrgId))),
-          icon: const Icon(Icons.storage, size: 18),
-          label: const Text('Manage Fields', style: TextStyle(fontSize: 13)),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.redAccent,
-            side: const BorderSide(color: Colors.redAccent),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-        ),
+        isIOS
+            ? CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                minSize: 0,
+                color: CupertinoColors.destructiveRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ManageFieldsScreen(organizationId: _selectedOrgId))),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(CupertinoIcons.square_grid_3x2, color: CupertinoColors.destructiveRed, size: 18),
+                    SizedBox(width: 8),
+                    Text('Fields', style: TextStyle(color: CupertinoColors.destructiveRed, fontSize: 13)),
+                  ],
+                ),
+              )
+            : OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ManageFieldsScreen(organizationId: _selectedOrgId))),
+                icon: const Icon(Icons.storage, size: 18),
+                label: const Text('Manage Fields', style: TextStyle(fontSize: 13)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.redAccent,
+                  side: const BorderSide(color: Colors.redAccent),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
         const SizedBox(width: 12),
-        _buildActionButton(Icons.file_upload, 'Import', () {}),
+        _buildActionButton(icon: Icons.file_upload, label: 'Import', onPressed: () {}),
         const SizedBox(width: 8),
-        _buildActionButton(Icons.file_download, 'Export', () {}),
+        _buildActionButton(icon: Icons.file_download, label: 'Export', onPressed: () {}),
       ],
     );
 
@@ -419,14 +480,15 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, VoidCallback onPressed) {
+  Widget _buildActionButton({required IconData icon, required String label, required VoidCallback onPressed}) {
+    final theme = Theme.of(context);
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 16),
       label: Text(label, style: const TextStyle(fontSize: 12)),
       style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white70,
-        side: const BorderSide(color: Colors.white24),
+        foregroundColor: theme.textTheme.bodyMedium?.color,
+        side: BorderSide(color: theme.dividerColor),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -434,14 +496,23 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   Widget _buildListView() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B), // Match React grey
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white12),
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: theme.dividerColor),
+            boxShadow: isDark ? [] : [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -453,8 +524,8 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                   // Header Row
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white12, width: 1.5)),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: theme.dividerColor, width: 1.5)),
                     ),
                     child: Row(
                       children: [
@@ -471,17 +542,16 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                                 }
                               });
                             },
-                            side: const BorderSide(color: Colors.white38),
-                            activeColor: Colors.blue,
-                            fillColor: MaterialStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? Colors.blue : null),
+                            side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+                            activeColor: theme.colorScheme.primary,
                           ),
                         ),
-                        Expanded(flex: 2, child: _buildSortableHeader('EMPLOYEE ID')),
-                        Expanded(flex: 3, child: _buildSortableHeader('NAME')),
-                        Expanded(flex: 4, child: _buildSortableHeader('EMAIL')),
-                        Expanded(flex: 2, child: _buildSortableHeader('USER ROLE')),
-                        Expanded(flex: 2, child: _buildSortableHeader('STATUS')),
-                        const SizedBox(width: 60, child: Text('ACTION', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11), textAlign: TextAlign.right)),
+                        Expanded(flex: 2, child: _buildSortableHeader('EMPLOYEE ID', theme)),
+                        Expanded(flex: 3, child: _buildSortableHeader('NAME', theme)),
+                        Expanded(flex: 4, child: _buildSortableHeader('EMAIL', theme)),
+                        Expanded(flex: 2, child: _buildSortableHeader('USER ROLE', theme)),
+                        Expanded(flex: 2, child: _buildSortableHeader('STATUS', theme)),
+                        SizedBox(width: 60, child: Text('ACTION', style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
                       ],
                     ),
                   ),
@@ -490,7 +560,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                     child: ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: _paginatedEmployees.length,
-                      separatorBuilder: (context, index) => const Divider(height: 1, color: Colors.white12),
+                      separatorBuilder: (context, index) => Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                       itemBuilder: (context, index) {
                         final emp = _paginatedEmployees[index];
                         final isSelected = _selectedIds.contains(emp.id);
@@ -504,7 +574,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                           onDoubleTap: () => _navigateToForm(employee: emp),
                           behavior: HitTestBehavior.opaque,
                           child: Container(
-                            color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+                            color: isSelected ? theme.colorScheme.primary.withOpacity(0.05) : Colors.transparent,
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -519,31 +589,30 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                                         else _selectedIds.remove(emp.id);
                                       });
                                     },
-                                    side: const BorderSide(color: Colors.white38),
-                                    activeColor: Colors.blue,
-                                    fillColor: MaterialStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? Colors.blue : null),
+                                    side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+                                    activeColor: theme.colorScheme.primary,
                                   ),
                                 ),
-                                Expanded(flex: 2, child: Text((emp.employeeCode == null || emp.employeeCode!.isEmpty) ? '--' : emp.employeeCode!, style: const TextStyle(color: Colors.white, fontSize: 13))),
+                                Expanded(flex: 2, child: Text((emp.employeeCode == null || emp.employeeCode!.isEmpty) ? '--' : emp.employeeCode!, style: theme.textTheme.bodyMedium)),
                                 Expanded(flex: 3, child: Row(
                                   children: [
                                     CircleAvatar(
                                       radius: 14,
                                       backgroundImage: emp.profilePictureUrl != null ? NetworkImage(ApiConfig.getFullImageUrl(emp.profilePictureUrl)) : null,
-                                      backgroundColor: Colors.blueGrey,
-                                      child: emp.profilePictureUrl == null ? Text(emp.name.isNotEmpty ? emp.name[0].toUpperCase() : 'E', style: const TextStyle(color: Colors.white, fontSize: 11)) : null,
+                                      backgroundColor: theme.colorScheme.primaryContainer,
+                                      child: emp.profilePictureUrl == null ? Text(emp.name.isNotEmpty ? emp.name[0].toUpperCase() : 'E', style: TextStyle(color: theme.colorScheme.onPrimaryContainer, fontSize: 11)) : null,
                                     ),
                                     const SizedBox(width: 10),
-                                    Expanded(child: Text(emp.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13), overflow: TextOverflow.ellipsis)),
+                                    Expanded(child: Text(emp.name, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis)),
                                   ],
                                 )),
-                                Expanded(flex: 4, child: Text(emp.email, style: const TextStyle(color: Colors.white70, fontSize: 13), overflow: TextOverflow.ellipsis)),
-                                Expanded(flex: 2, child: Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: const TextStyle(color: Colors.white54, fontSize: 13))),
+                                Expanded(flex: 4, child: Text(emp.email, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis)),
+                                Expanded(flex: 2, child: Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)))),
                                 Expanded(flex: 2, child: Row(
                                   children: [
                                     Container(width: 8, height: 8, decoration: BoxDecoration(color: emp.status == 'Active' ? Colors.green : Colors.red, shape: BoxShape.circle)),
                                     const SizedBox(width: 6),
-                                    Text(emp.status, style: const TextStyle(color: Colors.white, fontSize: 13)),
+                                    Text(emp.status, style: theme.textTheme.bodySmall),
                                   ],
                                 )),
                                 SizedBox(
@@ -556,10 +625,10 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                                         highlightColor: Colors.transparent,
                                       ),
                                       child: PopupMenuButton<String>(
-                                        icon: const Icon(Icons.more_vert, color: Colors.white54, size: 20),
-                                        color: const Color(0xFF1E293B),
+                                        icon: Icon(Icons.more_vert, color: theme.iconTheme.color?.withOpacity(0.5), size: 20),
+                                        color: theme.cardColor,
                                         elevation: 8,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: theme.dividerColor)),
                                         offset: const Offset(0, 40),
                                         onSelected: (value) {
                                           if (value == 'edit') {
@@ -569,25 +638,25 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                                           }
                                         },
                                         itemBuilder: (context) => [
-                                          const PopupMenuItem(
+                                          PopupMenuItem(
                                             value: 'edit',
-                                            padding: EdgeInsets.symmetric(horizontal: 16),
+                                            padding: const EdgeInsets.symmetric(horizontal: 16),
                                             child: Row(
                                               children: [
-                                                Icon(Icons.edit_outlined, color: Colors.blue, size: 18),
-                                                SizedBox(width: 12),
-                                                Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
+                                                Icon(Icons.edit_outlined, color: theme.colorScheme.primary, size: 18),
+                                                const SizedBox(width: 12),
+                                                Text('Edit', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
                                               ],
                                             ),
                                           ),
-                                          const PopupMenuItem(
+                                          PopupMenuItem(
                                             value: 'delete',
-                                            padding: EdgeInsets.symmetric(horizontal: 16),
+                                            padding: const EdgeInsets.symmetric(horizontal: 16),
                                             child: Row(
                                               children: [
-                                                Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
-                                                SizedBox(width: 12),
-                                                Text('Delete', style: TextStyle(color: Colors.redAccent, fontSize: 13, fontWeight: FontWeight.w500)),
+                                                const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                                                const SizedBox(width: 12),
+                                                Text('Delete', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent, fontWeight: FontWeight.w500)),
                                               ],
                                             ),
                                           ),
@@ -612,28 +681,33 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     );
   }
 
-  Widget _buildSortableHeader(String title) {
+  Widget _buildSortableHeader(String title, ThemeData theme) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11)),
+        Text(title, style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(width: 4),
-        const Icon(Icons.unfold_more, color: Colors.white24, size: 14),
+        Icon(Icons.unfold_more, color: theme.iconTheme.color?.withOpacity(0.3), size: 14),
       ],
     );
   }
 
   Widget _buildMobileListView() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       itemCount: _paginatedEmployees.length,
       itemBuilder: (context, index) {
         final emp = _paginatedEmployees[index];
         return Card(
-          color: const Color(0xFF1E293B),
+          color: theme.cardTheme.color,
           margin: const EdgeInsets.only(bottom: 12),
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: theme.dividerColor),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -650,17 +724,17 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                             CircleAvatar(
                               radius: 20,
                               backgroundImage: emp.profilePictureUrl != null ? NetworkImage(ApiConfig.getFullImageUrl(emp.profilePictureUrl)) : null,
-                              backgroundColor: Colors.blueGrey,
-                              child: emp.profilePictureUrl == null ? Text(emp.name.isNotEmpty ? emp.name[0].toUpperCase() : 'E', style: const TextStyle(color: Colors.white, fontSize: 16)) : null,
+                              backgroundColor: theme.colorScheme.primaryContainer,
+                              child: emp.profilePictureUrl == null ? Text(emp.name.isNotEmpty ? emp.name[0].toUpperCase() : 'E', style: TextStyle(color: theme.colorScheme.onPrimaryContainer, fontSize: 16)) : null,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(emp.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15), overflow: TextOverflow.ellipsis),
+                                  Text(emp.name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                                   const SizedBox(height: 2),
-                                  Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: const TextStyle(color: Colors.white54, fontSize: 12), overflow: TextOverflow.ellipsis),
+                                  Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)), overflow: TextOverflow.ellipsis),
                                 ],
                               ),
                             ),
@@ -668,62 +742,22 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                         ),
                       ),
                     ),
-                    Theme(
-                      data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                      child: PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, color: Colors.white54, size: 20),
-                        color: const Color(0xFF1E293B),
-                        elevation: 8,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.white12)),
-                        offset: const Offset(0, 40),
-                        onSelected: (value) {
-                          if (value == 'edit') {
-                            _navigateToForm(employee: emp);
-                          } else if (value == 'delete') {
-                            _confirmDelete(emp);
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit_outlined, color: Colors.blue, size: 18),
-                                SizedBox(width: 12),
-                                Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
-                                SizedBox(width: 12),
-                                Text('Delete', style: TextStyle(color: Colors.redAccent, fontSize: 13, fontWeight: FontWeight.w500)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildActionMenu(emp, theme),
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Divider(height: 1, color: Colors.white12),
+                Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: _buildMobileDetailColumn('ID', (emp.employeeCode == null || emp.employeeCode!.isEmpty) ? '--' : emp.employeeCode!)),
-                    Expanded(child: _buildMobileDetailColumn('Email', emp.email)),
+                    Expanded(child: _buildMobileDetailColumn('ID', (emp.employeeCode == null || emp.employeeCode!.isEmpty) ? '--' : emp.employeeCode!, theme)),
+                    Expanded(child: _buildMobileDetailColumn('Email', emp.email, theme)),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text('Status', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        Text('Status', style: theme.textTheme.labelSmall?.copyWith(fontSize: 9, color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
                         const SizedBox(height: 4),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -742,18 +776,20 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     );
   }
 
-  Widget _buildMobileDetailColumn(String label, String value) {
+  Widget _buildMobileDetailColumn(String label, String value, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        Text(label, style: theme.textTheme.labelSmall?.copyWith(fontSize: 9, color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+        Text(value, style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
       ],
     );
   }
 
   Widget _buildGridView() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -766,10 +802,14 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
       itemBuilder: (context, index) {
         final emp = _paginatedEmployees[index];
         return Card(
-          color: const Color(0xFF1E293B),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          color: theme.cardTheme.color,
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: theme.dividerColor),
+          ),
           child: InkWell(
-            onTap: () => _navigateToForm(employee: emp),
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -778,19 +818,20 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                   backgroundImage: emp.profilePictureUrl != null 
                       ? NetworkImage(ApiConfig.getFullImageUrl(emp.profilePictureUrl)) 
                       : null,
-                  child: emp.profilePictureUrl == null ? Text(emp.name[0].toUpperCase(), style: const TextStyle(fontSize: 24)) : null,
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  child: emp.profilePictureUrl == null ? Text(emp.name[0].toUpperCase(), style: TextStyle(fontSize: 24, color: theme.colorScheme.onPrimaryContainer)) : null,
                 ),
                 const SizedBox(height: 12),
-                Text(emp.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(emp.name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 Text(
                   (emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!,
-                  style: const TextStyle(color: Colors.white54),
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(4)),
-                  child: Text(emp.status, style: TextStyle(color: emp.status == 'Active' ? Colors.green : Colors.red, fontSize: 12)),
+                  decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(4), border: Border.all(color: theme.dividerColor.withOpacity(0.1))),
+                  child: Text(emp.status, style: TextStyle(color: emp.status == 'Active' ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -801,30 +842,64 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   void _confirmDelete(Employee emp) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: const Text('Delete Employee', style: TextStyle(color: Colors.white)),
-        content: Text('Are you sure you want to delete ${emp.name}?', style: const TextStyle(color: Colors.white70)),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await ref.read(employeeRepositoryProvider).deleteEmployee(emp.id);
-                _loadEmployees();
-                CustomSnackbar.show(context: context, message: 'Employee deleted successfully');
-              } catch (e) {
-                CustomSnackbar.show(context: context, message: 'Delete failed: $e', isError: true);
-              }
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
+    final theme = Theme.of(context);
+    final isIOS = theme.platform == TargetPlatform.iOS;
+    
+    if (isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text('Delete Employee'),
+          content: Text('Are you sure you want to delete ${emp.name}?'),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  await ref.read(employeeRepositoryProvider).deleteEmployee(emp.id);
+                  _loadEmployees();
+                  if (mounted) CustomSnackbar.show(context: context, message: 'Employee deleted successfully');
+                } catch (e) {
+                  if (mounted) CustomSnackbar.show(context: context, message: 'Delete failed: $e', isError: true);
+                }
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: theme.cardColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: theme.dividerColor)),
+          title: Text('Delete Employee', style: theme.textTheme.titleLarge),
+          content: Text('Are you sure you want to delete ${emp.name}?', style: theme.textTheme.bodyMedium),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel', style: TextStyle(color: theme.textTheme.bodySmall?.color))),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  await ref.read(employeeRepositoryProvider).deleteEmployee(emp.id);
+                  _loadEmployees();
+                  if (mounted) CustomSnackbar.show(context: context, message: 'Employee deleted successfully');
+                } catch (e) {
+                  if (mounted) CustomSnackbar.show(context: context, message: 'Delete failed: $e', isError: true);
+                }
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+    }
   }
   void _navigateToForm({Employee? employee}) {
     Navigator.push(
@@ -837,5 +912,103 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
         ),
       ),
     ).then((_) => _loadEmployees());
+  }
+
+  Widget _buildActionMenu(Employee emp, ThemeData theme) {
+    final isIOS = theme.platform == TargetPlatform.iOS;
+    if (isIOS) {
+      return CupertinoButton(
+        padding: EdgeInsets.zero,
+        child: Icon(CupertinoIcons.ellipsis_circle, color: theme.iconTheme.color?.withOpacity(0.5), size: 22),
+        onPressed: () => _showCupertinoActions(emp),
+      );
+    }
+
+    return Theme(
+      data: theme.copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+      child: PopupMenuButton<String>(
+        icon: Icon(Icons.more_vert, color: theme.iconTheme.color?.withOpacity(0.5), size: 20),
+        color: theme.cardColor,
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: theme.dividerColor)),
+        offset: const Offset(0, 40),
+        onSelected: (val) {
+          if (val == 'edit') {
+            _navigateToForm(employee: emp);
+          } else if (val == 'delete') {
+            _confirmDelete(emp);
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'edit',
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(Icons.edit_outlined, color: theme.colorScheme.primary, size: 18),
+                const SizedBox(width: 12),
+                Text('Edit', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: 'delete',
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                const SizedBox(width: 12),
+                Text('Delete', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent, fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCupertinoActions(Employee emp) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(emp.name),
+        message: Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _navigateToForm(employee: emp);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.pencil, size: 20),
+                SizedBox(width: 10),
+                Text('Edit Profile'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              _confirmDelete(emp);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed, size: 20),
+                SizedBox(width: 10),
+                Text('Delete Employee'),
+              ],
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
   }
 }
