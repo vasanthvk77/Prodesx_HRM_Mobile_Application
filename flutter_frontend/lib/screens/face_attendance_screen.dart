@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import '../providers/navigation_provider.dart';
 import '../widgets/custom_snackbar.dart';
 import '../services/face_service.dart';
 import '../providers/auth_provider.dart';
 import '../repositories/organization_repository.dart';
-import '../models/organization.dart';
 
 class FaceAttendanceScreen extends ConsumerStatefulWidget {
   final int? organizationId;
@@ -22,22 +22,82 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
   CameraController? _controller;
   bool _isInitialized = false;
   bool _isVerifying = false;
-  bool _isCheckingLocation = true;
+  bool _isCheckingLocation = false;
+  bool _hasStarted = false;
+  bool _isSuccess = false; // New state for success animation
   bool _isInRange = false;
   String _statusMessage = 'Align your face to mark attendance';
-  String _locationStatus = 'Checking location...';
+  String _locationStatus = '';
   double _verifyProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _checkGeofence();
+    // Removed automatic _checkGeofence() to prevent eager camera requests in IndexedStack
+  }
+
+  void _resetState() {
+    if (!mounted) return;
+    setState(() {
+      _hasStarted = false;
+      _isInRange = false;
+      _isCheckingLocation = false;
+      _isVerifying = false;
+      _isSuccess = false;
+      _isInitialized = false; // Important: Clear camera initialization state
+      _verifyProgress = 0.0;
+      _statusMessage = 'Align your face to mark attendance';
+      _locationStatus = '';
+    });
+    
+    // Ensure controller is cleaned up and nullified
+    _controller?.dispose();
+    _controller = null;
+  }
+
+  void _startAttendanceFlow() async {
+    // 1. ASK USER FIRST (Explicit confirmation required)
+    if (mounted) {
+      bool? confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Check Location?'),
+          content: const Text('To proceed, the app will verify if you are within the office range. Do you want to continue?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Proceed'),
+            ),
+          ],
+        ),
+      );
+      
+      if (confirm != true) return;
+    }
+
+    setState(() {
+      _hasStarted = true;
+      _isCheckingLocation = true; // Set immediately to prevent Access Denied flash
+      _statusMessage = 'Requesting location access...';
+    });
+    
+    // Add small delay to prevent rapid DB spikes from many screen launches
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (mounted) {
+      _checkGeofence();
+    }
   }
 
   Future<void> _checkGeofence() async {
     setState(() {
       _isCheckingLocation = true;
       _locationStatus = 'Verifying office location...';
+      _statusMessage = 'Fetching your current location...';
     });
 
     try {
@@ -46,7 +106,7 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
       final orgId = widget.organizationId ?? auth.user?.organizationId ?? 0;
 
       if (orgId == 0) {
-        throw Exception('No organization selected');
+        throw Exception('Your account is not assigned to an organization. Please contact your administrator.');
       }
 
       final org = await ref.read(organizationRepositoryProvider).getOrganizationById(orgId);
@@ -63,10 +123,62 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
         return;
       }
 
-      // 2. Check Permissions
+      // 2. Check Permissions and Service
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          bool? openSettings = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Location Services Disabled'),
+              content: const Text('To proceed, please enable location services in your device settings.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Enable'),
+                ),
+              ],
+            ),
+          );
+
+          if (openSettings == true) {
+            await Geolocator.openLocationSettings();
+          }
+        }
+        throw Exception('Location services are disabled. Please enable GPS and try again.');
+      }
+
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+        if (mounted) {
+          bool? requestNow = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Location Permission'),
+              content: const Text('This app needs your location to verify you are at the office. Allow permission?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            ),
+          );
+          if (requestNow == true) {
+            permission = await Geolocator.requestPermission();
+          } else {
+            throw Exception('Location permissions are required to mark attendance.');
+          }
+        }
+        
         if (permission == LocationPermission.denied) {
           throw Exception('Location permissions are denied');
         }
@@ -110,13 +222,15 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
         setState(() {
           _isCheckingLocation = false;
           _locationStatus = 'LOCATION ERROR';
-          _statusMessage = 'Could not verify location: $e';
+          _statusMessage = e.toString().contains('Exception: ') ? e.toString().split('Exception: ')[1] : 'Error: $e';
         });
       }
     }
   }
 
   Future<void> _initializeCamera() async {
+    if (_controller != null) return; // Already initialized or in progress
+
     final cameras = await availableCameras();
     if (cameras.isEmpty) return;
 
@@ -192,14 +306,20 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
           if (mounted) {
             if (dbResult['status'] != 'error') {
               setState(() {
+                _isSuccess = true;
                 _statusMessage = 'Attendance Marked: ${result['name']}';
                 _verifyProgress = 1.0;
                 _isVerifying = false;
               });
-              CustomSnackbar.show(
-                context: context,
-                message: 'Attendance Marked Successfully for ${result['name']}',
-              );
+
+              // Add a small delay for the success animation before popping
+              await Future.delayed(const Duration(milliseconds: 2000));
+              
+              if (mounted) {
+                _controller?.dispose();
+                _controller = null;
+                ref.read(navigationProvider.notifier).setIndex(0);
+              }
             } else {
               setState(() {
                 _statusMessage = 'Database Error';
@@ -232,6 +352,13 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Listen for tab changes to reset state when leaving this tab
+    ref.listen(navigationProvider, (previous, next) {
+      if (next.currentIndex != 1) { // 1 is the index of Attendance in MainShell for Users
+         _resetState();
+      }
+    });
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -241,7 +368,8 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () {
             _controller?.dispose();
-            Navigator.pop(context);
+            _controller = null;
+            ref.read(navigationProvider.notifier).setIndex(0);
           },
         ),
         title: const Text(
@@ -253,8 +381,8 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // Camera Preview (only if in range)
-          if (_isInRange && _isInitialized)
+          // Camera Preview (only if in range and initialized)
+          if (!_isCheckingLocation && _isInRange && _isInitialized && _controller != null && _controller!.value.isInitialized)
             Positioned.fill(
               child: AspectRatio(
                 aspectRatio: _controller!.value.aspectRatio,
@@ -297,7 +425,35 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (!_isInRange && !_isCheckingLocation)
+                  if (!_hasStarted)
+                    Column(
+                      children: [
+                        const Icon(Icons.location_on_outlined, color: Colors.blueAccent, size: 80),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Office Attendance',
+                          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Please verify your location to proceed.',
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                        const SizedBox(height: 40),
+                        ElevatedButton.icon(
+                          onPressed: _startAttendanceFlow,
+                          icon: const Icon(Icons.gps_fixed),
+                          label: const Text('Start Verification'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          ),
+                        ),
+                      ],
+                    )
+                  else if (!_isInRange && !_isCheckingLocation)
                     Container(
                       padding: const EdgeInsets.all(24),
                       margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -414,6 +570,43 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
                 onPressed: _checkGeofence,
                 icon: const Icon(Icons.refresh, color: Colors.blueAccent),
                 label: const Text('Retry Location Check', style: TextStyle(color: Colors.blueAccent)),
+              ),
+            ),
+          
+          // Success Overlay
+          if (_isSuccess)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.8),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(30),
+                        decoration: const BoxDecoration(
+                          color: Colors.greenAccent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.check, color: Colors.black, size: 80),
+                      ),
+                      const SizedBox(height: 30),
+                      const Text(
+                        'Success!',
+                        style: TextStyle(
+                          color: Colors.greenAccent,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Attendance Recorded Successfully',
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
         ],

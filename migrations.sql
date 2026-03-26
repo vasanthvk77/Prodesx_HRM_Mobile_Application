@@ -2205,6 +2205,7 @@ CREATE OR ALTER PROCEDURE sp_GetAllFaceEmbeddings
     @OrganizationId INT
 AS
 BEGIN
+    SET NOCOUNT ON;
     SELECT 
         fe.employee_id,
         fe.role,
@@ -2212,24 +2213,28 @@ BEGIN
         e.name as EmployeeName,
         e.employee_code as EmployeeCode
     FROM employee_face_embeddings fe
-    LEFT JOIN employees e ON (CAST(e.id AS VARCHAR(50)) = fe.employee_id OR e.employee_code = fe.employee_id)
-    WHERE fe.organization_id = @OrganizationId;
+    LEFT JOIN employees e ON (
+        fe.employee_id = CAST(e.id AS VARCHAR(50)) 
+        OR fe.employee_id = e.employee_code
+    )
+    WHERE fe.organization_id = @OrganizationId 
+       OR fe.organization_id IS NULL; -- Fallback for migration period
 END
 GO
 
 CREATE OR ALTER PROCEDURE sp_MarkFaceAttendance
-    @EmployeeId VARCHAR(50),
-    @OrganizationId INT = NULL,
-    @Role NVARCHAR(50) = NULL,
-    @PunchedInType NVARCHAR(50) = 'face',
-    @UserId INT = 1
+    @EmployeeId VARCHAR(50), 
+    @Role VARCHAR(50) = NULL,
+    @PunchedInType VARCHAR(50) = 'face',
+    @UserId INT = 1,
+    @OrganizationID INT
 AS
 BEGIN
-    INSERT INTO attendance (employee_id, organization_id, punch_in_time, punch_in_note, created_by)
-    SELECT id, organization_id, GETDATE(), 'Face Recognition Match', @UserId
+    SET NOCOUNT ON;
+    INSERT INTO employee_attendance (employee_id, role, punchedin_type, created_at, created_by, last_updated_by, organization_id)
+    SELECT id, @Role, @PunchedInType, GETDATE(), @UserId, @UserId, @OrganizationID
     FROM employees 
-    WHERE (CAST(id AS VARCHAR(50)) = @EmployeeId OR employee_code = @EmployeeId)
-      AND (@OrganizationId IS NULL OR organization_id = @OrganizationId);
+    WHERE (employee_code = @EmployeeId OR CAST(id AS VARCHAR(50)) = @EmployeeId);
 END
 GO
 
@@ -2255,3 +2260,7 @@ GO
 
 PRINT '[Migration] Migration 53: Attendance Logs procedure added.';
 GO
+
+
+------------embeddings----------------
+

@@ -34,7 +34,7 @@ public class FaceAttendanceController : ControllerBase
                 new
                 {
                     EmployeeId = request.EmployeeId,
-                   
+                    OrganizationId = request.OrganizationId,
                     Role = request.Role,
                     PunchedInType = request.PunchedInType,
                     UserId = request.UserId
@@ -89,21 +89,29 @@ public class FaceAttendanceController : ControllerBase
         _logger.LogInformation("ENDPOINT HIT: MatchEmbedding started.");
         try
         {
+            _logger.LogInformation("Matching face embedding for OrganizationId: {OrgId}", request.OrganizationId);
             _logger.LogInformation("Matching face embedding using stored procedure...");
             using var conn = _dataBaseConnection.CreateConnection();
 
-            var allEmbeddings = await conn.QueryAsync<dynamic>(
+            var allEmbeddings = (await conn.QueryAsync<dynamic>(
                 "sp_GetAllFaceEmbeddings",
                 new { OrganizationId = request.OrganizationId },
                 commandType: CommandType.StoredProcedure
-            );
+            )).ToList();
+
+            _logger.LogInformation("Found {Count} embeddings for OrganizationId: {OrgId}", allEmbeddings.Count, request.OrganizationId);
+
+            if (!allEmbeddings.Any())
+            {
+                _logger.LogWarning("Zero embeddings found in database for Organization {OrgId}. Matching cannot proceed.", request.OrganizationId);
+            }
 
             string? bestMatchEmployeeId = null;
             string? bestMatchRole = null;
             string? bestMatchName = null;
             string? bestMatchCode = null;
             double maxSimilarity = -1.0;
-            double threshold = 0.85; // Increased to 0.85 to prevent false matches from background patterns
+            double threshold = 0.80; // Adjusted from 0.85 to 0.80 based on recent logs to improve matching while maintaining accuracy.
 
             foreach (var row in allEmbeddings)
             {

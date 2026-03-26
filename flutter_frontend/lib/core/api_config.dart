@@ -1,6 +1,6 @@
 class ApiConfig {
-  static const String serverUrl = 'http://192.168.0.2:5217';
-  static const String pythonServerUrl = 'http://192.168.0.2:8000';
+  static const String serverUrl = 'http://10.87.153.56:5217';
+  static const String pythonServerUrl = 'http://10.87.153.56:8000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
