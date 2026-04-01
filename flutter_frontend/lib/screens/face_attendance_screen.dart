@@ -359,8 +359,16 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
       }
     });
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _controller?.dispose();
+        _controller = null;
+        ref.read(navigationProvider.notifier).setHRManagementContent(null);
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -369,7 +377,7 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
           onPressed: () {
             _controller?.dispose();
             _controller = null;
-            ref.read(navigationProvider.notifier).setIndex(0);
+            ref.read(navigationProvider.notifier).setHRManagementContent(null);
           },
         ),
         title: const Text(
@@ -610,6 +618,7 @@ class _FaceAttendanceScreenState extends ConsumerState<FaceAttendanceScreen> {
               ),
             ),
         ],
+      ),
       ),
     );
   }

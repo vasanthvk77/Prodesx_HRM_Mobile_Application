@@ -5,6 +5,9 @@ import '../widgets/digital_clock.dart';
 import 'designation_list_screen.dart';
 import 'department_list_screen.dart';
 import 'employee_list_screen.dart';
+import 'attendance_register_screen.dart';
+import 'attendance_list_screen.dart';
+import 'face_attendance_screen.dart';
 
 class HRManagementScreen extends ConsumerWidget {
   const HRManagementScreen({super.key});
@@ -42,7 +45,9 @@ class HRManagementScreen extends ConsumerWidget {
                 _buildMenuItem(context, ref, Icons.people_outline, 'Employees'),
                 _buildMenuItem(context, ref, Icons.event_busy_outlined, 'Leaves'),
                 _buildMenuItem(context, ref, Icons.assignment_ind_outlined, 'Shift Assignments'),
-                _buildMenuItem(context, ref, Icons.fingerprint, 'Attendance'),
+                _buildMenuItem(context, ref, Icons.fact_check_outlined, 'Attendance Register'),
+                _buildMenuItem(context, ref, Icons.history_outlined, 'Attendance Logs'),
+                _buildMenuItem(context, ref, Icons.location_on_outlined, 'Office Attendance'),
                 _buildMenuItem(context, ref, Icons.event_outlined, 'Holiday'),
                 _buildMenuItem(context, ref, Icons.badge_outlined, 'Designation'),
                 _buildMenuItem(context, ref, Icons.domain_outlined, 'Department'),
@@ -86,6 +91,12 @@ class HRManagementScreen extends ConsumerWidget {
         onTap: () {
           if (title == 'Employees') {
             ref.read(navigationProvider.notifier).setHRManagementContent(const EmployeeListScreen());
+          } else if (title == 'Attendance Register') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const AttendanceRegisterScreen());
+          } else if (title == 'Attendance Logs') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const AttendanceListScreen());
+          } else if (title == 'Office Attendance') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const FaceAttendanceScreen());
           } else if (title == 'Designation') {
             ref.read(navigationProvider.notifier).setHRManagementContent(const DesignationListScreen());
           } else if (title == 'Department') {

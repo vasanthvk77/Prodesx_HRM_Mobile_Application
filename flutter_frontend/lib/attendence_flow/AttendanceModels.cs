@@ -2,6 +2,7 @@ using System;
 
 namespace backend.Models;
 
+// Leave Management Models
 public class LeaveType
 {
     public byte LeaveTypeId { get; set; }
@@ -16,9 +17,19 @@ public class LeaveTypeUpsertRequest
     public byte? LeaveTypeId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string ShortName { get; set; } = string.Empty;
-    public int OrganizationId { get; set; } 
+    public int OrganizationId { get; set; } // Required to link the type to an org
     public bool IsPaid { get; set; } = true;
 }
+
+public class ToggleLeaveTypeRequest
+{
+    public byte LeaveTypeId { get; set; }
+    public int OrganizationId { get; set; }
+    public bool IsShow { get; set; }
+}
+
+
+
 
 public class DailyAttendance
 {
@@ -28,7 +39,6 @@ public class DailyAttendance
     public DateTime Date { get; set; }
     public DateTime? PunchIn { get; set; }
     public DateTime? PunchOut { get; set; }
-    public int? AttendanceTypeId { get; set; }
     public string? CalculatedStatus { get; set; }
     public bool IsProcessed { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -36,8 +46,6 @@ public class DailyAttendance
     // Navigation/Extended properties
     public string? EmployeeName { get; set; }
     public string? EmployeeCode { get; set; }
-    public string? LeaveTypeName { get; set; }
-    public string? ShortName { get; set; }
 }
 
 public class AttendanceStatusResponse
@@ -51,50 +59,9 @@ public class AttendanceStatusResponse
     public DateTime? PunchOutTime { get; set; }
 }
 
-public class EmpAttendanceRecord
-{
-    public int EmployeeId { get; set; }
-    public string EmployeeCode { get; set; } = string.Empty;
-    public string EmployeeName { get; set; } = string.Empty;
-    public string? Department { get; set; }
-    public string? Designation { get; set; }
-    public DateTime? Date { get; set; }
-    public string? FN { get; set; } // Forenoon status code
-    public string? AN { get; set; } // Afternoon status code
-    public string? ProfilePictureUrl { get; set; }
-}
-
-public class UpsertEmpAttendanceRequest
-{
-    public int EmployeeId { get; set; }
-    public DateTime AttendanceDate { get; set; }
-    public string? FN { get; set; }
-    public string? AN { get; set; }
-}
-
-public class BulkUpsertEmpAttendanceRequest
-{
-    public DateTime AttendanceDate { get; set; }
-    public List<UpsertEmpAttendanceRequest> Records { get; set; } = new();
-}
-
 public class QRPunchRequest
 {
     public string QRToken { get; set; } = string.Empty;
-    public double? Latitude { get; set; }
-    public double? Longitude { get; set; }
-}
-
-public class FaceAttendanceRequest
-{
-    public string EmployeeId { get; set; } = string.Empty;
-    public string Role { get; set; } = string.Empty;
-    public string PunchedInType { get; set; } = "face";
-}
-
-public class ToggleLeaveTypeRequest
-{
-    public byte LeaveTypeId { get; set; }
-    public int OrganizationId { get; set; }
-    public bool IsShow { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
 }

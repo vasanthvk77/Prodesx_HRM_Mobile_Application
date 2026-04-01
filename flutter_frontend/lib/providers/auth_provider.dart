@@ -10,15 +10,22 @@ class AuthState {
   final User? user;
   final String? token;
   final bool isLoading;
+  final List<dynamic> organizationList;
 
   AuthState({
     this.user,
     this.token,
     this.isLoading = false,
+    this.organizationList = const [],
   });
 
   // Getter for easy check in UI
   bool get isAuthenticated => token != null;
+
+  Map<String, String> get requestHeaders => {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
 
   /// Helper method to create a copy of the state with some changes
   AuthState copyWith({
@@ -26,11 +33,13 @@ class AuthState {
     String? token,
     bool? isLoading,
     bool clearUser = false,
+    List<dynamic>? organizations,
   }) {
     return AuthState(
       user: clearUser ? null : (user ?? this.user),
       token: clearUser ? null : (token ?? this.token),
       isLoading: isLoading ?? this.isLoading,
+      organizationList: organizations ?? this.organizationList,
     );
   }
 }
@@ -62,7 +71,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
         token: token,
         user: User.fromJson(jsonDecode(userJson)),
       );
+      fetchOrganizations();
     }
+  }
+
+  /// Fetches organizations associated with the current user.
+  Future<void> fetchOrganizations() async {
+    if (state.token == null) return;
+    try {
+      final organizations = await _repo.getUserOrganizations();
+      state = state.copyWith(organizations: organizations);
+    } catch (_) {}
   }
 
   /// Handles the login process by calling the Repository.
@@ -85,6 +104,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: user,
         isLoading: false,
       );
+      await fetchOrganizations();
     } catch (e) {
       state = state.copyWith(isLoading: false);
       rethrow;
@@ -135,6 +155,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: updatedUser,
         isLoading: false,
       );
+      await fetchOrganizations();
     } catch (e) {
       state = state.copyWith(isLoading: false);
       rethrow;

@@ -1663,31 +1663,31 @@ DECLARE @SQL NVARCHAR(MAX);
 DECLARE table_cursor CURSOR FOR 
 SELECT name FROM sys.tables;
 
-OPEN table_cursor;
-FETCH NEXT FROM table_cursor INTO @TableName;
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    -- Check for created_by
-    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(@TableName) AND name IN ('created_by', 'CreatedBy'))
-    BEGIN
-        SET @SQL = 'ALTER TABLE ' + QUOTENAME(@TableName) + ' ADD created_by INT NULL';
-        EXEC (@SQL);
-        PRINT 'Added created_by to ' + @TableName;
-    END
+-- OPEN table_cursor;
+-- FETCH NEXT FROM table_cursor INTO @TableName;
+-- WHILE @@FETCH_STATUS = 0
+-- BEGIN
+--     -- Check for created_by
+--     IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(@TableName) AND name IN ('created_by', 'CreatedBy'))
+--     BEGIN
+--         SET @SQL = 'ALTER TABLE ' + QUOTENAME(@TableName) + ' ADD created_by INT NULL';
+--         EXEC (@SQL);
+--         PRINT 'Added created_by to ' + @TableName;
+--     END
 
-    -- Check for last_updated_by
-    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(@TableName) AND name IN ('last_updated_by', 'LastUpdatedBy'))
-    BEGIN
-        SET @SQL = 'ALTER TABLE ' + QUOTENAME(@TableName) + ' ADD last_updated_by INT NULL';
-        EXEC (@SQL);
-        PRINT 'Added last_updated_by to ' + @TableName;
-    END
+--     -- Check for last_updated_by
+--     IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(@TableName) AND name IN ('last_updated_by', 'LastUpdatedBy'))
+--     BEGIN
+--         SET @SQL = 'ALTER TABLE ' + QUOTENAME(@TableName) + ' ADD last_updated_by INT NULL';
+--         EXEC (@SQL);
+--         PRINT 'Added last_updated_by to ' + @TableName;
+--     END
 
-    FETCH NEXT FROM table_cursor INTO @TableName;
-END
-CLOSE table_cursor;
-DEALLOCATE table_cursor;
-GO
+--     FETCH NEXT FROM table_cursor INTO @TableName;
+-- END
+-- CLOSE table_cursor;
+-- DEALLOCATE table_cursor;
+-- GO
 
 -- ── Migration 41: Module Management Procedures ─────────────────
 CREATE OR ALTER PROCEDURE sp_GetOrganizationModules

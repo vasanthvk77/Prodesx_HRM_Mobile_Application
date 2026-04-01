@@ -705,195 +705,268 @@ namespace backend.Services
                 return stream.ToArray();
             }
         }
-        public byte[] GenerateAttendanceRegisterPdf(List<Employee> employees, List<EmpAttendanceRecord> attendanceRecords, Organization org, int month, int year)
+    public byte[] GenerateAttendanceRegisterPdf(List<Employee> employees, List<EmpAttendanceRecord> attendanceRecords, Organization org, int month, int year)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+        var dt = new DataTable();
+        dt.TableName = "AttendanceDataSet";
+        dt.Columns.Add("OrgName");
+        dt.Columns.Add("OrgAddress");
+        dt.Columns.Add("MonthYear");
+        dt.Columns.Add("SlNo");
+        dt.Columns.Add("EmpName");
+        dt.Columns.Add("EmpCode");
+        dt.Columns.Add("Designation");
+        dt.Columns.Add("DayNo");
+        dt.Columns.Add("FN");
+        dt.Columns.Add("AN");
+        dt.Columns.Add("TotalPresent", typeof(double));
+        dt.Columns.Add("TotalPaidLeave", typeof(double));
+        dt.Columns.Add("TotalPay", typeof(double));
+
+        var monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+        int daysInMonth = DateTime.DaysInMonth(year, month);
+        var attendanceMap = attendanceRecords.GroupBy(r => r.EmployeeId).ToDictionary(g => g.Key, g => g.ToList());
+        int serial = 1;
+
+        foreach (var emp in employees)
         {
+            attendanceMap.TryGetValue(emp.Id, out var empAtt);
+            double totalPresent = 0;
+            double totalPaidLeave = 0;
+
+            // Step 1: Pre-calculate totals (each half = 0.5)
+            for (int d = 1; d <= daysInMonth; d++)
+            {
+                var record = empAtt?.FirstOrDefault(r => r.Date.Date == new DateTime(year, month, d).Date);
+                if (record != null)
+                {
+                    // Function to increment correct counter
+                    Action<string> countStatus = (status) => {
+                        if (string.IsNullOrWhiteSpace(status)) return;
+                        switch (status.ToUpper()) {
+                            case "P": totalPresent += 0.5; break;
+                            case "WK":
+                            case "CL":
+                            case "H": totalPaidLeave += 0.5; break;
+                        }
+                    };
+                    countStatus(record.FN ?? "");
+                    countStatus(record.AN ?? "");
+                }
+            }
+
+            // Step 2: Add rows for each day
+            for (int d = 1; d <= daysInMonth; d++)
+            {
+                var record = empAtt?.FirstOrDefault(r => r.Date.Date == new DateTime(year, month, d).Date);
+                var row = dt.NewRow();
+                row["OrgName"] = org.Name;
+                row["OrgAddress"] = org.Address ?? "";
+                row["MonthYear"] = monthName.ToUpper();
+                row["SlNo"] = serial.ToString();
+                row["EmpName"] = emp.Name;
+                row["EmpCode"] = emp.EmployeeCode ?? "--";
+                row["Designation"] = emp.Designation ?? "--";
+                row["DayNo"] = d.ToString("00");
+                
+                string fn = record?.FN ?? "";
+                string an = record?.AN ?? "";
+                row["FN"] = string.IsNullOrWhiteSpace(fn) ? "-" : fn;
+                row["AN"] = string.IsNullOrWhiteSpace(an) ? "-" : an;
+                
+                row["TotalPresent"] = totalPresent;
+                row["TotalPaidLeave"] = totalPaidLeave;
+                row["TotalPay"] = totalPresent + totalPaidLeave;
+                dt.Rows.Add(row);
+            }
+            serial++;
+        }
+
+        using var localReport = new LocalReport();
+        var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "ReportTemplate", "Attendance_Register.rdlc");
+        localReport.ReportPath = reportPath;
+        localReport.DataSources.Add(new ReportDataSource("AttendanceDataSet", dt));
+
+        return localReport.Render("PDF");
+    }
+
+    public byte[] GenerateAttendanceRegisterExcel(List<Employee> employees, List<EmpAttendanceRecord> attendanceRecords, Organization org, int month, int year)
+    {
+        using (var workbook = new XLWorkbook())
+        {
+            var monthDateTime = new DateTime(year, month, 1);
+            var monthName = monthDateTime.ToString("MMMM");
+            var worksheet = workbook.Worksheets.Add("Attendance Register");
+            int daysInMonth = DateTime.DaysInMonth(year, month);
+            int currentRow = 1;
+
+            // Support Provider
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var dt = new DataTable();
-            dt.TableName = "AttendanceDataSet";
-            dt.Columns.Add("OrgName");
-            dt.Columns.Add("OrgAddress");
-            dt.Columns.Add("MonthYear");
-            dt.Columns.Add("SlNo");
-            dt.Columns.Add("EmpName");
-            dt.Columns.Add("EmpCode");
-            dt.Columns.Add("Designation");
-            dt.Columns.Add("Department");
-            dt.Columns.Add("DayNo");
-            dt.Columns.Add("FN");
-            dt.Columns.Add("AN");
-            dt.Columns.Add("TotalPresent", typeof(double));
-            dt.Columns.Add("TotalPaidLeave", typeof(double));
-            dt.Columns.Add("TotalPay", typeof(double));
+            // 1. Title Rows (spanning approx 70 columns now)
+            int totalCols = 3 + (daysInMonth * 2) + 3; // SlNo + Name + Code + Days*2 + Metrics(3)
+            
+            worksheet.Cell(currentRow, 1).Value = "FORM XXV: REGISTER OF ATTENDANCE / MUSTER ROLL";
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Merge().Style.Font.Bold = true;
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Font.FontSize = 14;
+            currentRow++;
 
-            var monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
-            int daysInMonth = DateTime.DaysInMonth(year, month);
-            var attendanceMap = attendanceRecords.GroupBy(r => r.EmployeeId).ToDictionary(g => g.Key, g => g.ToList());
+            worksheet.Cell(currentRow, 1).Value = $"{org.Name} - {org.Address}";
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Merge().Style.Font.Bold = true;
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            currentRow++;
+
+            worksheet.Cell(currentRow, 1).Value = $"Attendance Register for the Month of {monthName.ToUpper()} {year}";
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Merge().Style.Font.Bold = true;
+            worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            currentRow += 2;
+
+            // 2. Double-Level Headers
+            // Row A: Static headers and Day Numbers
+            worksheet.Cell(currentRow, 1).Value = "Sl.No";
+            worksheet.Range(currentRow, 1, currentRow + 1, 1).Merge();
+            worksheet.Cell(currentRow, 2).Value = "Employee Name";
+            worksheet.Range(currentRow, 2, currentRow + 1, 2).Merge();
+            worksheet.Cell(currentRow, 3).Value = "Emp Code";
+            worksheet.Range(currentRow, 3, currentRow + 1, 3).Merge();
+
+            for (int d = 1; d <= daysInMonth; d++)
+            {
+                int startCol = 4 + ((d - 1) * 2);
+                worksheet.Cell(currentRow, startCol).Value = d.ToString("00");
+                worksheet.Range(currentRow, startCol, currentRow, startCol + 1).Merge();
+                
+                // Row B: FH/SH
+                worksheet.Cell(currentRow + 1, startCol).Value = "FH";
+                worksheet.Cell(currentRow + 1, startCol + 1).Value = "SH";
+            }
+
+            int metricStart = 4 + (daysInMonth * 2);
+            worksheet.Cell(currentRow, metricStart).Value = "Total P";
+            worksheet.Range(currentRow, metricStart, currentRow + 1, metricStart).Merge();
+            worksheet.Cell(currentRow, metricStart + 1).Value = "Paid Leave";
+            worksheet.Range(currentRow, metricStart + 1, currentRow + 1, metricStart + 1).Merge();
+            worksheet.Cell(currentRow, metricStart + 2).Value = "TOTAL PAY";
+            worksheet.Range(currentRow, metricStart + 2, currentRow + 1, metricStart + 2).Merge();
+
+            var headerRange = worksheet.Range(currentRow, 1, currentRow + 1, totalCols);
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            headerRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            currentRow += 2;
+
+            // 3. Data Rows
             int serial = 1;
+            var attendanceMap = attendanceRecords.GroupBy(r => r.EmployeeId).ToDictionary(g => g.Key, g => g.ToList());
+            int dataStartRow = currentRow;
 
             foreach (var emp in employees)
             {
-                attendanceMap.TryGetValue(emp.Id, out var empAtt);
+                worksheet.Cell(currentRow, 1).Value = serial++;
+                worksheet.Cell(currentRow, 2).Value = emp.Name;
+                worksheet.Cell(currentRow, 3).Value = emp.EmployeeCode ?? "--";
+
                 double totalPresent = 0;
                 double totalPaidLeave = 0;
+                attendanceMap.TryGetValue(emp.Id, out var empAtt);
 
-                // Step 1: Pre-calculate totals (each half = 0.5)
                 for (int d = 1; d <= daysInMonth; d++)
                 {
-                    var record = empAtt?.FirstOrDefault(r => r.Date?.Date == new DateTime(year, month, d).Date);
-                    if (record != null)
-                    {
-                        Action<string> countStatus = (status) => {
-                            if (string.IsNullOrWhiteSpace(status)) return;
-                            switch (status.ToUpper()) {
-                                case "P": totalPresent += 0.5; break;
-                                case "WK":
-                                case "CL":
-                                case "H": 
-                                case "PL":
-                                case "SL": totalPaidLeave += 0.5; break;
-                            }
-                        };
-                        countStatus(record.FN ?? "");
-                        countStatus(record.AN ?? "");
-                    }
-                }
-
-                // Step 2: Add rows for each day
-                for (int d = 1; d <= daysInMonth; d++)
-                {
-                    var record = empAtt?.FirstOrDefault(r => r.Date?.Date == new DateTime(year, month, d).Date);
-                    var row = dt.NewRow();
-                    row["OrgName"] = org.Name;
-                    row["OrgAddress"] = org.Address ?? "";
-                    row["MonthYear"] = monthName.ToUpper();
-                    row["SlNo"] = serial.ToString();
-                    row["EmpName"] = emp.Name;
-                    row["EmpCode"] = emp.EmployeeCode ?? "--";
-                    row["Designation"] = emp.Designation ?? "--";
-                    row["Department"] = emp.Department ?? "--";
-                    row["DayNo"] = d.ToString("00");
+                    int startCol = 4 + ((d - 1) * 2);
+                    var date = new DateTime(year, month, d);
+                    var record = empAtt?.FirstOrDefault(r => r.Date.Date == date.Date);
                     
                     string fn = record?.FN ?? "";
-                    string an = record?.AN ?? "";
-                    row["FN"] = string.IsNullOrWhiteSpace(fn) ? "-" : fn;
-                    row["AN"] = string.IsNullOrWhiteSpace(an) ? "-" : an;
-                    
-                    row["TotalPresent"] = totalPresent;
-                    row["TotalPaidLeave"] = totalPaidLeave;
-                    row["TotalPay"] = totalPresent + totalPaidLeave;
-                    dt.Rows.Add(row);
+                    string sh = record?.AN ?? "";
+
+                    // If future date, leave blank
+                    if (date.Date > DateTime.Today) { fn = ""; sh = ""; }
+
+                    worksheet.Cell(currentRow, startCol).Value = string.IsNullOrWhiteSpace(fn) ? "-" : fn;
+                    worksheet.Cell(currentRow, startCol + 1).Value = string.IsNullOrWhiteSpace(sh) ? "-" : sh;
+
+                    // Calculation logic (Holiday 'H' = Paid Leave)
+                    Action<string> process = (s) => {
+                        if (s == "P") totalPresent += 0.5;
+                        else if (s == "WK" || s == "CL" || s == "H") totalPaidLeave += 0.5;
+                    };
+                    process(fn);
+                    process(sh);
                 }
-                serial++;
+
+                worksheet.Cell(currentRow, metricStart).Value = totalPresent;
+                worksheet.Cell(currentRow, metricStart + 1).Value = totalPaidLeave;
+                worksheet.Cell(currentRow, metricStart + 2).Value = totalPresent + totalPaidLeave;
+                
+                // Borders
+                worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range(currentRow, 1, currentRow, totalCols).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range(currentRow, 4, currentRow, totalCols).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                currentRow++;
             }
 
-            var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "ReportTemplate", "Attendance_Register.rdlc");
-            using var localReport = new LocalReport();
-            localReport.ReportPath = reportPath;
-            localReport.DataSources.Add(new ReportDataSource("AttendanceDataSet", dt));
+            // 4. Vertical Footer Totals (TOTAL (P))
+            worksheet.Cell(currentRow, 2).Value = "TOTAL (P)";
+            worksheet.Cell(currentRow, 2).Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-            return localReport.Render("PDF");
-        }
-
-        public byte[] GenerateAttendanceRegisterExcel(List<Employee> employees, List<EmpAttendanceRecord> attendanceRecords, Organization org, int month, int year)
-        {
-            using (var workbook = new XLWorkbook())
+            // Total P for every FH/SH column
+            for (int c = 4; c < metricStart; c++)
             {
-                var worksheet = workbook.Worksheets.Add("Attendance Register");
-                var monthDateTime = new DateTime(year, month, 1);
-                var monthName = monthDateTime.ToString("MMMM yyyy");
-                int daysInMonth = DateTime.DaysInMonth(year, month);
-                int currentRow = 1;
-
-                // Title and Header Info
-                worksheet.Cell(currentRow, 1).Value = "FORM XXV: REGISTER OF ATTENDANCE / MUSTER ROLL - " + monthName.ToUpper();
-                worksheet.Range(currentRow, 1, currentRow, 10).Merge().Style.Font.Bold = true;
-                worksheet.Range(currentRow, 1, currentRow, 10).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                currentRow++;
-
-                worksheet.Cell(currentRow, 1).Value = org.Name + ", " + org.Address;
-                worksheet.Range(currentRow, 1, currentRow, 10).Merge().Style.Font.Italic = true;
-                worksheet.Range(currentRow, 1, currentRow, 10).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                currentRow += 2;
-
-                // Actual Table Headers
-                worksheet.Cell(currentRow, 1).Value = "Sl.No";
-                worksheet.Cell(currentRow, 2).Value = "Emp Code";
-                worksheet.Cell(currentRow, 3).Value = "Employee Name";
-                worksheet.Cell(currentRow, 4).Value = "Designation";
-                worksheet.Cell(currentRow, 5).Value = "Day";
-                worksheet.Cell(currentRow, 6).Value = "FH";
-                worksheet.Cell(currentRow, 7).Value = "SH";
-                worksheet.Cell(currentRow, 8).Value = "Tot P";
-                worksheet.Cell(currentRow, 9).Value = "Paid Leave";
-                worksheet.Cell(currentRow, 10).Value = "Total Pay";
-
-                var headerRange = worksheet.Range(currentRow, 1, currentRow, 10);
-                headerRange.Style.Font.Bold = true;
-                headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
-                headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-                currentRow++;
-
-                var attendanceMap = attendanceRecords.GroupBy(r => r.EmployeeId).ToDictionary(g => g.Key, g => g.ToList());
-                int serial = 1;
-
-                foreach (var emp in employees)
+                double colP = 0;
+                for (int r = dataStartRow; r < currentRow; r++)
                 {
-                    attendanceMap.TryGetValue(emp.Id, out var empAtt);
-                    double totalPresent = 0;
-                    double totalPaidLeave = 0;
-
-                    // Calculation
-                    for (int d = 1; d <= daysInMonth; d++)
-                    {
-                        var record = empAtt?.FirstOrDefault(r => r.Date?.Date == new DateTime(year, month, d).Date);
-                        if (record != null)
-                        {
-                            Action<string> countStatus = (status) => {
-                                if (string.IsNullOrWhiteSpace(status)) return;
-                                switch (status.ToUpper()) {
-                                    case "P": totalPresent += 0.5; break;
-                                    case "WK":
-                                    case "CL":
-                                    case "H":
-                                    case "PL":
-                                    case "SL": totalPaidLeave += 0.5; break;
-                                }
-                            };
-                            countStatus(record.FN ?? "");
-                            countStatus(record.AN ?? "");
-                        }
-                    }
-
-                    // Write rows
-                    for (int d = 1; d <= daysInMonth; d++)
-                    {
-                        var record = empAtt?.FirstOrDefault(r => r.Date?.Date == new DateTime(year, month, d).Date);
-                        worksheet.Cell(currentRow, 1).Value = serial;
-                        worksheet.Cell(currentRow, 2).Value = emp.EmployeeCode ?? "--";
-                        worksheet.Cell(currentRow, 3).Value = emp.Name;
-                        worksheet.Cell(currentRow, 4).Value = emp.Designation ?? "--";
-                        worksheet.Cell(currentRow, 5).Value = d;
-                        
-                        worksheet.Cell(currentRow, 6).Value = string.IsNullOrWhiteSpace(record?.FN) ? "-" : record.FN;
-                        worksheet.Cell(currentRow, 7).Value = string.IsNullOrWhiteSpace(record?.AN) ? "-" : record.AN;
-                        
-                        worksheet.Cell(currentRow, 8).Value = totalPresent;
-                        worksheet.Cell(currentRow, 9).Value = totalPaidLeave;
-                        worksheet.Cell(currentRow, 10).Value = totalPresent + totalPaidLeave;
-                        currentRow++;
-                    }
-                    serial++;
+                    var val = worksheet.Cell(r, c).Value.ToString();
+                    if (val == "P") colP += 0.5;
                 }
-
-                worksheet.Columns().AdjustToContents();
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-                    return stream.ToArray();
-                }
+                worksheet.Cell(currentRow, c).Value = colP;
+                worksheet.Cell(currentRow, c).Style.Font.Bold = true;
+                worksheet.Cell(currentRow, c).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             }
+
+            // Vertical sums for the metrics (Total P, Paid Leave, TOTAL PAY)
+            for (int m = 0; m < 3; m++)
+            {
+                double colSum = 0;
+                for (int r = dataStartRow; r < currentRow; r++)
+                {
+                    var cellVal = worksheet.Cell(r, metricStart + m).Value;
+                    if (cellVal.IsNumber) colSum += cellVal.GetNumber();
+                }
+                worksheet.Cell(currentRow, metricStart + m).Value = colSum;
+                worksheet.Cell(currentRow, metricStart + m).Style.Font.Bold = true;
+                worksheet.Cell(currentRow, metricStart + m).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            // Styling the footer row
+            var footerRange = worksheet.Range(currentRow, 1, currentRow, totalCols);
+            footerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+            footerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            footerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            currentRow++;
+
+            // 5. Legend row at bottom
+            currentRow++;
+            worksheet.Cell(currentRow, 1).Value = "Legend: P - Present, A - Absent, CL - Casual Leave, WK - Week Off, H - Holiday, CS - Compensatory Leave, OD - On Duty";
+            worksheet.Range(currentRow, 1, currentRow, 20).Merge().Style.Font.FontSize = 9;
+            worksheet.Range(currentRow, 1, currentRow, 20).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+            worksheet.Range(currentRow, 1, currentRow, 20).Style.Font.Italic = true;
+
+            worksheet.Columns().AdjustToContents();
+            
+            using (var stream = new MemoryStream())
+            {
+                workbook.SaveAs(stream);
+                return stream.ToArray();
+            }
+        }
         }
     }
 }

@@ -132,6 +132,7 @@ try
     app.MapHub<MustorRollHub>("/hubs/mustorroll");
     app.MapHub<DangerousOccurrencesHub>("/hubs/dangerousoccurrences");
     app.MapHub<HolidaysHub>("/hubs/holidays");
+    app.MapHub<AttendanceHub>("/hubs/attendance");
     Log.Information("=== Backend running at {Url} ===", backendUrl);
 
     app.Run();

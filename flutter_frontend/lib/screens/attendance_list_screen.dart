@@ -80,15 +80,21 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final isIOS = theme.platform == TargetPlatform.iOS;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        ref.read(navigationProvider.notifier).setHRManagementContent(null);
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Attendance Logs'),
         elevation: 0,
         backgroundColor: theme.cardColor,
         leading: IconButton(
           icon: Icon(isIOS ? CupertinoIcons.back : Icons.arrow_back),
-          onPressed: () => ref.read(navigationProvider.notifier).setDashboardContent(null),
+          onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
         ),
         actions: [
           IconButton(
@@ -296,6 +302,7 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
                       ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 class ApiConfig {
-  static const String serverUrl = 'http://10.87.153.56:5217';
-  static const String pythonServerUrl = 'http://10.87.153.56:8000';
+  static const String serverUrl = 'http://localhost:5217';
+  static const String pythonServerUrl = 'http://localhost:8000';
   static const String baseUrl = '$serverUrl/api';
 
   // Auth Endpoints
@@ -28,10 +28,19 @@ class ApiConfig {
 
   // SignalR Hubs
   static const String employeesHub = '$serverUrl/hubs/employees';
+  static const String attendanceHub = '$serverUrl/hubs/attendance';
 
   // Attendance
   static const String attendanceStatus = '$baseUrl/Attendance/status';
   static const String attendancePunch = '$baseUrl/Attendance';
+  static const String attendanceMaster = '$baseUrl/AttendanceMaster';
+  static const String bulkAttendanceMaster = '$baseUrl/AttendanceMaster/bulk';
+  static const String exportAttendanceRegister = '$baseUrl/Attendance/export-register';
+
+  // Leave Types
+  static const String leaveTypes = '$baseUrl/LeaveType';
+  static const String leaveTypeSettings = '$baseUrl/LeaveType/settings';
+  static const String toggleLeaveType = '$baseUrl/LeaveType/toggle';
 
   // Shifts
   static const String shiftRoster = '$baseUrl/ShiftAssignments/roster';
