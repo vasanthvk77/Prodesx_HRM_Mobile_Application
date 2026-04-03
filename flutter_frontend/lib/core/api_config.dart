@@ -29,6 +29,7 @@ class ApiConfig {
   // SignalR Hubs
   static const String employeesHub = '$serverUrl/hubs/employees';
   static const String attendanceHub = '$serverUrl/hubs/attendance';
+  static const String empOTHub = '$serverUrl/hubs/empot';
 
   // Attendance
   static const String attendanceStatus = '$baseUrl/Attendance/status';
@@ -44,6 +45,13 @@ class ApiConfig {
 
   // Shifts
   static const String shiftRoster = '$baseUrl/ShiftAssignments/roster';
+
+  // Overtime (OT)
+  static const String empOT = '$baseUrl/EmpOT';
+  static const String getOTByOrgId = '$empOT/GetOTByOrgId';
+  static const String saveEmpOT = '$empOT/SaveOT';
+  static const String updateEmpOT = '$empOT/UpdateOT';
+  static const String deleteEmpOT = '$empOT/DeleteOT';
 
   // CRM / Leads
   static const String leads = '$baseUrl/leads';

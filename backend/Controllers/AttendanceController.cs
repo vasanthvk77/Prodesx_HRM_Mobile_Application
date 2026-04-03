@@ -223,6 +223,33 @@ public class AttendanceController : ControllerBase
         catch (Exception) { return StatusCode(500, new { message = "Punch failed." }); }
     }
 
+    [HttpGet("status")]
+    public async Task<IActionResult> GetStatus([FromQuery] int employeeId, [FromQuery] int orgId)
+    {
+        try
+        {
+            using var conn = _dataBaseConnection.CreateConnection();
+            var today = DateTime.Today;
+            
+            // Check if there is an attendance record for today
+            var status = await conn.QueryFirstOrDefaultAsync<dynamic>(
+                "SELECT sa.FN, sa.AN FROM StaffAttendance sa JOIN AttendanceMaster am ON sa.AttendanceSettingId = am.AttendanceSettingId WHERE sa.EmployeeId = @EmpId AND am.OrganizationId = @OrgId AND CAST(am.Date AS DATE) = CAST(@Date AS DATE)",
+                new { EmpId = employeeId, OrgId = orgId, Date = today }
+            );
+
+            if (status == null) return Ok(new { status = (string)null });
+
+            // Standard logic: if FN and AN are same, return that. If Half, return FH/SH logic.
+            // Simplified return to match Flutter expectations
+            return Ok(new { fn = status.FN, an = status.AN });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting attendance status");
+            return StatusCode(500, "Error getting status");
+        }
+    }
+
     private double GetDistance(double lat1, double lon1, double lat2, double lon2)
     {
         double R = 6371e3;

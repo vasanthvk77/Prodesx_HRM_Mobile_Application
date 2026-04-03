@@ -65,6 +65,21 @@ try
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+
+        // NEW: Handle SignalR authentication via query string
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
     builder.Services.AddAuthorization();
@@ -106,8 +121,15 @@ try
     var backendUrl = app.Configuration["BackendUrl"] ?? throw new Exception("Critical Error: 'BackendUrl' is missing in appsettings.json");
     app.Urls.Add(backendUrl);
 
-    // Serve uploaded files (e.g. employee profile photos) from wwwroot/
+    // Serve uploaded files (e.g. employee profile photos) from uploads/
     app.UseStaticFiles();
+    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+    if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
+    });
 
     // Configure the HTTP request pipeline
     app.UseSwagger();
@@ -122,7 +144,7 @@ try
         opts.MessageTemplate = "HTTP {RequestMethod} {RequestPath} → {StatusCode} ({Elapsed:0.0}ms)";
     });
 
-    app.MapControllers();
+    // Hubs should be mapped before Controllers for better precedence
     app.MapHub<LeadsHub>("/hubs/leads");
     app.MapHub<DealsHub>("/dealsHub");
     app.MapHub<UserManagementHub>("/hubs/userManagement");
@@ -133,6 +155,9 @@ try
     app.MapHub<DangerousOccurrencesHub>("/hubs/dangerousoccurrences");
     app.MapHub<HolidaysHub>("/hubs/holidays");
     app.MapHub<AttendanceHub>("/hubs/attendance");
+    app.MapHub<EmpOTHub>("/hubs/empot");
+
+    app.MapControllers();
     Log.Information("=== Backend running at {Url} ===", backendUrl);
 
     app.Run();

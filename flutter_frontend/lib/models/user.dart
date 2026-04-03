@@ -3,7 +3,7 @@ class User {
   final String name;
   final String email;
   final String role;
-  final int? organizationId;
+  final dynamic organizationId;
   final String? organizationLogo;
 
   User({
@@ -22,7 +22,7 @@ class User {
         name: json['name']?.toString() ?? 'Unknown User',
         email: json['email']?.toString() ?? '',
         role: json['role']?.toString() ?? 'User',
-        organizationId: json['organizationId'] is int ? json['organizationId'] : int.tryParse(json['organizationId']?.toString() ?? ''),
+        organizationId: json['organizationId'],
         organizationLogo: json['organizationLogo']?.toString(),
       );
     } catch (e) {

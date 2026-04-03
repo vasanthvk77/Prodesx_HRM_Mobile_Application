@@ -7,6 +7,7 @@ import '../repositories/auth_repository.dart';
 import '../widgets/org_dropdown.dart';
 import '../providers/navigation_provider.dart';
 import '../widgets/custom_snackbar.dart';
+import '../widgets/hrm_search_toolbar.dart';
 
 class AttendanceListScreen extends ConsumerStatefulWidget {
   const AttendanceListScreen({super.key});
@@ -23,6 +24,7 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
   bool _isLoading = true;
   String? _selectedOrgId;
   List<OrgDropdownItem> _organizations = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -105,29 +107,25 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
       ),
       body: Column(
         children: [
-          // Filter Section
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.business, size: 18, color: Colors.blueAccent),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OrgDropdown(
-                    value: _selectedOrgId,
-                    items: _organizations,
-                    onChanged: (id) {
-                      setState(() => _selectedOrgId = id);
-                      _fetchLogs();
-                    },
-                    isCompact: true,
-                  ),
-                ),
-              ],
+          // Premium Search Toolbar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: HRMSearchToolbar(
+              selectedOrgId: _selectedOrgId,
+              orgItems: _organizations,
+              onOrgChanged: (id) {
+                setState(() {
+                  _selectedOrgId = id;
+                });
+                _fetchLogs();
+              },
+              onSearchChanged: (val) {
+                setState(() {
+                  _searchQuery = val;
+                });
+              },
+              hintText: 'Search Employee Name or ID...',
+              isOrgLoading: _isLoading && _organizations.isEmpty,
             ),
           ),
 
@@ -168,9 +166,20 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
                         onRefresh: _fetchLogs,
                         child: ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          itemCount: _logs.length,
+                          itemCount: _logs.where((log) {
+                            final name = (log['employeeName'] ?? log['EmployeeName'] ?? '').toString().toLowerCase();
+                            final code = (log['employeeCode'] ?? log['EmployeeCode'] ?? '').toString().toLowerCase();
+                            final search = _searchQuery.toLowerCase();
+                            return name.contains(search) || code.contains(search);
+                          }).length,
                           itemBuilder: (context, index) {
-                            final log = _logs[index];
+                            final filteredLogs = _logs.where((log) {
+                              final name = (log['employeeName'] ?? log['EmployeeName'] ?? '').toString().toLowerCase();
+                              final code = (log['employeeCode'] ?? log['EmployeeCode'] ?? '').toString().toLowerCase();
+                              final search = _searchQuery.toLowerCase();
+                              return name.contains(search) || code.contains(search);
+                            }).toList();
+                            final log = filteredLogs[index];
                             
                             // Safe parsing
                             final rawTime = log['punchTime'] ?? log['PunchTime'] ?? DateTime.now().toIso8601String();

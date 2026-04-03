@@ -8,6 +8,7 @@ import 'employee_list_screen.dart';
 import 'attendance_register_screen.dart';
 import 'attendance_list_screen.dart';
 import 'face_attendance_screen.dart';
+import 'ot_management_screen.dart';
 
 class HRManagementScreen extends ConsumerWidget {
   const HRManagementScreen({super.key});
@@ -21,12 +22,13 @@ class HRManagementScreen extends ConsumerWidget {
           // Unified Header
           Row(
             children: [
-              Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
+              if (MediaQuery.of(context).size.width < 900)
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
                 ),
-              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -47,8 +49,8 @@ class HRManagementScreen extends ConsumerWidget {
                 _buildMenuItem(context, ref, Icons.assignment_ind_outlined, 'Shift Assignments'),
                 _buildMenuItem(context, ref, Icons.fact_check_outlined, 'Attendance Register'),
                 _buildMenuItem(context, ref, Icons.history_outlined, 'Attendance Logs'),
+                _buildMenuItem(context, ref, Icons.timer_outlined, 'Overtime Management'),
                 _buildMenuItem(context, ref, Icons.location_on_outlined, 'Office Attendance'),
-                _buildMenuItem(context, ref, Icons.event_outlined, 'Holiday'),
                 _buildMenuItem(context, ref, Icons.badge_outlined, 'Designation'),
                 _buildMenuItem(context, ref, Icons.domain_outlined, 'Department'),
               ],
@@ -95,6 +97,8 @@ class HRManagementScreen extends ConsumerWidget {
             ref.read(navigationProvider.notifier).setHRManagementContent(const AttendanceRegisterScreen());
           } else if (title == 'Attendance Logs') {
             ref.read(navigationProvider.notifier).setHRManagementContent(const AttendanceListScreen());
+          } else if (title == 'Overtime Management') {
+            ref.read(navigationProvider.notifier).setHRManagementContent(const OTManagementScreen());
           } else if (title == 'Office Attendance') {
             ref.read(navigationProvider.notifier).setHRManagementContent(const FaceAttendanceScreen());
           } else if (title == 'Designation') {

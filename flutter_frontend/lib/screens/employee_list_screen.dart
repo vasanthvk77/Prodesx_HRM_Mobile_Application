@@ -17,6 +17,7 @@ import '../widgets/org_dropdown.dart';
 import '../providers/navigation_provider.dart';
 import '../widgets/custom_snackbar.dart';
 import '../widgets/custom_pagination.dart';
+import '../widgets/hrm_search_toolbar.dart';
 
 
 class EmployeeListScreen extends ConsumerStatefulWidget {
@@ -222,23 +223,10 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                     if (isIOS) ...[
                       CupertinoButton(
                         padding: EdgeInsets.zero,
-                        child: const Icon(CupertinoIcons.bars, size: 22),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
                         child: const Icon(CupertinoIcons.back, size: 22),
                         onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
                       ),
                     ] else ...[
-                      Builder(
-                        builder: (context) {
-                          return MediaQuery.of(context).size.width >= 900 ? const SizedBox.shrink() : IconButton(
-                            icon: const Icon(Icons.menu, color: Colors.white),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          );
-                        },
-                      ),
                       IconButton(
                         icon: Icon(Icons.arrow_back, color: theme.iconTheme.color, size: 20),
                         onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
@@ -313,84 +301,88 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
   }
 
   Widget _buildFilterBar(BuildContext context) {
-    final theme = Theme.of(context);
-    final bool isDesktop = MediaQuery.of(context).size.width >= 900;
-    
-    Widget buildOrgDropdown() => _organizations.isNotEmpty ? OrgDropdown(
-      value: _selectedOrgId?.toString(),
-      items: _organizations.map((org) => OrgDropdownItem(id: org.id.toString(), name: org.name, logoUrl: org.logoUrl)).toList(),
-      onChanged: (val) {
-        if (val == null || val == _selectedOrgId?.toString()) return;
-        final id = int.parse(val);
-        setState(() { _selectedOrgId = id; _selectedOrgName = _organizations.firstWhere((o) => o.id == id).name; _selectedDesignationId = null; _selectedDepartmentId = null; });
-        _loadEmployees();
-      },
-      isCompact: true,
-      showLabel: true,
-    ) : const SizedBox.shrink();
-
-    Widget buildDesigDrop() => _buildCompactDropdown<int?>(label: 'Designation', value: _selectedDesignationId, items: [const DropdownMenuItem(value: null, child: Text('All')), ..._designations.map((d) => DropdownMenuItem(value: d.id, child: Text(d.designationName)))], onChanged: (val) => setState(() { _selectedDesignationId = val; _applyFilters(); }));
-    Widget buildDeptDrop() => _buildCompactDropdown<int?>(label: 'Department', value: _selectedDepartmentId, items: [const DropdownMenuItem(value: null, child: Text('All')), ..._departments.map((d) => DropdownMenuItem(value: d.id, child: Text(d.departmentName)))], onChanged: (val) => setState(() { _selectedDepartmentId = val; _applyFilters(); }));
-    
-    Widget buildSearch() => Container(height: 36, decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(8), border: Border.all(color: theme.dividerColor.withOpacity(0.1))), child: TextField(controller: _searchController, onChanged: (val) => setState(() { _searchQuery = val; _applyFilters(); }), style: theme.textTheme.bodyMedium, decoration: InputDecoration(hintText: 'Start typing to search', hintStyle: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)), prefixIcon: Icon(Icons.search, color: theme.iconTheme.color?.withOpacity(0.5), size: 16), border: InputBorder.none, contentPadding: const EdgeInsets.only(top: 0, bottom: 12))));
-    Widget buildFilterBtn() => ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.filter_list, size: 16), label: const Text('Filters', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: theme.colorScheme.surface, foregroundColor: theme.colorScheme.primary, padding: const EdgeInsets.symmetric(horizontal: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: theme.dividerColor.withOpacity(0.1))), elevation: 0, minimumSize: const Size(0, 36)));
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: HRMSearchToolbar(
+        selectedOrgId: _selectedOrgId?.toString(),
+        orgItems: _organizations.map((org) => OrgDropdownItem(
+          id: org.id.toString(),
+          name: org.name,
+          logoUrl: org.logoUrl,
+        )).toList(),
+        onOrgChanged: (val) {
+          if (val == null || val == _selectedOrgId?.toString()) return;
+          final id = int.parse(val);
+          setState(() {
+            _selectedOrgId = id;
+            _selectedOrgName = _organizations.firstWhere((o) => o.id == id).name;
+            _selectedDesignationId = null;
+            _selectedDepartmentId = null;
+          });
+          _loadEmployees();
+        },
+        onSearchChanged: (val) => setState(() {
+          _searchQuery = val;
+          _applyFilters();
+        }),
+        hintText: 'Search Name, ID or Email...',
+        isOrgLoading: _isLoading && _organizations.isEmpty,
+        actions: [
+          // Designation Filter
+          _buildCompactFilter(
+            label: 'Designation',
+            value: _selectedDesignationId,
+            items: [
+              const DropdownMenuItem(value: null, child: Text('All Designations')),
+              ..._designations.map((d) => DropdownMenuItem(value: d.id, child: Text(d.designationName))),
+            ],
+            onChanged: (val) => setState(() { _selectedDesignationId = val; _applyFilters(); }),
+          ),
+          const SizedBox(width: 8),
+          // Department Filter
+          _buildCompactFilter(
+            label: 'Department',
+            value: _selectedDepartmentId,
+            items: [
+              const DropdownMenuItem(value: null, child: Text('All Departments')),
+              ..._departments.map((d) => DropdownMenuItem(value: d.id, child: Text(d.departmentName))),
+            ],
+            onChanged: (val) => setState(() { _selectedDepartmentId = val; _applyFilters(); }),
+          ),
+        ],
       ),
-      child: isDesktop ? 
-        Row(
-          children: [
-            SizedBox(width: 200, child: buildOrgDropdown()), const SizedBox(width: 12),
-            SizedBox(width: 150, child: buildDesigDrop()), const SizedBox(width: 12),
-            SizedBox(width: 150, child: buildDeptDrop()), const SizedBox(width: 24),
-            Expanded(child: buildSearch()), const SizedBox(width: 12),
-            buildFilterBtn(),
-          ],
-        ) : 
-        Column(
-          children: [
-            Row(children: [ Expanded(flex: 2, child: buildOrgDropdown()), const SizedBox(width: 8), Expanded(child: buildDesigDrop()), const SizedBox(width: 8), Expanded(child: buildDeptDrop()) ]),
-            const SizedBox(height: 12),
-            Row(children: [ Expanded(child: buildSearch()), const SizedBox(width: 12), buildFilterBtn() ]),
-          ],
-        ),
     );
   }
 
-  Widget _buildCompactDropdown<T>({required String label, required T value, required List<DropdownMenuItem<T>> items, required ValueChanged<T> onChanged}) {
+  Widget _buildCompactFilter<T>({
+    required String label,
+    required T value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T> onChanged,
+  }) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 2),
-          child: Text(label, style: theme.textTheme.labelSmall?.copyWith(fontSize: 9, fontWeight: FontWeight.bold)),
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black.withOpacity(0.2) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300,
         ),
-        Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<T>(
-              value: value,
-              items: items,
-              onChanged: (val) => onChanged(val as T),
-              dropdownColor: theme.cardColor,
-              isExpanded: true,
-              icon: Icon(Icons.arrow_drop_down, size: 16, color: theme.iconTheme.color?.withOpacity(0.5)),
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: value,
+          items: items,
+          onChanged: (val) => onChanged(val as T),
+          icon: const Icon(Icons.filter_list, size: 16),
+          style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+          hint: Text(label, style: const TextStyle(fontSize: 12)),
         ),
-      ],
+      ),
     );
   }
 

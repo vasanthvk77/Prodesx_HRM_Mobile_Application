@@ -27,9 +27,8 @@ class CustomPagination extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        border: Border(top: BorderSide(color: theme.dividerColor.withOpacity(0.5))),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -46,7 +45,7 @@ class CustomPagination extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: theme.dividerColor),
                     ),
                     child: DropdownButtonHideUnderline(
@@ -172,12 +171,12 @@ class _PageButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             border: Border.all(color: theme.dividerColor),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: onPressed != null ? theme.iconTheme.color : theme.iconTheme.color?.withOpacity(0.2), size: 18),
         ),
@@ -200,7 +199,7 @@ class _PageNumberButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           width: 32,
           height: 32,
@@ -208,7 +207,7 @@ class _PageNumberButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive ? theme.colorScheme.primary : Colors.transparent,
             border: isActive ? null : Border.all(color: theme.dividerColor),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             '$page',
