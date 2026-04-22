@@ -1,0 +1,1435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="PaySlipDs">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>99f38734-6094-4589-8a08-86cfadbfc6a5</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="PaySlipDataSet">
+      <Query>
+        <DataSourceName>PaySlipDs</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="OrgName">
+          <DataField>OrgName</DataField>
+        </Field>
+        <Field Name="OrgAddress">
+          <DataField>OrgAddress</DataField>
+        </Field>
+        <Field Name="MonthYear">
+          <DataField>MonthYear</DataField>
+        </Field>
+        <Field Name="EmpName">
+          <DataField>EmpName</DataField>
+        </Field>
+        <Field Name="EmpCode">
+          <DataField>EmpCode</DataField>
+        </Field>
+        <Field Name="Designation">
+          <DataField>Designation</DataField>
+        </Field>
+        <Field Name="Department">
+          <DataField>Department</DataField>
+        </Field>
+        <Field Name="Doj">
+          <DataField>Doj</DataField>
+        </Field>
+        <Field Name="PfNo">
+          <DataField>PfNo</DataField>
+        </Field>
+        <Field Name="EsiNo">
+          <DataField>EsiNo</DataField>
+        </Field>
+        <Field Name="BankName">
+          <DataField>BankName</DataField>
+        </Field>
+        <Field Name="AccNo">
+          <DataField>AccNo</DataField>
+        </Field>
+        <Field Name="Ifsc">
+          <DataField>Ifsc</DataField>
+        </Field>
+        <Field Name="TotalDays">
+          <DataField>TotalDays</DataField>
+        </Field>
+        <Field Name="PresentDays">
+          <DataField>PresentDays</DataField>
+        </Field>
+        <Field Name="BasicPay">
+          <DataField>BasicPay</DataField>
+        </Field>
+        <Field Name="EarnedBasic">
+          <DataField>EarnedBasic</DataField>
+        </Field>
+        <Field Name="GrossEarnings">
+          <DataField>GrossEarnings</DataField>
+        </Field>
+        <Field Name="FullGrossEarnings">
+          <DataField>FullGrossEarnings</DataField>
+        </Field>
+        <Field Name="GrossDeduction">
+          <DataField>GrossDeduction</DataField>
+        </Field>
+        <Field Name="NetSalary">
+          <DataField>NetSalary</DataField>
+        </Field>
+        <Field Name="EarningsList">
+          <DataField>EarningsList</DataField>
+        </Field>
+        <Field Name="DeductionsList">
+          <DataField>DeductionsList</DataField>
+        </Field>
+        <Field Name="EarnParticulars">
+          <DataField>EarnParticulars</DataField>
+        </Field>
+        <Field Name="EarnFull">
+          <DataField>EarnFull</DataField>
+        </Field>
+        <Field Name="EarnActual">
+          <DataField>EarnActual</DataField>
+        </Field>
+        <Field Name="DedParticulars">
+          <DataField>DedParticulars</DataField>
+        </Field>
+        <Field Name="DedAmount">
+          <DataField>DedAmount</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="HeaderTitle">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>PAY SLIP FOR THE MONTH OF  </Value>
+                    <Style>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!MonthYear.Value, "PaySlipDataSet")</Value>
+                    <Style>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.09111in</Top>
+            <Height>0.27in</Height>
+            <Width>7.5in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>4pt</PaddingLeft>
+              <PaddingRight>4pt</PaddingRight>
+              <PaddingTop>4pt</PaddingTop>
+              <PaddingBottom>4pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Rectangle Name="InfoGrid">
+            <ReportItems>
+              <Textbox Name="l1">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Name :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.06056in</Top>
+                <Left>0.08889in</Left>
+                <Height>0.28944in</Height>
+                <Width>1.4in</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v9">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!TotalDays.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>1.19333in</Top>
+                <Left>1.48889in</Left>
+                <Height>0.29278in</Height>
+                <Width>2.1in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <TextAlign>Right</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l9">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Total Days :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>1.19333in</Top>
+                <Left>0.08889in</Left>
+                <Height>0.29278in</Height>
+                <Width>1.4in</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v8">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EsiNo.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.915in</Top>
+                <Left>4.85833in</Left>
+                <Height>0.27833in</Height>
+                <Width>2.21111in</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l8">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>ESI No :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.915in</Top>
+                <Left>3.65833in</Left>
+                <Height>0.27333in</Height>
+                <Width>1.18611in</Width>
+                <ZIndex>4</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v7">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!PfNo.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.915in</Top>
+                <Left>1.48889in</Left>
+                <Height>0.27333in</Height>
+                <Width>2.1in</Width>
+                <ZIndex>5</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l7">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>PF No :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.915in</Top>
+                <Left>0.08889in</Left>
+                <Height>0.27333in</Height>
+                <Width>1.4in</Width>
+                <ZIndex>6</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v6">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!AccNo.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.65333in</Top>
+                <Left>4.85833in</Left>
+                <Height>0.26167in</Height>
+                <Width>2.21111in</Width>
+                <ZIndex>7</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l6">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Bank A/c No :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.65333in</Top>
+                <Left>3.65833in</Left>
+                <Height>0.26167in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>8</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v5">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Doj.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.65333in</Top>
+                <Left>1.48889in</Left>
+                <Height>0.26167in</Height>
+                <Width>2.1in</Width>
+                <ZIndex>9</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l5">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>DOJ :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.65333in</Top>
+                <Left>0.08889in</Left>
+                <Height>0.26167in</Height>
+                <Width>1.4in</Width>
+                <ZIndex>10</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v4">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Designation.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.35in</Top>
+                <Left>4.85833in</Left>
+                <Height>0.28944in</Height>
+                <Width>2.21111in</Width>
+                <ZIndex>11</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l4">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Designation :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.35in</Top>
+                <Left>3.65833in</Left>
+                <Height>0.28944in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>12</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v3">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Department.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.35in</Top>
+                <Left>1.48889in</Left>
+                <Height>0.30333in</Height>
+                <Width>2.1in</Width>
+                <ZIndex>13</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l3">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Department :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.35in</Top>
+                <Left>0.08889in</Left>
+                <Height>0.30333in</Height>
+                <Width>1.4in</Width>
+                <ZIndex>14</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v2">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EmpCode.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.06056in</Top>
+                <Left>4.85833in</Left>
+                <Height>0.26167in</Height>
+                <Width>2.21111in</Width>
+                <ZIndex>15</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l2">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Staff Id :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.06056in</Top>
+                <Left>3.65833in</Left>
+                <Height>0.27556in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>16</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="l10">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Present Days :</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>1.19333in</Top>
+                <Left>3.65833in</Left>
+                <Height>0.29278in</Height>
+                <Width>1.18611in</Width>
+                <ZIndex>17</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v10">
+                <CanShrink>true</CanShrink>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!PresentDays.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>1.19333in</Top>
+                <Left>4.84444in</Left>
+                <Height>0.29278in</Height>
+                <Width>2.225in</Width>
+                <ZIndex>18</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <TextAlign>Right</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="v1">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EmpName.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.06056in</Top>
+                <Left>1.48889in</Left>
+                <Height>0.28944in</Height>
+                <Width>2.1in</Width>
+                <ZIndex>19</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <Top>0.43056in</Top>
+            <Left>0.16111in</Left>
+            <Height>1.52778in</Height>
+            <Width>7.23889in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>Solid</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="EarningsArea">
+            <ReportItems>
+              <Textbox Name="h1">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>PARTICULARS</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Height>0.39722in</Height>
+                <Width>1.6in</Width>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <BottomBorder>
+                    <Style>None</Style>
+                  </BottomBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="h2">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Amount Rs.</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>1.6in</Left>
+                <Height>0.20556in</Height>
+                <Width>1.61389in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                </Style>
+              </Textbox>
+              <Textbox Name="h3">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>FULL</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.20556in</Top>
+                <Left>1.6in</Left>
+                <Height>0.19167in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <BottomBorder>
+                    <Style>None</Style>
+                  </BottomBorder>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="h4">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>EARNED</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.20556in</Top>
+                <Left>2.4in</Left>
+                <Height>0.19167in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <BottomBorder>
+                    <Style>None</Style>
+                  </BottomBorder>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vEarnPart">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EarnParticulars.Value, "PaySlipDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.39723in</Top>
+                <Height>2.31666in</Height>
+                <Width>1.6in</Width>
+                <ZIndex>4</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingTop>4pt</PaddingTop>
+                </Style>
+              </Textbox>
+              <Textbox Name="vEarnFull">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EarnFull.Value, "PaySlipDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Right</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.39723in</Top>
+                <Left>1.6in</Left>
+                <Height>2.31666in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>40</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                </Style>
+              </Textbox>
+              <Textbox Name="vEarnAct">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!EarnActual.Value, "PaySlipDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Right</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.39723in</Top>
+                <Left>2.4in</Left>
+                <Height>2.31666in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>41</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <PaddingRight>10pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                </Style>
+              </Textbox>
+              <Textbox Name="lGrEarn">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Gross Earnings</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>2.71389in</Top>
+                <Height>0.3in</Height>
+                <Width>1.6in</Width>
+                <ZIndex>5</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <TopBorder>
+                    <Style>None</Style>
+                  </TopBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vGrEarnFull">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!FullGrossEarnings.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Right</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>2.71389in</Top>
+                <Left>1.6in</Left>
+                <Height>0.3in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>6</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <TopBorder>
+                    <Style>None</Style>
+                  </TopBorder>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <Format>N2</Format>
+                  <TextAlign>Right</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vGrEarnAct">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!GrossEarnings.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Right</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>2.71389in</Top>
+                <Left>2.4in</Left>
+                <Height>0.3in</Height>
+                <Width>0.8in</Width>
+                <ZIndex>60</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <TopBorder>
+                    <Style>None</Style>
+                  </TopBorder>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <Format>N2</Format>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingRight>10pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <Top>2.11667in</Top>
+            <Left>0.51943in</Left>
+            <Height>3.01389in</Height>
+            <Width>3.21389in</Width>
+            <ZIndex>2</ZIndex>
+            <Style />
+          </Rectangle>
+          <Rectangle Name="DeductionArea">
+            <ReportItems>
+              <Textbox Name="h5">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>DEDUCTIONS</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>0.00003cm</Left>
+                <Height>0.38333in</Height>
+                <Width>1.8in</Width>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <BottomBorder>
+                    <Style>None</Style>
+                  </BottomBorder>
+                  <RightBorder>
+                    <Style>None</Style>
+                  </RightBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="h6">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Amount Rs.</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>1.8in</Left>
+                <Height>0.36945in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <BottomBorder>
+                    <Style>None</Style>
+                  </BottomBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vDedPart">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!DedParticulars.Value, "PaySlipDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.38333in</Top>
+                <Height>2.33056in</Height>
+                <Width>1.8in</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingTop>4pt</PaddingTop>
+                </Style>
+              </Textbox>
+              <Textbox Name="vDedAmt">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!DedAmount.Value, "PaySlipDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Right</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <Top>0.38333in</Top>
+                <Left>1.8in</Left>
+                <Height>2.33056in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>20</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <PaddingRight>10pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                </Style>
+              </Textbox>
+              <Textbox Name="lGrDed">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Gross Deduction</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>2.71389in</Top>
+                <Height>0.3in</Height>
+                <Width>1.8in</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <TopBorder>
+                    <Style>None</Style>
+                  </TopBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vGrDed">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!GrossDeduction.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>2.71389in</Top>
+                <Left>1.8in</Left>
+                <Height>0.3in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>4</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <TopBorder>
+                    <Style>None</Style>
+                  </TopBorder>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <Format>N2</Format>
+                  <TextAlign>Right</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <Top>2.11667in</Top>
+            <Left>3.81943in</Left>
+            <Height>3.01389in</Height>
+            <Width>3in</Width>
+            <ZIndex>3</ZIndex>
+            <Style />
+          </Rectangle>
+          <Rectangle Name="SummaryBoxes">
+            <ReportItems>
+              <Textbox Name="lActual">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Actual Salary</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Height>0.3in</Height>
+                <Width>1.2in</Width>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vNetSalaryValue">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!NetSalary.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>3.75556in</Left>
+                <Height>0.3in</Height>
+                <Width>1.3in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <Format>N2</Format>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="lNetSalaryTag">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Net Salary</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>2.55556in</Left>
+                <Height>0.3in</Height>
+                <Width>1.2in</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <FontWeight>Bold</FontWeight>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="vActualValue">
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!GrossEarnings.Value, "PaySlipDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Left>1.2in</Left>
+                <Height>0.3in</Height>
+                <Width>1.25556in</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                  <LeftBorder>
+                    <Style>None</Style>
+                  </LeftBorder>
+                  <FontWeight>Bold</FontWeight>
+                  <Format>N2</Format>
+                  <TextAlign>Center</TextAlign>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>4pt</PaddingLeft>
+                  <PaddingRight>4pt</PaddingRight>
+                  <PaddingTop>4pt</PaddingTop>
+                  <PaddingBottom>4pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <Top>5.2in</Top>
+            <Left>1.26388in</Left>
+            <Height>0.3in</Height>
+            <Width>5.05556in</Width>
+            <ZIndex>4</ZIndex>
+            <Style />
+          </Rectangle>
+        </ReportItems>
+        <Height>5.5in</Height>
+        <Style />
+      </Body>
+      <Width>7.5in</Width>
+      <Page>
+        <PageHeight>11.69in</PageHeight>
+        <PageWidth>8.27in</PageWidth>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
+        <TopMargin>0.5in</TopMargin>
+        <BottomMargin>0.5in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>f6b53c0f-c383-424b-ae9d-e29924cdfe88</rd:ReportID>
+</Report>

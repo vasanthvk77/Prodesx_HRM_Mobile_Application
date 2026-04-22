@@ -49,6 +49,8 @@ class _OTManagementScreenState extends ConsumerState<OTManagementScreen> {
     final accent = const Color(0xFF3182ce); // React primary
     final textSecondary = isDark ? Colors.white70 : Colors.black54;
 
+    final isDesktop = MediaQuery.of(context).size.width >= 900;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -62,45 +64,42 @@ class _OTManagementScreenState extends ConsumerState<OTManagementScreen> {
             // ── Premium Custom Header ───────────────────────────────────
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: isIOS ? (isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.9)) : theme.cardColor,
+              color: isIOS
+                  ? (isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.9))
+                  : theme.cardColor,
               child: SafeArea(
                 bottom: false,
                 child: Row(
                   children: [
-                    if (isIOS) ...[
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: const Icon(CupertinoIcons.back, size: 22),
-                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.iconTheme.color,
+                        size: 20,
                       ),
-                    ] else ...[
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: theme.iconTheme.color, size: 20),
-                        onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
-                      ),
-                    ],
+                      onPressed: () => ref
+                          .read(navigationProvider.notifier)
+                          .setHRManagementContent(null),
+                    ),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Employee OT Management',
-                            style: isIOS 
-                                ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)
-                                : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'Manage employee over duty records',
-                            style: TextStyle(fontSize: 10, color: textSecondary, fontWeight: FontWeight.w500),
-                          ),
-                        ],
+                      child: Text(
+                        'Employee OT Management',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900, // Extra bold
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
-                    if (state.isLoading) 
-                      isIOS 
-                          ? const CupertinoActivityIndicator()
-                          : const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.blue)),
+                    if (state.isLoading)
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.blue,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -109,35 +108,26 @@ class _OTManagementScreenState extends ConsumerState<OTManagementScreen> {
             // ── Desktop/Tablet Action Bar (Optional) ────────────────────
             if (isAdminOrAbove)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
-                    isIOS 
-                        ? CupertinoButton.filled(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            minSize: 0,
-                            borderRadius: BorderRadius.circular(8),
-                            onPressed: () => _openModal(context),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(CupertinoIcons.add, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Add OT Entry', style: TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                          )
-                        : ElevatedButton.icon(
-                            onPressed: () => _openModal(context),
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add OT Entry'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: accent,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ),
+                    ElevatedButton.icon(
+                      onPressed: () => _openModal(context),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Add OT Entry'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade600,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -169,7 +159,9 @@ class _OTManagementScreenState extends ConsumerState<OTManagementScreen> {
             Expanded(
               child: state.isLoading && state.paginated.isEmpty
                   ? const Center(child: CircularProgressIndicator(color: Colors.blue))
-                  : _buildDataTable(state, theme, border, isDark, isAdminOrAbove),
+                  : isDesktop 
+                      ? _buildDesktopTable(state, theme, border, isDark, isAdminOrAbove)
+                      : _buildMobileCards(state, theme, border, isDark, isAdminOrAbove),
             ),
 
             if (state.filtered.isNotEmpty)
@@ -186,122 +178,243 @@ class _OTManagementScreenState extends ConsumerState<OTManagementScreen> {
     );
   }
 
-Widget _infoBlock(String label, String value, {Color? valueColor}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: const TextStyle(fontSize: 10, color: Colors.grey),
-      ),
-      const SizedBox(height: 2),
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: valueColor ?? Colors.white,
+  Widget _infoBlock(String label, String value, bool isDark, {Color? valueColor}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w600),
         ),
-      ),
-    ],
-  );
-}
-Widget _buildDataTable(OTState state, ThemeData theme, Color border, bool isDark, bool isAdminOrAbove) {
-  if (state.paginated.isEmpty) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.hourglass_empty, size: 48, color: isDark ? Colors.white24 : Colors.grey.shade300),
-          const SizedBox(height: 12),
-          const Text('No OT records found', style: TextStyle(color: Colors.grey)),
-        ],
-      ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: valueColor ?? (isDark ? Colors.white : Colors.black87),
+          ),
+        ),
+      ],
     );
   }
-
-  return ListView.separated(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-    itemCount: state.paginated.length,
-    separatorBuilder: (_, __) => const SizedBox(height: 10),
-    itemBuilder: (context, i) {
-      final r = state.paginated[i];
-
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: border),
-        ),
+  Widget _buildMobileCards(OTState state, ThemeData theme, Color border, bool isDark, bool isAdminOrAbove) {
+    if (state.paginated.isEmpty) {
+      return Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            
-            // 🔹 Top Row (Profile + Name + Action)
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundImage: (r.profilePictureUrl != null && r.profilePictureUrl!.isNotEmpty)
-                      ? NetworkImage(ApiConfig.getFullImageUrl(r.profilePictureUrl))
-                      : null,
-                  child: (r.profilePictureUrl == null || r.profilePictureUrl!.isEmpty)
-                      ? Text(r.employeeName?[0] ?? '?', style: const TextStyle(fontSize: 12))
-                      : null,
-                ),
-                const SizedBox(width: 10),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        r.employeeName ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'ID: ${r.employeeCode ?? 'N/A'}',
-                        style: const TextStyle(fontSize: 11, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-
-                if (isAdminOrAbove)
-                  _buildActionMenu(context, r),
-              ],
-            ),
-
+            Icon(Icons.hourglass_empty, size: 48, color: isDark ? Colors.white24 : Colors.grey.shade300),
             const SizedBox(height: 12),
-
-            // 🔹 Info Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _infoBlock(
-                  'Date',
-                  DateFormat('dd-MM-yyyy').format(r.overDutyDate),
-                ),
-                _infoBlock(
-                  'Hours',
-                  r.hours.toString(),
-                  valueColor: const Color(0xFF3182ce),
-                ),
-                _infoBlock(
-                  'Amount',
-                  '₹${NumberFormat('#,##,###').format(r.amount)}',
-                  valueColor: const Color(0xFF0d9488),
-                ),
-              ],
-            ),
+            const Text('No OT records found', style: TextStyle(color: Colors.grey)),
           ],
         ),
       );
-    },
-  );
-}
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: state.paginated.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, i) {
+        final r = state.paginated[i];
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.cardTheme.color,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: border),
+            boxShadow: [
+              if (!isDark)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.blue.shade50,
+                    backgroundImage: (r.profilePictureUrl != null && r.profilePictureUrl!.isNotEmpty)
+                        ? NetworkImage(ApiConfig.getFullImageUrl(r.profilePictureUrl))
+                        : null,
+                    child: (r.profilePictureUrl == null || r.profilePictureUrl!.isEmpty)
+                        ? Text(r.employeeName?[0] ?? '?', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold))
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          r.employeeName ?? '',
+                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                        ),
+                        Text(
+                          'ID: ${r.employeeCode ?? 'N/A'}',
+                          style: const TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isAdminOrAbove) _buildActionMenu(context, r),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _infoBlock('DATE', DateFormat('dd-MMM-yy').format(r.overDutyDate), isDark),
+                  _infoBlock('HOURS', r.hours.toString(), isDark, valueColor: Colors.blue.shade600),
+                  _infoBlock('AMOUNT', '₹${NumberFormat('#,##,###').format(r.amount)}', isDark, valueColor: const Color(0xFF0d9488)),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDesktopTable(OTState state, ThemeData theme, Color border, bool isDark, bool isAdminOrAbove) {
+    if (state.paginated.isEmpty) return const Center(child: Text('No records found'));
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tableWidth = constraints.maxWidth > 1000 ? constraints.maxWidth : 1000.0;
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.4 : 0.04),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: tableWidth,
+              child: Column(
+                children: [
+                  // Header Row
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        _headerCell(state, 'EMPLOYEE', 0, expanded: true, sortKey: 'employeeName'),
+                        _headerCell(state, 'DATE', 150, sortKey: 'overDutyDate'),
+                        _headerCell(state, 'HOURS', 120, align: Alignment.center, sortKey: 'hours'),
+                        _headerCell(state, 'AMOUNT', 150, align: Alignment.centerRight, sortKey: 'amount'),
+                        if (isAdminOrAbove)
+                          const SizedBox(
+                            width: 100,
+                            child: Text(
+                              'ACTION',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF475569),
+                                letterSpacing: 0.8,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1, color: border),
+                  // Body
+                  Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: state.paginated.length,
+                      separatorBuilder: (_, __) => Divider(height: 1, color: border),
+                      itemBuilder: (context, i) {
+                        final r = state.paginated[i];
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor: Colors.blue.shade50,
+                                      backgroundImage: (r.profilePictureUrl != null && r.profilePictureUrl!.isNotEmpty)
+                                          ? NetworkImage(ApiConfig.getFullImageUrl(r.profilePictureUrl))
+                                          : null,
+                                      child: (r.profilePictureUrl == null || r.profilePictureUrl!.isEmpty)
+                                          ? Text(r.employeeName?[0] ?? '?', style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 12))
+                                          : null,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(r.employeeName ?? '', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5)),
+                                          Text('ID: ${r.employeeCode ?? 'N/A'}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 150,
+                                child: Text(DateFormat('dd-MMM-yyyy').format(r.overDutyDate), style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500)),
+                              ),
+                              Container(
+                                width: 120,
+                                alignment: Alignment.center,
+                                child: Text(r.hours.toString(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.blue.shade600)),
+                              ),
+                              Container(
+                                width: 150,
+                                alignment: Alignment.centerRight,
+                                child: Text('₹${NumberFormat('#,##,###').format(r.amount)}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: Color(0xFF0d9488))),
+                              ),
+                              if (isAdminOrAbove)
+                                SizedBox(
+                                  width: 100,
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: _buildActionMenu(context, r),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   Widget _headerCell(OTState state, String label, double width, {bool expanded = false, Alignment align = Alignment.centerLeft, String? sortKey}) {
     final active = state.sortKey == sortKey;
     final widget = InkWell(
@@ -317,9 +430,9 @@ Widget _buildDataTable(OTState state, ThemeData theme, Color border, bool isDark
               label.toUpperCase(),
               style: TextStyle(
                 fontSize: 10,
-                fontWeight: FontWeight.w800,
-                color: active ? const Color(0xFF3182ce) : Colors.grey,
-                letterSpacing: 0.5,
+                fontWeight: FontWeight.w900, // Extra bold
+                color: active ? Colors.blue.shade600 : const Color(0xFF475569),
+                letterSpacing: 0.8,
               ),
             ),
             if (active) ...[
@@ -327,7 +440,7 @@ Widget _buildDataTable(OTState state, ThemeData theme, Color border, bool isDark
               Icon(
                 state.sortDirection == 'asc' ? Icons.arrow_upward : Icons.arrow_downward,
                 size: 10,
-                color: const Color(0xFF3182ce),
+                color: Colors.blue.shade600,
               ),
             ],
           ],
@@ -348,15 +461,40 @@ Widget _buildDataTable(OTState state, ThemeData theme, Color border, bool isDark
   }
 
   Widget _buildActionMenu(BuildContext context, OvertimeRecord r) {
+    final theme = Theme.of(context);
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert, size: 18, color: Colors.grey),
+      icon: Icon(Icons.more_vert, color: theme.iconTheme.color?.withOpacity(0.5), size: 20),
+      color: theme.cardColor,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: theme.dividerColor)),
+      offset: const Offset(0, 40),
       onSelected: (v) {
         if (v == 'edit') _openModal(context, editData: r);
         if (v == 'delete') _confirmDelete(context, r);
       },
       itemBuilder: (ctx) => [
-        const PopupMenuItem(value: 'edit', child: Text('Edit Entry', style: TextStyle(fontSize: 13))),
-        const PopupMenuItem(value: 'delete', child: Text('Delete Entry', style: TextStyle(fontSize: 13, color: Colors.red))),
+        PopupMenuItem(
+          value: 'edit',
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Icon(Icons.edit_outlined, color: theme.colorScheme.primary, size: 18),
+              const SizedBox(width: 12),
+              const Text('Edit Entry', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+              const SizedBox(width: 12),
+              const Text('Delete Entry', style: TextStyle(fontSize: 13, color: Colors.redAccent, fontWeight: FontWeight.w500)),
+            ],
+          ),
+        ),
       ],
     );
   }

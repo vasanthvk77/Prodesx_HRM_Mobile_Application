@@ -40,6 +40,11 @@ public class Employee
     public int? DepartmentId { get; set; }
     public int? DesignationId { get; set; }
     public EmployeeAccountDetails? BankDetails { get; set; }
+
+    // Flattened Bank Details for Exports
+    public string? AccountNumber { get; set; }
+    public string? BankName { get; set; }
+    public string? IfscCode { get; set; }
 }
 
 public class CreateEmployeeRequest

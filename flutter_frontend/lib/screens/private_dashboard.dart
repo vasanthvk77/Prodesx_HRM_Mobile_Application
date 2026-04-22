@@ -647,14 +647,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
               children: [
                 _buildStatsGrid(crossAxisCount: 3),
                 const SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildWeekTimelogs()),
-                    const SizedBox(width: 20),
-                    Expanded(child: _buildTickets()),
-                  ],
-                ),
+                _buildWeekTimelogs(),
                 const SizedBox(height: 20),
                 _buildCalendarWidget(),
               ],
@@ -687,6 +680,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
               color: isIOS 
                 ? (isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7))
                 : Theme.of(context).cardTheme.color,
+              borderRadius: BorderRadius.circular(isIOS ? 20 : 16),
               border: Border.all(
                 color: isIOS 
                   ? (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))
@@ -813,6 +807,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
           {'val': totalDeals, 'label': 'Total Deals', 'color': Colors.blue},
           {'val': convertedDeals, 'label': 'Converted Deals', 'color': Colors.green},
         ]),
+        _buildTickets(),
       ],
     );
   }
@@ -838,6 +833,7 @@ class _PrivateDashboardState extends ConsumerState<PrivateDashboard> {
               color: isIOS 
                 ? (isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7))
                 : Theme.of(context).cardTheme.color,
+              borderRadius: BorderRadius.circular(isIOS ? 18 : 16),
               border: Border.all(
                 color: isIOS 
                   ? (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))

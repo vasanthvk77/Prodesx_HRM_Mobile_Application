@@ -316,12 +316,23 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                     if (isIOS) ...[
                       CupertinoButton(
                         padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.bars, size: 22),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
                         child: const Icon(CupertinoIcons.back, size: 22),
                         onPressed: () => ref
                             .read(navigationProvider.notifier)
                             .setHRManagementContent(null),
                       ),
                     ] else ...[
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.blueAccent),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
+                      ),
                       IconButton(
                         icon: Icon(
                           Icons.arrow_back,
@@ -342,7 +353,9 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                                 fontWeight: FontWeight.w600,
                               )
                             : theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w900, // Extra bold
+                                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                letterSpacing: 0.5,
                               ),
                       ),
                     ),
@@ -354,7 +367,7 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: Colors.blue,
                               ),
                             ),
                   ],
@@ -370,7 +383,9 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                 onOrgChanged: (id) {
                   setState(() {
                     _selectedOrgId = id;
-                    _selectedOrgName = _organizations.firstWhere((o) => o.id == id).name;
+                    _selectedOrgName = _organizations
+                        .firstWhere((o) => o.id == id)
+                        .name;
                   });
                   _loadDepartments();
                 },
@@ -383,37 +398,79 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                 hintText: 'Search departments...',
                 isOrgLoading: _isLoading && _organizations.isEmpty,
                 actions: [
-                  // Parent Filter
-                  _buildCompactFilter(
-                    label: 'Parent',
-                    value: _parentFilter,
-                    items: _getParentOptions().map((opt) {
-                      return DropdownMenuItem(value: opt, child: Text(opt));
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _parentFilter = val;
-                        _applyFilters();
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  // View Toggle
+                  // Hierarchy Toggle
                   Container(
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.black.withOpacity(0.2) : theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isDark ? Colors.white.withOpacity(0.05) : theme.dividerColor.withOpacity(0.1),
+                        color: theme.dividerColor.withOpacity(0.1),
                       ),
+                      boxShadow: [
+                        if (!isDark)
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _viewToggleIcon(Icons.list, !_isHierarchyView, () => setState(() => _isHierarchyView = false)),
-                        _viewToggleIcon(Icons.account_tree_outlined, _isHierarchyView, () => setState(() => _isHierarchyView = true)),
+                        _viewToggleIcon(
+                          Icons.list,
+                          !_isHierarchyView,
+                          () => setState(() => _isHierarchyView = false),
+                        ),
+                        _viewToggleIcon(
+                          Icons.account_tree_outlined,
+                          _isHierarchyView,
+                          () => setState(() => _isHierarchyView = true),
+                        ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Parent Filter
+                  Container(
+                    height: 36,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: theme.dividerColor.withOpacity(0.1),
+                      ),
+                      boxShadow: [
+                        if (!isDark)
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                      ],
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _parentFilter,
+                        dropdownColor: theme.cardColor,
+                        icon: const Icon(Icons.filter_list, size: 14),
+                        style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                        items: _getParentOptions().map((opt) {
+                          return DropdownMenuItem(
+                            value: opt,
+                            child: Text(opt),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            _parentFilter = val!;
+                            _applyFilters();
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -455,10 +512,12 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
                               backgroundColor: Colors.blue.shade600,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
+                                horizontal: 16,
+                                vertical: 14,
                               ),
+                              elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
@@ -571,174 +630,230 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
   Widget _buildDesktopTable(double availableWidth, ThemeData theme) {
     final isDark = theme.brightness == Brightness.dark;
     final border = isDark ? Colors.white.withOpacity(0.05) : theme.dividerColor.withOpacity(0.1);
+    final tableWidth = availableWidth > 1000 ? availableWidth : 1000.0;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          // Header Row
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 40,
-                  child: Icon(
-                    Icons.check_box_outline_blank,
-                    color: theme.iconTheme.color?.withOpacity(0.2),
-                    size: 18,
-                  ),
-                ),
-                Expanded(flex: 4, child: _buildSortableHeader('NAME', theme)),
-                Expanded(
-                  flex: 4,
-                  child: _buildSortableHeader('PARENT DEPARTMENT', theme),
-                ),
-                const SizedBox(
-                  width: 120,
-                  child: Text(
-                    'ACTION',
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 0.5),
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: border),
-          // Body
-          Expanded(
-            child: ListView.separated(
-              itemCount: _paginatedDepartments.length,
-              separatorBuilder: (_, __) => Divider(height: 1, color: border),
-              itemBuilder: (context, index) {
-                final d = _paginatedDepartments[index];
-                final isSelected = _selectedIds.contains(d.id);
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        child: Checkbox(
-                          value: isSelected,
-                          onChanged: (val) {
-                            setState(() {
-                              if (val == true)
-                                _selectedIds.add(d.id);
-                              else
-                                _selectedIds.remove(d.id);
-                            });
-                          },
-                          side: BorderSide(color: border),
-                          activeColor: theme.colorScheme.primary,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          d.departmentName,
-                          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          d.parentDepartmentName ?? '-',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 120,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () => _navigateToForm(d),
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                side: const BorderSide(color: Colors.white12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text(
-                                'View',
-                                style: TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Theme(
-                              data: theme.copyWith(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                              ),
-                              child: PopupMenuButton<String>(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: theme.iconTheme.color?.withOpacity(0.5),
-                                  size: 18,
-                                ),
-                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  side: BorderSide(color: border),
-                                ),
-                                offset: const Offset(0, 30),
-                                onSelected: (val) {
-                                  if (val == 'edit')
-                                    _navigateToForm(d);
-                                  else if (val == 'delete')
-                                    _handleDelete(d.id);
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: 'edit',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.edit_outlined, color: theme.colorScheme.primary, size: 16),
-                                        const SizedBox(width: 10),
-                                        Text('Edit', style: theme.textTheme.bodyMedium),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'delete',
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.delete_outline, color: Colors.redAccent, size: 16),
-                                        const SizedBox(width: 10),
-                                        Text('Delete',
-                                            style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent)),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+        borderRadius: BorderRadius.circular(20), // Premium rounding
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.04), // Soft shadow
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          width: tableWidth,
+          child: Column(
+            children: [
+              // Header Row
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      child: Checkbox(
+                        value: _selectedIds.length == _filteredDepartments.length && _filteredDepartments.isNotEmpty,
+                        onChanged: (val) {
+                          setState(() {
+                            if (val == true) {
+                              _selectedIds.addAll(_filteredDepartments.map((d) => d.id));
+                            } else {
+                              _selectedIds.clear();
+                            }
+                          });
+                        },
+                        side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+                        activeColor: theme.colorScheme.primary,
+                      ),
+                    ),
+                    Expanded(flex: 4, child: _buildSortableHeader('NAME', theme)),
+                    Expanded(
+                      flex: 4,
+                      child: _buildSortableHeader('PARENT DEPARTMENT', theme),
+                    ),
+                    const SizedBox(
+                      width: 120,
+                      child: Text(
+                        'ACTION',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF475569),
+                          letterSpacing: 0.8,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(height: 1, color: border),
+              // Body
+              Expanded(
+              child: ListView.separated(
+                itemCount: _paginatedDepartments.length,
+                separatorBuilder: (context, index) => Divider(height: 1, color: border),
+                itemBuilder: (context, index) {
+                  final d = _paginatedDepartments[index];
+                  final isSelected = _selectedIds.contains(d.id);
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    color: isSelected ? theme.colorScheme.primary.withOpacity(0.05) : Colors.transparent,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Checkbox(
+                            value: isSelected,
+                            onChanged: (val) {
+                              setState(() {
+                                if (val == true)
+                                  _selectedIds.add(d.id);
+                                else
+                                  _selectedIds.remove(d.id);
+                              });
+                            },
+                            side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+                            activeColor: theme.colorScheme.primary,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            d.departmentName,
+                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            d.parentDepartmentName ?? '-',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.textTheme.bodySmall?.color
+                                  ?.withOpacity(0.7),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () => _navigateToForm(d),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  side: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text(
+                                  'View',
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white70 : Colors.black54,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              _buildActionMenu(d, theme),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+  Widget _buildActionMenu(Department d, ThemeData theme) {
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_vert,
+        color: theme.iconTheme.color?.withOpacity(0.5),
+        size: 20,
+      ),
+      color: theme.cardColor,
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: theme.dividerColor),
+      ),
+      offset: const Offset(0, 40),
+      onSelected: (val) {
+        if (val == 'edit')
+          _navigateToForm(d);
+        else if (val == 'delete')
+          _handleDelete(d.id);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'edit',
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit_outlined,
+                color: theme.colorScheme.primary,
+                size: 18,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Edit',
+                style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.delete_outline,
+                color: Colors.redAccent,
+                size: 18,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Delete',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -749,7 +864,9 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
         Text(
           title,
           style: theme.textTheme.labelSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900, // Extra bold
+            color: const Color(0xFF475569), // Darker text
+            letterSpacing: 0.8,
           ),
         ),
         const SizedBox(width: 4),
@@ -780,90 +897,30 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            d.departmentName,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            d.parentDepartmentName != null
-                                ? 'Parent: ${d.parentDepartmentName}'
-                                : 'No Parent',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                      ),
-                      child: PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: theme.iconTheme.color?.withOpacity(0.5),
-                          size: 20,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        d.departmentName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                        color: theme.cardColor,
-                        offset: const Offset(0, 40),
-                        onSelected: (val) {
-                          if (val == 'edit')
-                            _navigateToForm(d);
-                          else if (val == 'delete')
-                            _handleDelete(d.id);
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.edit_outlined,
-                                  color: theme.colorScheme.primary,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 12),
-                                Text('Edit', style: theme.textTheme.bodyLarge),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.redAccent,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Delete',
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        d.parentDepartmentName != null
+                            ? 'Parent: ${d.parentDepartmentName}'
+                            : 'No Parent',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
                 ),
+                _buildActionMenu(d, theme),
               ],
             ),
           ),
@@ -904,38 +961,6 @@ class _DepartmentListScreenState extends ConsumerState<DepartmentListScreen> {
           color: isActive
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).iconTheme.color?.withOpacity(0.4),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompactFilter<T>({
-    required String label,
-    required T value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T> onChanged,
-  }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.2) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300,
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          value: value,
-          items: items,
-          onChanged: (val) => onChanged(val as T),
-          icon: const Icon(Icons.filter_list, size: 16),
-          style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
-          hint: Text(label, style: const TextStyle(fontSize: 12)),
         ),
       ),
     );

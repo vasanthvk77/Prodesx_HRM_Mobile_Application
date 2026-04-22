@@ -2262,5 +2262,492 @@ PRINT '[Migration] Migration 53: Attendance Logs procedure added.';
 GO
 
 
+PRINT '[Migration] Migration 54: Allowances & Deductions Tables and Procedures...';
+GO
+
+-- ── Allowances Master Table ──────────────────────────────────────────────────
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Allowances')
+BEGIN 
+    CREATE TABLE Allowances (
+        AllowencesId INT IDENTITY(1,1) PRIMARY KEY,
+        OrganizationID INT NOT NULL,
+        FullName VARCHAR(100) NOT NULL,
+        ShortName VARCHAR(20) NOT NULL,
+        
+        CONSTRAINT FK_Allowances_Organization FOREIGN KEY (OrganizationID) REFERENCES organizations(id),
+        CONSTRAINT UK_Allowance_Org_ShortName UNIQUE (OrganizationID, ShortName)
+    );
+    PRINT 'Table Allowances created.';
+END
+GO
+
+-- ── Staff Allowance Assignment Table ──────────────────────────────────────────
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'StaffAllowance')
+BEGIN
+    CREATE TABLE StaffAllowance (
+        StaffAllowanceId INT IDENTITY(1,1) PRIMARY KEY,
+        AllowenceId INT NOT NULL,
+        EmployeeID INT NOT NULL,
+        CalType BIT NOT NULL, -- 0 for Percentage, 1 for Fixed
+        Amount DECIMAL(18, 2) NOT NULL,
+        CreatedBy INT NOT NULL,
+        CreatedDate DATETIME DEFAULT GETDATE(),
+        
+        CONSTRAINT FK_StaffAllowance_Allowance FOREIGN KEY (AllowenceId) REFERENCES Allowances(AllowencesId),
+        CONSTRAINT FK_StaffAllowance_Staff FOREIGN KEY (EmployeeID) REFERENCES employees(ID),
+        CONSTRAINT UK_Staff_Allowance UNIQUE (EmployeeID, AllowenceId)
+    );
+    PRINT 'Table StaffAllowance created.';
+END
+GO
+
+-- ── Deductions Master Table ──────────────────────────────────────────────────
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Deductions')
+BEGIN 
+    CREATE TABLE Deductions (
+        DeductionsId INT IDENTITY(1,1) PRIMARY KEY,
+        OrganizationID INT NOT NULL,
+        FullName VARCHAR(100) NOT NULL,
+        ShortName VARCHAR(20) NOT NULL,
+        
+        CONSTRAINT FK_Deductions_Organization FOREIGN KEY (OrganizationID) REFERENCES organizations(id),
+        CONSTRAINT UK_Deduction_Org_ShortName UNIQUE (OrganizationID, ShortName)
+    );
+    PRINT 'Table Deductions created.';
+END
+GO
+
+-- ── Staff Deduction Assignment Table ──────────────────────────────────────────
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'StaffDeductions')
+BEGIN
+    CREATE TABLE StaffDeductions (
+        StaffDeductionId INT IDENTITY(1,1) PRIMARY KEY,
+        DeductionId INT NOT NULL,
+        EmployeeID INT NOT NULL,
+        CalType BIT NOT NULL, -- 0 for Percentage, 1 for Fixed
+        Amount DECIMAL(18, 2) NOT NULL,
+        CreatedBy INT NOT NULL,
+        CreatedDate DATETIME DEFAULT GETDATE(),
+        
+        CONSTRAINT FK_StaffDeduction_Deduction FOREIGN KEY (DeductionId) REFERENCES Deductions(DeductionsId),
+        CONSTRAINT FK_StaffDeduction_Staff FOREIGN KEY (EmployeeID) REFERENCES employees(ID),
+        CONSTRAINT UK_Staff_Deduction UNIQUE (EmployeeID, DeductionId)
+    );
+    PRINT 'Table StaffDeductions created.';
+END
+GO
+
+-- ── Allowances Stored Procedures ──────────────────────────────────────────────
+CREATE OR ALTER PROCEDURE sp_SaveAllowance
+    @OrganizationID INT,
+    @FullName VARCHAR(100),
+    @ShortName VARCHAR(20)
+AS
+BEGIN
+    INSERT INTO Allowances (OrganizationID, FullName, ShortName)
+    VALUES (@OrganizationID, @FullName, @ShortName);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateAllowance
+    @AllowencesId INT,
+    @OrganizationID INT,
+    @FullName VARCHAR(100),
+    @ShortName VARCHAR(20)
+AS
+BEGIN
+    UPDATE Allowances
+    SET FullName = @FullName,
+        ShortName = @ShortName
+    WHERE AllowencesId = @AllowencesId AND OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetAllowanceByOrgId
+    @OrganizationID INT
+AS
+BEGIN
+    SELECT * FROM Allowances WHERE OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetAllowanceById
+    @AllowencesId INT
+AS
+BEGIN
+    SELECT * FROM Allowances WHERE AllowencesId = @AllowencesId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteAllowance
+    @AllowencesId INT
+AS
+BEGIN
+    DELETE FROM StaffAllowance WHERE AllowenceId = @AllowencesId;
+    DELETE FROM Allowances WHERE AllowencesId = @AllowencesId;
+END
+GO
+
+-- ── Staff Allowance Stored Procedures ──────────────────────────────────────────
+CREATE OR ALTER PROCEDURE sp_SaveStaffAllowance
+    @AllowenceId INT,
+    @EmployeeID INT,
+    @CalType BIT,
+    @Amount DECIMAL(18, 2),
+    @CreatedBy INT
+AS
+BEGIN
+    INSERT INTO StaffAllowance (AllowenceId, EmployeeID, CalType, Amount, CreatedBy)
+    VALUES (@AllowenceId, @EmployeeID, @CalType, @Amount, @CreatedBy);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateStaffAllowance
+    @StaffAllowanceId INT,
+    @AllowenceId INT,
+    @EmployeeID INT,
+    @CalType BIT,
+    @Amount DECIMAL(18, 2)
+AS
+BEGIN
+    UPDATE StaffAllowance
+    SET AllowenceId = @AllowenceId,
+        EmployeeID = @EmployeeID,
+        CalType = @CalType,
+        Amount = @Amount
+    WHERE StaffAllowanceId = @StaffAllowanceId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetStaffAllowanceByOrgId
+    @OrganizationID INT
+AS
+BEGIN
+    SELECT sa.*, a.FullName as AllowanceName, a.ShortName as AllowanceShortName 
+    FROM StaffAllowance sa
+    JOIN Allowances a ON sa.AllowenceId = a.AllowencesId
+    WHERE a.OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetStaffAllowanceById
+    @StaffAllowanceId INT
+AS
+BEGIN
+    SELECT * FROM StaffAllowance WHERE StaffAllowanceId = @StaffAllowanceId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteStaffAllowance
+    @StaffAllowanceId INT
+AS
+BEGIN
+    DELETE FROM StaffAllowance WHERE StaffAllowanceId = @StaffAllowanceId;
+END
+GO
+
+-- ── Deductions Stored Procedures ──────────────────────────────────────────────
+CREATE OR ALTER PROCEDURE sp_SaveDeduction
+    @OrganizationID INT,
+    @FullName VARCHAR(100),
+    @ShortName VARCHAR(20)
+AS
+BEGIN
+    INSERT INTO Deductions (OrganizationID, FullName, ShortName)
+    VALUES (@OrganizationID, @FullName, @ShortName);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateDeduction
+    @DeductionsId INT,
+    @OrganizationID INT,
+    @FullName VARCHAR(100),
+    @ShortName VARCHAR(20)
+AS
+BEGIN
+    UPDATE Deductions
+    SET FullName = @FullName,
+        ShortName = @ShortName
+    WHERE DeductionsId = @DeductionsId AND OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetDeductionsByOrgId
+    @OrganizationID INT
+AS
+BEGIN
+    SELECT * FROM Deductions WHERE OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetDeductionById
+    @DeductionsId INT
+AS
+BEGIN
+    SELECT * FROM Deductions WHERE DeductionsId = @DeductionsId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteDeduction
+    @DeductionsId INT
+AS
+BEGIN
+    DELETE FROM StaffDeductions WHERE DeductionId = @DeductionsId;
+    DELETE FROM Deductions WHERE DeductionsId = @DeductionsId;
+END
+GO
+
+-- ── Staff Deduction Stored Procedures ──────────────────────────────────────────
+CREATE OR ALTER PROCEDURE sp_SaveStaffDeduction
+    @DeductionId INT,
+    @EmployeeID INT,
+    @CalType BIT,
+    @Amount DECIMAL(18, 2),
+    @CreatedBy INT
+AS
+BEGIN
+    INSERT INTO StaffDeductions (DeductionId, EmployeeID, CalType, Amount, CreatedBy)
+    VALUES (@DeductionId, @EmployeeID, @CalType, @Amount, @CreatedBy);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateStaffDeduction
+    @StaffDeductionId INT,
+    @DeductionId INT,
+    @EmployeeID INT,
+    @CalType BIT,
+    @Amount DECIMAL(18, 2)
+AS
+BEGIN
+    UPDATE StaffDeductions
+    SET DeductionId = @DeductionId,
+        EmployeeID = @EmployeeID,
+        CalType = @CalType,
+        Amount = @Amount
+    WHERE StaffDeductionId = @StaffDeductionId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetStaffDeductionsByOrgId
+    @OrganizationID INT
+AS
+BEGIN
+    SELECT sd.*, d.FullName as DeductionName, d.ShortName as DeductionShortName 
+    FROM StaffDeductions sd
+    JOIN Deductions d ON sd.DeductionId = d.DeductionsId
+    WHERE d.OrganizationID = @OrganizationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetStaffDeductionById
+    @StaffDeductionId INT
+AS
+BEGIN
+    SELECT * FROM StaffDeductions WHERE StaffDeductionId = @StaffDeductionId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteStaffDeduction
+    @StaffDeductionId INT
+AS
+BEGIN
+    DELETE FROM StaffDeductions WHERE StaffDeductionId = @StaffDeductionId;
+END
+GO
+
+PRINT '[Migration] Migration 54 completed.';
+GO
+
+
 ------------embeddings----------------
 
+-- =============== SALARY SETTINGS ===============
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'SalarySettings')
+BEGIN
+    CREATE TABLE SalarySettings (
+        SSId INT IDENTITY(1,1) PRIMARY KEY,
+        OrganizationId INT NOT NULL,
+        SalaryYearId INT NOT NULL,
+        EmployeeId INT NOT NULL,
+        BasicPay DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+        CreatedBy INT NOT NULL,
+        CreatedDateTime DATETIME DEFAULT GETDATE(),
+        UpdatedBy INT NULL,
+        UpdatedDateTime DATETIME NULL,
+        
+        -- Foreign Keys
+        -- Note: references organizations(id) is lowercase to match schema.sql
+        CONSTRAINT FK_SalarySettings_Organization FOREIGN KEY (OrganizationId) REFERENCES organizations(id),
+        CONSTRAINT FK_SalarySettings_SalaryYear FOREIGN KEY (SalaryYearId) REFERENCES SalaryYear(SalaryYearId),
+        CONSTRAINT FK_SalarySettings_Employee FOREIGN KEY (EmployeeId) REFERENCES employees(id),
+        
+        -- Prevent duplicates: One basic salary per employee per financial year
+        CONSTRAINT UK_SalarySettings_Emp_Year UNIQUE (SalaryYearId, EmployeeId),
+        
+        -- Ensure salary isn't negative
+        CONSTRAINT CHK_BasicPay_Positive CHECK (BasicPay >= 0)
+    );
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_InsertSalarySettings
+    @OrganizationId INT,
+    @SalaryYearId INT,
+    @EmployeeId INT,
+    @BasicPay DECIMAL(18,2),
+    @CreatedBy INT,
+    @CreatedDateTime DATETIME
+AS
+BEGIN
+    INSERT INTO SalarySettings (
+        OrganizationId,
+        SalaryYearId,
+        EmployeeId,
+        BasicPay,
+        CreatedBy,
+        CreatedDateTime
+    )
+    OUTPUT INSERTED.SSId
+    VALUES (
+        @OrganizationId,
+        @SalaryYearId,
+        @EmployeeId,
+        @BasicPay,
+        @CreatedBy,
+        @CreatedDateTime
+    );
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpdateSalarySettings
+    @SSId INT,
+    @OrganizationId INT,
+    @SalaryYearId INT,
+    @EmployeeId INT,
+    @BasicPay DECIMAL(18,2),
+    @UpdatedBy INT,
+    @UpdatedDateTime DATETIME
+AS
+BEGIN
+    UPDATE SalarySettings
+    SET 
+        OrganizationId = @OrganizationId,
+        SalaryYearId = @SalaryYearId,
+        EmployeeId = @EmployeeId,
+        BasicPay = @BasicPay,
+        UpdatedBy = @UpdatedBy,
+        UpdatedDateTime = @UpdatedDateTime
+    WHERE SSId = @SSId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_DeleteSalarySettings
+    @SSId INT
+AS
+BEGIN
+    DELETE FROM SalarySettings
+    WHERE SSId = @SSId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetSalarySettings
+    @OrganizationId INT,
+    @SalaryYearId INT
+AS
+BEGIN
+    SELECT 
+        ss.*,
+        e.name AS EmployeeName,
+        e.employee_code AS EmployeeCode
+    FROM SalarySettings ss
+    INNER JOIN employees e ON e.id = ss.EmployeeId
+    WHERE ss.OrganizationId = @OrganizationId
+    AND ss.SalaryYearId = @SalaryYearId;
+END
+GO
+
+-- ── Migration: Statutory Master & Org Settings ──────────────────────────────────
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'StatutoryMaster')
+BEGIN
+    CREATE TABLE StatutoryMaster (
+        StatutoryId INT IDENTITY(1,1) PRIMARY KEY,
+        StatutoryName VARCHAR(100) NOT NULL,
+        ShortCode VARCHAR(10) NOT NULL,
+        DefaultPercentage DECIMAL(18,2) NOT NULL,
+        DefaultCapAmount DECIMAL(18,2) NULL,
+    );
+
+    INSERT INTO StatutoryMaster (StatutoryName, ShortCode, DefaultPercentage, DefaultCapAmount)
+    VALUES ('Provident Fund', 'PF', 12.00, 15000.00),
+           ('Employee State Insurance', 'ESI', 0.75, NULL);
+
+    PRINT '[Migration] StatutoryMaster table created and seeded.';
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'OrganizationStatutorySettings')
+BEGIN
+    CREATE TABLE OrganizationStatutorySettings (
+        SettingId INT IDENTITY(1,1) PRIMARY KEY,
+        OrganizationId INT NOT NULL,
+        StatutoryId INT NOT NULL,
+        IsActive BIT DEFAULT 0,
+        OverridePercentage DECIMAL(18,2) NULL,
+        OverrideCapAmount DECIMAL(18,2) NULL,
+        ModifiedBy INT,
+        ModifiedAt DATETIME DEFAULT GETDATE(),
+        
+        CONSTRAINT FK_OrgStatSettings_Org FOREIGN KEY (OrganizationId) REFERENCES organizations(id),
+        CONSTRAINT FK_OrgStatSettings_Stat FOREIGN KEY (StatutoryId) REFERENCES StatutoryMaster(StatutoryId),
+        CONSTRAINT UK_OrgStatSettings UNIQUE (OrganizationId, StatutoryId)
+    );
+    PRINT '[Migration] OrganizationStatutorySettings table created.';
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_UpsertStatutorySettings
+    @OrganizationId INT,
+    @PFActive BIT,
+    @PFPercentage DECIMAL(18,2) = NULL,
+    @PFCapAmount DECIMAL(18,2) = NULL,
+    @ESIActive BIT,
+    @ESIPercentage DECIMAL(18,2) = NULL,
+    @ModifiedBy INT
+AS
+BEGIN
+    DECLARE @PF_Id INT = (SELECT StatutoryId FROM StatutoryMaster WHERE ShortCode = 'PF');
+    DECLARE @ESI_Id INT = (SELECT StatutoryId FROM StatutoryMaster WHERE ShortCode = 'ESI');
+
+    -- PF Settings
+    IF EXISTS (SELECT 1 FROM OrganizationStatutorySettings WHERE OrganizationId = @OrganizationId AND StatutoryId = @PF_Id)
+        UPDATE OrganizationStatutorySettings SET IsActive = @PFActive, OverridePercentage = @PFPercentage, OverrideCapAmount = @PFCapAmount, ModifiedBy = @ModifiedBy, ModifiedAt = GETDATE()
+        WHERE OrganizationId = @OrganizationId AND StatutoryId = @PF_Id;
+    ELSE
+        INSERT INTO OrganizationStatutorySettings (OrganizationId, StatutoryId, IsActive, OverridePercentage, OverrideCapAmount, ModifiedBy)
+        VALUES (@OrganizationId, @PF_Id, @PFActive, @PFPercentage, @PFCapAmount, @ModifiedBy);
+
+    -- ESI Settings
+    IF EXISTS (SELECT 1 FROM OrganizationStatutorySettings WHERE OrganizationId = @OrganizationId AND StatutoryId = @ESI_Id)
+        UPDATE OrganizationStatutorySettings SET IsActive = @ESIActive, OverridePercentage = @ESIPercentage, ModifiedBy = @ModifiedBy, ModifiedAt = GETDATE()
+        WHERE OrganizationId = @OrganizationId AND StatutoryId = @ESI_Id;
+    ELSE
+        INSERT INTO OrganizationStatutorySettings (OrganizationId, StatutoryId, IsActive, OverridePercentage, ModifiedBy)
+        VALUES (@OrganizationId, @ESI_Id, @ESIActive, @ESIPercentage, @ModifiedBy);
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetStatutorySettingsByOrgId
+    @OrganizationId INT
+AS
+BEGIN
+    SELECT 
+        m.ShortCode,
+        m.StatutoryName,
+        ISNULL(s.IsActive, 0) AS IsActive,
+        ISNULL(s.OverridePercentage, m.DefaultPercentage) AS Percentage,
+        ISNULL(s.OverrideCapAmount, m.DefaultCapAmount) AS CapAmount
+    FROM StatutoryMaster m
+    LEFT JOIN OrganizationStatutorySettings s ON m.StatutoryId = s.StatutoryId AND s.OrganizationId = @OrganizationId;
+END
+GO

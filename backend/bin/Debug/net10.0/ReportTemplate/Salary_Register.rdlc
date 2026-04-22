@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="SalaryDs">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="SalaryDataSet">
+      <Query>
+        <DataSourceName>SalaryDs</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="OrgName"><DataField>OrgName</DataField></Field>
+        <Field Name="OrgAddress"><DataField>OrgAddress</DataField></Field>
+        <Field Name="MonthYear"><DataField>MonthYear</DataField></Field>
+        <Field Name="SlNo"><DataField>SlNo</DataField></Field>
+        <Field Name="EmpName"><DataField>EmpName</DataField></Field>
+        <Field Name="EmpCode"><DataField>EmpCode</DataField></Field>
+        <Field Name="BaseBasicPay"><DataField>BaseBasicPay</DataField></Field>
+        <Field Name="PresentDays"><DataField>PresentDays</DataField></Field>
+        <Field Name="TotalDays"><DataField>TotalDays</DataField></Field>
+        <Field Name="EarnedBasic"><DataField>EarnedBasic</DataField></Field>
+        <Field Name="PF"><DataField>PF</DataField></Field>
+        <Field Name="ESI"><DataField>ESI</DataField></Field>
+        <Field Name="TotalAllowances"><DataField>TotalAllowances</DataField></Field>
+        <Field Name="TotalDeductions"><DataField>TotalDeductions</DataField></Field>
+        <Field Name="NetSalary"><DataField>NetSalary</DataField></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="Title">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>MONTHLY SALARY REGISTER</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>16pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.2in</Top>
+            <Left>0.1in</Left>
+            <Height>0.35in</Height>
+            <Width>10.3in</Width>
+          </Textbox>
+          <Textbox Name="OrgInfo">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!OrgName.Value, "SalaryDataSet") &amp; " - " &amp; First(Fields!OrgAddress.Value, "SalaryDataSet")</Value>
+                    <Style>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="For the Month of " &amp; First(Fields!MonthYear.Value, "SalaryDataSet")</Value>
+                    <Style>
+                      <FontSize>10pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.65in</Top>
+            <Left>0.1in</Left>
+            <Height>0.5in</Height>
+            <Width>10.3in</Width>
+          </Textbox>
+          <Tablix Name="SalaryTable">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>0.4in</Width></TablixColumn>
+                <TablixColumn><Width>2.0in</Width></TablixColumn>
+                <TablixColumn><Width>0.8in</Width></TablixColumn>
+                <TablixColumn><Width>0.9in</Width></TablixColumn>
+                <TablixColumn><Width>0.5in</Width></TablixColumn>
+                <TablixColumn><Width>0.9in</Width></TablixColumn>
+                <TablixColumn><Width>0.9in</Width></TablixColumn>
+                <TablixColumn><Width>0.7in</Width></TablixColumn>
+                <TablixColumn><Width>0.7in</Width></TablixColumn>
+                <TablixColumn><Width>0.9in</Width></TablixColumn>
+                <TablixColumn><Width>1.6in</Width></TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.3in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="hSl"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Sl. No</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Employee Name</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hCode"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Code</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hBasic"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Basic Pay</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hPresent"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Days</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hEarned"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Earned Basic</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hAllow"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Allowances</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hPf"><Paragraphs><Paragraph><TextRuns><TextRun><Value>PF</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hEsi"><Paragraphs><Paragraph><TextRuns><TextRun><Value>ESI</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hDed"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Deductions</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="hNet"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Net Salary</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><BackgroundColor>LightGrey</BackgroundColor><FontWeight>Bold</FontWeight></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="SlNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SlNo.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="EmpName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EmpName.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="EmpCode"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EmpCode.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="BaseBasicPay"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!BaseBasicPay.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="PresentDays"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!PresentDays.Value</Value></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="EarnedBasic"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EarnedBasic.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TotalAllowances"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TotalAllowances.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="PF"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!PF.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="ESI"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!ESI.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TotalDeductions"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TotalDeductions.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="NetSalary"><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!NetSalary.Value</Value><Style><Format>N2</Format><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Style><Border><Style>Solid</Style></Border><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy><TablixMembers><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /></TablixMembers></TablixColumnHierarchy>
+            <TablixRowHierarchy><TablixMembers><TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember><TablixMember><Group Name="Details" /></TablixMember></TablixMembers></TablixRowHierarchy>
+            <Top>1.25in</Top>
+            <Left>0.1in</Left>
+            <Height>0.55in</Height>
+            <Width>10.3in</Width>
+          </Tablix>
+        </ReportItems>
+        <Height>2.0in</Height>
+        <Style />
+      </Body>
+      <Width>10.5in</Width>
+      <Page>
+        <PageHeight>8.27in</PageHeight>
+        <PageWidth>11.69in</PageWidth>
+        <LeftMargin>0.5in</LeftMargin>
+        <RightMargin>0.5in</RightMargin>
+        <TopMargin>0.3in</TopMargin>
+        <BottomMargin>0.3in</BottomMargin>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+            <Width>1pt</Width>
+          </Border>
+        </Style>
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

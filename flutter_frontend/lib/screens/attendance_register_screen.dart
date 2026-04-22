@@ -429,11 +429,7 @@ class _AttNotifier extends StateNotifier<_AttState> {
         args: [state.selectedOrgId!.toString()],
       );
     }
-    state = state.copyWith(
-      selectedOrgId: id,
-      selectedIds: {},
-      currentPage: 1,
-    );
+    state = state.copyWith(selectedOrgId: id, selectedIds: {}, currentPage: 1);
     _loadRecords();
     _loadLeaveTypes();
     if (_hubConnection != null) {
@@ -448,7 +444,8 @@ class _AttNotifier extends StateNotifier<_AttState> {
 
   void setSearch(String q) =>
       state = state.copyWith(searchQuery: q, currentPage: 1);
-  void setDept(String d) => state = state.copyWith(deptFilter: d, currentPage: 1);
+  void setDept(String d) =>
+      state = state.copyWith(deptFilter: d, currentPage: 1);
   void setDesig(String d) =>
       state = state.copyWith(desigFilter: d, currentPage: 1);
 
@@ -627,8 +624,9 @@ class _AttendanceRegisterScreenState
     final hasCode = code != null && code.isNotEmpty;
 
     // Surface/Border colors from theme
-    final borderColor =
-        isDark ? Colors.white.withOpacity(0.12) : theme.dividerColor;
+    final borderColor = isDark
+        ? Colors.white.withOpacity(0.12)
+        : theme.dividerColor;
 
     return GestureDetector(
       onTap: onTap,
@@ -772,37 +770,61 @@ class _AttendanceRegisterScreenState
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 600;
 
-    return Scaffold(
-      backgroundColor: bg,
-      body: SafeArea(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        ref.read(navigationProvider.notifier).setHRManagementContent(null);
+      },
+      child: Material(
+        color: bg,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── HEADER ──
-            _buildHeader(
-              state,
-              isAdmin,
-              isMobile,
-              textPrimary,
-              textSecondary,
-              accent,
-              border,
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: surface,
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: textPrimary, size: 20),
+                      onPressed: () => ref
+                          .read(navigationProvider.notifier)
+                          .setHRManagementContent(null),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Attendance Register',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    if (isAdmin) ...[
+                      _settingsBtn(textPrimary, border),
+                      const SizedBox(width: 8),
+                    ],
+                    _exportBtn(state, isMobile: isMobile, border: border, textPrimary: textPrimary),
+                  ],
+                ),
+              ),
             ),
-            // ── STAT CARDS ──
+
+            const SizedBox(height: 16),
+
+            // Stat Cards
             _buildStatCards(state.stats, isMobile, textPrimary),
-            // ── FILTER BAR ──
-            _buildFilterBar(
-              state,
-              isMobile,
-              surface,
-              border,
-              textPrimary,
-              textSecondary,
-              accent,
-            ),
-            // ── BULK ACTION BAR ──
+
+            // Filter Bar
+            _buildFilterBar(state, isMobile, surface, border, textPrimary, textSecondary, accent),
+
             if (state.selectedIds.isNotEmpty) _buildBulkBar(state),
-            // ── TABLE ──
+
+            // Table
             Expanded(
               child: _buildTable(
                 state,
@@ -815,15 +837,14 @@ class _AttendanceRegisterScreenState
                 accent,
               ),
             ),
+
             if (state.filtered.isNotEmpty)
               CustomPagination(
                 totalItems: state.filtered.length,
                 pageSize: state.pageSize,
                 currentPage: state.currentPage,
-                onPageChanged: (p) =>
-                    ref.read(attendanceRegisterProvider.notifier).setPage(p),
-                onPageSizeChanged: (s) =>
-                    ref.read(attendanceRegisterProvider.notifier).setPageSize(s),
+                onPageChanged: (p) => ref.read(attendanceRegisterProvider.notifier).setPage(p),
+                onPageSizeChanged: (s) => ref.read(attendanceRegisterProvider.notifier).setPageSize(s),
               ),
           ],
         ),
@@ -832,96 +853,7 @@ class _AttendanceRegisterScreenState
   }
 
   // ── HEADER ────────────────────────────────────────────────
-  Widget _buildHeader(
-    _AttState state,
-    bool isAdmin,
-    bool isMobile,
-    Color textPrimary,
-    Color textSecondary,
-    Color accent,
-    Color border,
-  ) {
-    final titleRow = Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () => ref
-              .read(navigationProvider.notifier)
-              .setHRManagementContent(null),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Icon(Icons.arrow_back, color: textSecondary, size: 20),
-          ),
-        ),
-        Icon(Icons.calendar_month, color: accent, size: 22),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Daily Attendance Register',
-                style: TextStyle(
-                  color: textPrimary,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                '${DateFormat('EEE, d MMM yyyy').format(state.selectedDate).toUpperCase()} • ${state.records.length} EMPLOYEES',
-                style: TextStyle(
-                  color: textSecondary,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.6,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        // Inline buttons on tablet/desktop only
-        if (!isMobile) ...[
-          if (isAdmin) ...[
-            _settingsBtn(textPrimary, border),
-            const SizedBox(width: 8),
-          ],
-          _exportBtn(state, isMobile: false, border: border, textPrimary: textPrimary),
-        ],
-      ],
-    );
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-      child: isMobile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                titleRow,
-                const SizedBox(height: 10),
-                // Buttons row below title on mobile
-                Row(
-                  children: [
-                    if (isAdmin) ...[
-                      Expanded(child: _settingsBtn(textPrimary, border)),
-                      const SizedBox(width: 8),
-                    ],
-                    Expanded(
-                      child: _exportBtn(
-                        state,
-                        isMobile: true,
-                        border: border,
-                        textPrimary: textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-          : titleRow,
-    );
-  }
+  // Header removed and integrated into main build for better standard compliance
 
   bool _isSettingsOpen = false;
 
@@ -1044,51 +976,53 @@ class _AttendanceRegisterScreenState
     Widget buildCard(Map<String, Object> c, {double? fixedWidth}) {
       final color = c['color'] as Color;
       final bg = c['bg'] as Color;
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
+
       return Container(
         width: fixedWidth,
-        margin: const EdgeInsets.only(right: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    c['label'] as String,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${c['val']}',
-                    style: TextStyle(
-                      color: textPrimary,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
-                  ),
-                ],
+          color: isDark ? color.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.15)),
+          boxShadow: [
+            if (!isDark)
+              BoxShadow(
+                color: color.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  c['label'] as String,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                Icon(Icons.people_outline, color: color.withOpacity(0.5), size: 16),
+              ],
             ),
-            const SizedBox(width: 8),
-            CircleAvatar(
-              radius: 14,
-              backgroundColor: color.withOpacity(0.2),
-              child: Icon(Icons.people_outline, color: color, size: 14),
+            const SizedBox(height: 8),
+            Text(
+              '${c['val']}',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                height: 1,
+              ),
             ),
           ],
         ),
@@ -1096,21 +1030,20 @@ class _AttendanceRegisterScreenState
     }
 
     if (isMobile) {
-      // Horizontally scrollable cards on mobile
       return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 0, 10),
+        padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
           child: Row(
-            children: cards.map((c) => buildCard(c, fixedWidth: 160)).toList(),
+            children: cards.map((c) => buildCard(c, fixedWidth: 150)).toList(),
           ),
         ),
       );
     }
 
-    // Side-by-side equal cards on desktop
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Row(
         children: cards.map((c) => Expanded(child: buildCard(c))).toList(),
       ),
@@ -1127,49 +1060,47 @@ class _AttendanceRegisterScreenState
     Color textSecondary,
     Color accent,
   ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final bar = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(8),
+        color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           // Organization
-          Icon(Icons.business_outlined, color: textSecondary, size: 14),
-          const SizedBox(width: 6),
-          Text(
-            'Organization',
-            style: TextStyle(color: textSecondary, fontSize: 13),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 160,
-            child: OrgDropdown(
-              value: state.selectedOrgId?.toString(),
-              items: state.organizations
-                  .map(
-                    (o) => OrgDropdownItem(
-                      id: o['id'].toString(),
-                      name: o['name'],
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) => ref
-                  .read(attendanceRegisterProvider.notifier)
-                  .setOrgId(int.parse(v!)),
-              isCompact: true,
-              showLabel: false,
-            ),
-          ),
-
-          Container(
-            width: 1,
-            height: 28,
-            color: border,
-            margin: const EdgeInsets.symmetric(horizontal: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Organization',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white.withOpacity(0.5) : Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 150,
+                child: OrgDropdown(
+                  value: state.selectedOrgId?.toString(),
+                  items: state.organizations
+                      .map((o) => OrgDropdownItem(id: o['id'].toString(), name: o['name']))
+                      .toList(),
+                  onChanged: (v) => ref.read(attendanceRegisterProvider.notifier).setOrgId(int.parse(v!)),
+                  isCompact: true,
+                  showLabel: false,
+                ),
+              ),
+            ],
           ),
 
           // Date picker
@@ -1180,87 +1111,69 @@ class _AttendanceRegisterScreenState
                 initialDate: state.selectedDate,
                 firstDate: DateTime(2020),
                 lastDate: DateTime.now(),
-                builder: (ctx, child) => Theme(
-                  data: Theme.of(ctx).copyWith(
-                    colorScheme: ColorScheme.fromSeed(
-                      seedColor: accent,
-                      brightness: Theme.of(ctx).brightness,
-                    ).copyWith(primary: accent),
-                  ),
-                  child: child!,
-                ),
               );
-              if (d != null)
-                ref.read(attendanceRegisterProvider.notifier).setDate(d);
+              if (d != null) ref.read(attendanceRegisterProvider.notifier).setDate(d);
             },
             child: Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFF21262D)
-                    : Colors.black.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(6),
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade300,
+                ),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    color: textSecondary,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 6),
+                  Icon(Icons.event_note_outlined, color: Colors.blue.shade600, size: 16),
+                  const SizedBox(width: 8),
                   Text(
-                    DateFormat('dd-MM-yyyy').format(state.selectedDate),
-                    style: TextStyle(color: textPrimary, fontSize: 13),
+                    DateFormat('dd MMM yyyy').format(state.selectedDate),
+                    style: TextStyle(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(width: 8),
 
           // Search
           Container(
-            width: 200,
-            height: 32,
+            width: isMobile ? double.infinity : 220,
+            height: 38,
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? const Color(0xFF21262D)
-                  : Colors.black.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: TextField(
-              controller: _searchCtrl,
-              textAlign: TextAlign.left,
-              style: TextStyle(color: textPrimary, fontSize: 13),
-              cursorColor: accent,
-              decoration: InputDecoration(
-                hintText: 'Search employee name or code...',
-                hintStyle: TextStyle(color: textSecondary, fontSize: 12),
-                prefixIcon: Icon(Icons.search, color: textSecondary, size: 14),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                prefixIconConstraints: const BoxConstraints(minWidth: 28),
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade300,
               ),
-              onChanged: (v) => ref
-                  .read(attendanceRegisterProvider.notifier)
-                  .setSearch(v.trim()),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: TextField(
+                controller: _searchCtrl,
+                style: TextStyle(color: textPrimary, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: 'Search Name/ID...',
+                  hintStyle: TextStyle(color: textSecondary.withOpacity(0.5), fontSize: 13),
+                  prefixIcon: Icon(Icons.search, color: textSecondary, size: 18),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                ),
+                onChanged: (v) => ref.read(attendanceRegisterProvider.notifier).setSearch(v.trim()),
+              ),
             ),
           ),
           const SizedBox(width: 8),
 
           // Dept filter
-          Text(
-            'Dept',
-            style: TextStyle(color: textSecondary, fontSize: 13),
-          ),
-          const SizedBox(width: 4),
+          _miniFilterLabel('Dept'),
           _miniDropdown(
             value: state.deptFilter,
             items: ['', ...state.uniqueDepts],
-            onChanged: (v) =>
-                ref.read(attendanceRegisterProvider.notifier).setDept(v ?? ''),
+            onChanged: (v) => ref.read(attendanceRegisterProvider.notifier).setDept(v ?? ''),
             surface: surface,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -1268,16 +1181,11 @@ class _AttendanceRegisterScreenState
           const SizedBox(width: 8),
 
           // Desig filter
-          Text(
-            'Desig',
-            style: TextStyle(color: textSecondary, fontSize: 13),
-          ),
-          const SizedBox(width: 4),
+          _miniFilterLabel('Desig'),
           _miniDropdown(
             value: state.desigFilter,
             items: ['', ...state.uniqueDesigs],
-            onChanged: (v) =>
-                ref.read(attendanceRegisterProvider.notifier).setDesig(v ?? ''),
+            onChanged: (v) => ref.read(attendanceRegisterProvider.notifier).setDesig(v ?? ''),
             surface: surface,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -1287,17 +1195,18 @@ class _AttendanceRegisterScreenState
     );
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        isMobile ? 16 : 24,
-        0,
-        isMobile ? 16 : 24,
-        10,
-      ),
-      child: isMobile
-          ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: bar)
-          : bar,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: isMobile ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: bar) : bar,
     );
   }
+
+  Widget _miniFilterLabel(String label) => Padding(
+        padding: const EdgeInsets.only(right: 6),
+        child: Text(
+          label.toUpperCase(),
+          style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.5),
+        ),
+      );
 
   Widget _miniDropdown({
     required String value,
@@ -1306,39 +1215,34 @@ class _AttendanceRegisterScreenState
     required Color surface,
     required Color textPrimary,
     required Color textSecondary,
-  }) => Container(
-    height: 32,
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    decoration: BoxDecoration(
-      color: Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFF21262D)
-          : Colors.black.withOpacity(0.05),
-      borderRadius: BorderRadius.circular(6),
-    ),
-    child: DropdownButton<String>(
-      value: value,
-      underline: const SizedBox(),
-      dropdownColor: surface,
-      style: TextStyle(color: textPrimary, fontSize: 13),
-      icon: Icon(
-        Icons.keyboard_arrow_down,
-        color: textSecondary,
-        size: 16,
-      ),
-      items: items
-          .map(
-            (e) => DropdownMenuItem(
-              value: e,
-              child: Text(
-                e.isEmpty ? 'All' : e,
-                style: const TextStyle(fontSize: 13),
-              ),
-            ),
-          )
-          .toList(),
-      onChanged: onChanged,
-    ),
-  );
+  }) =>
+      Container(
+        height: 38,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: DropdownButton<String>(
+          value: value,
+          underline: const SizedBox(),
+          dropdownColor: surface,
+          style: TextStyle(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+          icon: Icon(Icons.keyboard_arrow_down, color: textSecondary, size: 16),
+          items: items
+              .map(
+                (e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(
+                    e.isEmpty ? 'All' : e,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      );
 
   // ── BULK ACTION BAR ───────────────────────────────────────
   Widget _buildBulkBar(_AttState state) {
@@ -1350,12 +1254,7 @@ class _AttendanceRegisterScreenState
       decoration: BoxDecoration(
         color: accent,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withOpacity(0.3),
-            blurRadius: 20,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: accent.withOpacity(0.3), blurRadius: 20)],
       ),
       child: Row(
         children: [
@@ -1429,76 +1328,48 @@ class _AttendanceRegisterScreenState
   ) {
     final rows = state.paginated;
     final isMobile = screenWidth < 600;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Widget tableContent = Column(
       children: [
         // ── TABLE HEADER ──
         Container(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF21262D)
-              : Colors.black.withOpacity(0.04),
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14),
           child: _tableRow(
             isMobile: isMobile,
             checkbox: Checkbox(
               value: rows.isNotEmpty && state.selectedIds.length == rows.length,
-              tristate:
-                  state.selectedIds.isNotEmpty &&
-                  state.selectedIds.length < rows.length,
-              onChanged: (_) => ref
-                  .read(attendanceRegisterProvider.notifier)
-                  .toggleSelectAll(),
-              side: BorderSide(color: textSecondary),
-              fillColor: WidgetStateProperty.resolveWith(
-                (s) => s.contains(WidgetState.selected)
-                    ? accent
-                    : Colors.transparent,
-              ),
+              tristate: state.selectedIds.isNotEmpty && state.selectedIds.length < rows.length,
+              onChanged: (_) => ref.read(attendanceRegisterProvider.notifier).toggleSelectAll(),
+              side: BorderSide(color: textSecondary.withOpacity(0.4)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              activeColor: accent,
             ),
-            code: _th('CODE ↕', textSecondary),
-            name: _th('NAME', textSecondary),
+            code: _th('CODE', textSecondary),
+            name: _th('EMPLOYEE NAME', textSecondary, align: Alignment.centerLeft),
             fn: isMobile
-                ? Center(
-                    child: Icon(
-                      Icons.wb_sunny_outlined,
-                      color: textSecondary,
-                      size: 14,
-                    ),
-                  )
+                ? Center(child: Icon(Icons.wb_sunny_outlined, color: textSecondary, size: 14))
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.wb_sunny_outlined,
-                        color: textSecondary,
-                        size: 12,
-                      ),
-                      const SizedBox(width: 4),
-                      _th('FIRST HALF', textSecondary),
+                      Icon(Icons.wb_sunny_outlined, color: textSecondary, size: 12),
+                      const SizedBox(width: 6),
+                      _th('1ST HALF', textSecondary),
                     ],
                   ),
             an: isMobile
-                ? Center(
-                    child: Icon(
-                      Icons.wb_twilight_outlined,
-                      color: textSecondary,
-                      size: 14,
-                    ),
-                  )
+                ? Center(child: Icon(Icons.wb_twilight_outlined, color: textSecondary, size: 14))
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.wb_twilight_outlined,
-                        color: textSecondary,
-                        size: 12,
-                      ),
-                      const SizedBox(width: 4),
-                      _th('SECOND HALF', textSecondary),
+                      Icon(Icons.wb_twilight_outlined, color: textSecondary, size: 12),
+                      const SizedBox(width: 6),
+                      _th('2ND HALF', textSecondary),
                     ],
                   ),
-            deptDesig: _th('DEPT / DESIGNATION', textSecondary),
-            action: _th('ACTION', textSecondary),
+            deptDesig: _th('DEPARTMENT', textSecondary),
+            action: _th('STATUS', textSecondary),
           ),
         ),
         Divider(height: 1, color: border),
@@ -1509,14 +1380,14 @@ class _AttendanceRegisterScreenState
               : rows.isEmpty
                   ? Center(
                       child: Text(
-                        'No matching employees found.',
-                        style: TextStyle(color: textSecondary, fontSize: 14),
+                        'No records found',
+                        style: TextStyle(color: textSecondary, fontSize: 13),
                       ),
                     )
                   : ListView.separated(
+                      padding: EdgeInsets.zero,
                       itemCount: rows.length,
-                      separatorBuilder: (_, __) =>
-                          Divider(height: 1, color: border.withOpacity(0.5)),
+                      separatorBuilder: (_, __) => Divider(height: 1, color: border.withOpacity(0.5)),
                       itemBuilder: (ctx, i) => _buildRow(
                         ctx,
                         rows[i],
@@ -1533,41 +1404,37 @@ class _AttendanceRegisterScreenState
     );
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        isMobile ? 12 : 24,
-        0,
-        isMobile ? 12 : 24,
-        16,
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Container(
         decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: border),
+          color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.4 : 0.04),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: tableContent,
-        ),
+        clipBehavior: Clip.antiAlias,
+        child: tableContent,
       ),
     );
   }
 
-  Widget _th(String text, Color textSecondary) => Center(
-    child: FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: textSecondary,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.8,
+  Widget _th(String text, Color textSecondary, {Alignment align = Alignment.center}) => Container(
+        alignment: align,
+        child: Text(
+          text.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w900, // Extra bold
+            color: Color(0xFF475569),
+            letterSpacing: 0.8,
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget _buildRow(
     BuildContext ctx,
@@ -1719,21 +1586,14 @@ class _AttendanceRegisterScreenState
                     Text(
                       rec.designation ?? 'Staff',
                       textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: textSecondary,
-                      ),
+                      style: TextStyle(fontSize: 11, color: textSecondary),
                     ),
                   ],
                 ),
           action: Center(
             child: IconButton(
               onPressed: () {},
-              icon: Icon(
-                Icons.more_vert,
-                size: 16,
-                color: textSecondary,
-              ),
+              icon: Icon(Icons.more_vert, size: 16, color: textSecondary),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
@@ -1862,17 +1722,10 @@ class _LeaveTypeSettingsDialogState
               children: [
                 if (_isForm)
                   IconButton(
-                    icon: Icon(
-                      Icons.chevron_left,
-                      color: textSecondary,
-                    ),
+                    icon: Icon(Icons.chevron_left, color: textSecondary),
                     onPressed: _switchToList,
                   ),
-                Icon(
-                  Icons.settings_outlined,
-                  color: accent,
-                  size: 20,
-                ),
+                Icon(Icons.settings_outlined, color: accent, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -1931,7 +1784,14 @@ class _LeaveTypeSettingsDialogState
             Flexible(
               child: _isForm
                   ? _buildFormView(theme, textPrimary, textSecondary, accent)
-                  : _buildListView(state, surface, textPrimary, textSecondary, accent, border),
+                  : _buildListView(
+                      state,
+                      surface,
+                      textPrimary,
+                      textSecondary,
+                      accent,
+                      border,
+                    ),
             ),
 
             if (!_isForm) ...[
@@ -1970,9 +1830,7 @@ class _LeaveTypeSettingsDialogState
     Color border,
   ) {
     if (state.isLoadingSettings) {
-      return Center(
-        child: CircularProgressIndicator(color: accent),
-      );
+      return Center(child: CircularProgressIndicator(color: accent));
     }
 
     if (state.allSettingsLeaveTypes.isEmpty) {
@@ -2038,11 +1896,7 @@ class _LeaveTypeSettingsDialogState
                 ),
               ),
               IconButton(
-                icon: Icon(
-                  Icons.edit_outlined,
-                  size: 16,
-                  color: textSecondary,
-                ),
+                icon: Icon(Icons.edit_outlined, size: 16, color: textSecondary),
                 onPressed: () => _switchToForm(lt),
               ),
               IconButton(
@@ -2115,7 +1969,12 @@ class _LeaveTypeSettingsDialogState
     );
   }
 
-  Widget _buildFormView(ThemeData theme, Color textPrimary, Color textSecondary, Color accent) {
+  Widget _buildFormView(
+    ThemeData theme,
+    Color textPrimary,
+    Color textSecondary,
+    Color accent,
+  ) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2194,7 +2053,8 @@ class _LeaveTypeSettingsDialogState
                     _switchToList();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFF3B82F6)
                         : theme.colorScheme.primary,
                     foregroundColor: Colors.white,
@@ -2228,7 +2088,11 @@ class _LeaveTypeSettingsDialogState
     ),
   );
 
-  InputDecoration _inputDecoration(String hint, ThemeData theme, Color accent) => InputDecoration(
+  InputDecoration _inputDecoration(
+    String hint,
+    ThemeData theme,
+    Color accent,
+  ) => InputDecoration(
     hintText: hint,
     hintStyle: TextStyle(
       color: theme.brightness == Brightness.dark

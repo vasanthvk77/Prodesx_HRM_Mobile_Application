@@ -895,5 +895,428 @@ namespace backend.Services
                 }
             }
         }
+        public byte[] GenerateStaffSalaryExcel(List<StaffSalary> records, Organization org, int month, int year)
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                var monthName = new DateTime(year, month, 1).ToString("MMMM");
+                var worksheet = workbook.Worksheets.Add($"Payroll_{monthName}_{year}");
+                int currentRow = 1;
+
+                // Title
+                worksheet.Cell(currentRow, 1).Value = org.Name;
+                worksheet.Range(currentRow, 1, currentRow, 10).Merge().Style.Font.Bold = true;
+                worksheet.Range(currentRow, 1, currentRow, 10).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                currentRow++;
+
+                worksheet.Cell(currentRow, 1).Value = $"Monthly Salary Register - {monthName} {year}";
+                worksheet.Range(currentRow, 1, currentRow, 10).Merge().Style.Font.Bold = true;
+                worksheet.Range(currentRow, 1, currentRow, 10).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                currentRow += 2;
+
+                // Identify ALL unique allowance and deduction names
+                var allowanceNames = new HashSet<string>();
+                var manualDeductionNames = new HashSet<string>();
+                bool hasPF = false;
+                bool hasESI = false;
+
+                foreach (var r in records)
+                {
+                    if (!string.IsNullOrEmpty(r.AllowancesDetail))
+                    {
+                        var list = JsonConvert.DeserializeObject<List<dynamic>>(r.AllowancesDetail);
+                        if (list != null) {
+                            foreach (var item in list) {
+                                string? name = (string?)item.name;
+                                if (!string.IsNullOrEmpty(name)) allowanceNames.Add(name);
+                            }
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(r.DeductionsDetail))
+                    {
+                        var list = JsonConvert.DeserializeObject<List<dynamic>>(r.DeductionsDetail);
+                        if (list != null) {
+                            foreach (var item in list) {
+                                string? name = (string?)item.name;
+                                if (string.IsNullOrEmpty(name)) continue;
+                                
+                                if (name == "PF") hasPF = true;
+                                else if (name == "ESI") hasESI = true;
+                                else manualDeductionNames.Add(name);
+                            }
+                        }
+                    }
+                }
+
+                var sortedAllowances = allowanceNames.OrderBy(n => n).ToList();
+                var sortedManualDeductions = manualDeductionNames.OrderBy(n => n).ToList();
+
+                // Build Headers
+                int col = 1;
+                worksheet.Cell(currentRow, col++).Value = "Sl. No.";
+                worksheet.Cell(currentRow, col++).Value = "Employee Name";
+                worksheet.Cell(currentRow, col++).Value = "Staff ID";
+                worksheet.Cell(currentRow, col++).Value = "Base Basic Pay";
+                worksheet.Cell(currentRow, col++).Value = "Present Days";
+                worksheet.Cell(currentRow, col++).Value = "Total Days";
+                worksheet.Cell(currentRow, col++).Value = "Earned Basic Pay";
+
+                // Dynamic Allowance Columns
+                foreach (var name in sortedAllowances) 
+                {
+                    worksheet.Cell(currentRow, col++).Value = $"{name} (Full)";
+                    worksheet.Cell(currentRow, col++).Value = $"{name} (Earned)";
+                }
+
+                // Statutory Deductions (Fixed Columns)
+                if (hasPF) worksheet.Cell(currentRow, col++).Value = "PF";
+                if (hasESI) worksheet.Cell(currentRow, col++).Value = "ESI";
+
+                // Dynamic Manual Deduction Columns
+                foreach (var name in sortedManualDeductions) 
+                {
+                    worksheet.Cell(currentRow, col++).Value = $"{name} (Full)";
+                    worksheet.Cell(currentRow, col++).Value = $"{name} (Earned)";
+                }
+
+                worksheet.Cell(currentRow, col++).Value = "Total Allowances";
+                worksheet.Cell(currentRow, col++).Value = "Total Deductions";
+                worksheet.Cell(currentRow, col++).Value = "Net Salary / Gross";
+
+                var headerRange = worksheet.Range(currentRow, 1, currentRow, col - 1);
+                headerRange.Style.Font.Bold = true;
+                headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+                headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                currentRow++;
+
+                // Data Rows
+                int serial = 1;
+                var sortedRecords = records.OrderBy(r => r.EmployeeName).ToList();
+                foreach (var r in sortedRecords)
+                {
+                    int currentCol = 1;
+                    worksheet.Cell(currentRow, currentCol++).Value = serial++;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.EmployeeName;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.EmployeeCode;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.BaseBasicPay;
+                    worksheet.Cell(currentRow, currentCol++).Value = (double)r.PresentDays;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.TotalDaysInMonth;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.NetSalary;
+
+                    // Allowances Logic
+                    var allowanceMap = new Dictionary<string, (decimal Full, decimal Earned)>();
+                    if (!string.IsNullOrEmpty(r.AllowancesDetail))
+                    {
+                        var list = JsonConvert.DeserializeObject<List<dynamic>>(r.AllowancesDetail);
+                        if (list != null)
+                        {
+                            foreach (var item in list)
+                            {
+                                string? n = (string?)item.name;
+                                if (string.IsNullOrEmpty(n)) continue;
+                                decimal earned = (decimal?)(item.amount) ?? 0m;
+                                decimal full = (decimal?)(item.baseAmount) ?? earned;
+                                if (item.baseAmount == null && r.PresentDays > 0 && r.TotalDaysInMonth > 0)
+                                    full = Math.Round(earned * r.TotalDaysInMonth / r.PresentDays, 2);
+                                allowanceMap[n] = (full, earned);
+                            }
+                        }
+                    }
+                    foreach (var name in sortedAllowances)
+                    {
+                        if (allowanceMap.TryGetValue(name, out var vals))
+                        {
+                            worksheet.Cell(currentRow, currentCol++).Value = vals.Full;
+                            worksheet.Cell(currentRow, currentCol++).Value = vals.Earned;
+                        }
+                        else { worksheet.Cell(currentRow, currentCol++).Value = 0; worksheet.Cell(currentRow, currentCol++).Value = 0; }
+                    }
+
+                    // Deductions Logic (Statutory + Manual)
+                    var deductionMap = new Dictionary<string, (decimal Full, decimal Earned)>();
+                    if (!string.IsNullOrEmpty(r.DeductionsDetail))
+                    {
+                        var list = JsonConvert.DeserializeObject<List<dynamic>>(r.DeductionsDetail);
+                        if (list != null)
+                        {
+                            foreach (var item in list)
+                            {
+                                string? n = (string?)item.name;
+                                if (string.IsNullOrEmpty(n)) continue;
+                                decimal earned = (decimal?)(item.amount) ?? 0m;
+                                decimal full = (decimal?)(item.baseAmount) ?? earned;
+                                if (item.baseAmount == null && r.PresentDays > 0 && r.TotalDaysInMonth > 0 && (n != "PF" && n != "ESI"))
+                                    full = Math.Round(earned * r.TotalDaysInMonth / r.PresentDays, 2);
+                                deductionMap[n] = (full, earned);
+                            }
+                        }
+                    }
+
+                    // PF / ESI Columns
+                    if (hasPF) worksheet.Cell(currentRow, currentCol++).Value = deductionMap.TryGetValue("PF", out var pfVals) ? pfVals.Earned : 0;
+                    if (hasESI) worksheet.Cell(currentRow, currentCol++).Value = deductionMap.TryGetValue("ESI", out var esiVals) ? esiVals.Earned : 0;
+
+                    // Manual Deductions (Full & Earned)
+                    foreach (var name in sortedManualDeductions)
+                    {
+                        if (deductionMap.TryGetValue(name, out var vals))
+                        {
+                            worksheet.Cell(currentRow, currentCol++).Value = vals.Full;
+                            worksheet.Cell(currentRow, currentCol++).Value = vals.Earned;
+                        }
+                        else { worksheet.Cell(currentRow, currentCol++).Value = 0; worksheet.Cell(currentRow, currentCol++).Value = 0; }
+                    }
+
+                    worksheet.Cell(currentRow, currentCol++).Value = r.TotalAllowance;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.TotalDeduction;
+                    worksheet.Cell(currentRow, currentCol++).Value = r.GrossSalary;
+                    
+                    currentRow++;
+                }
+
+                worksheet.Columns().AdjustToContents();
+                worksheet.Range(currentRow - serial + 1, 1, currentRow - 1, col - 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range(currentRow - serial + 1, 1, currentRow - 1, col - 1).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    return stream.ToArray();
+                }
+            }
+        }
+
+
+        public byte[] GenerateStaffSalaryPdf(List<StaffSalary> records, Organization org, int month, int year)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            var dt = new DataTable();
+            dt.TableName = "SalaryDataSet";
+            dt.Columns.Add("OrgName");
+            dt.Columns.Add("OrgAddress");
+            dt.Columns.Add("MonthYear");
+            dt.Columns.Add("SlNo");
+            dt.Columns.Add("EmpName");
+            dt.Columns.Add("EmpCode");
+            dt.Columns.Add("BaseBasicPay", typeof(decimal));
+            dt.Columns.Add("PresentDays", typeof(decimal));
+            dt.Columns.Add("TotalDays", typeof(int));
+            dt.Columns.Add("EarnedBasic", typeof(decimal));
+            dt.Columns.Add("TotalBaseAllowances", typeof(decimal));
+            dt.Columns.Add("TotalAllowances", typeof(decimal));
+            dt.Columns.Add("PF", typeof(decimal));
+            dt.Columns.Add("ESI", typeof(decimal));
+            dt.Columns.Add("TotalDeductions", typeof(decimal));
+            dt.Columns.Add("NetSalary", typeof(decimal));
+
+            var monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+            int serial = 1;
+
+            var sortedRecords = records.OrderBy(r => r.EmployeeName).ToList();
+            foreach (var r in sortedRecords)
+            {
+                var row = dt.NewRow();
+                row["OrgName"] = org.Name;
+                row["OrgAddress"] = org.Address ?? "";
+                row["MonthYear"] = monthName.ToUpper();
+                row["SlNo"] = serial++.ToString();
+                row["EmpName"] = r.EmployeeName;
+                row["EmpCode"] = r.EmployeeCode ?? "--";
+                row["BaseBasicPay"] = r.BaseBasicPay;
+                row["PresentDays"] = r.PresentDays;
+                row["TotalDays"] = r.TotalDaysInMonth;
+                row["EarnedBasic"] = r.NetSalary; // NetSalary in model is Earned Basic
+                row["TotalBaseAllowances"] = r.TotalBaseAllowance;
+                row["TotalAllowances"] = r.TotalAllowance;
+                
+                // Extract PF and ESI from JSON
+                var deductions = !string.IsNullOrEmpty(r.DeductionsDetail) 
+                    ? JsonConvert.DeserializeObject<List<dynamic>>(r.DeductionsDetail) 
+                    : null;
+                
+                decimal pf = 0, esi = 0;
+                if (deductions != null)
+                {
+                    foreach (var d in deductions)
+                    {
+                        string name = (string)d.name;
+                        if (name == "PF") pf = (decimal?)d.amount ?? 0;
+                        else if (name == "ESI") esi = (decimal?)d.amount ?? 0;
+                    }
+                }
+                
+                row["PF"] = pf;
+                row["ESI"] = esi;
+                row["TotalDeductions"] = r.TotalDeduction;
+                row["NetSalary"] = r.GrossSalary;
+
+                dt.Rows.Add(row);
+            }
+
+            var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "ReportTemplate", "Salary_Register.rdlc");
+            if (!File.Exists(reportPath))
+            {
+                throw new FileNotFoundException("Salary PDF template not found.");
+            }
+
+            using var localReport = new LocalReport();
+            localReport.ReportPath = reportPath;
+            localReport.DataSources.Add(new ReportDataSource("SalaryDataSet", dt));
+            return localReport.Render("PDF");
+        }
+
+        public byte[] GenerateIndividualPaySlipPdf(StaffSalary salary, Employee employee, Organization org, int month, int year)
+        {
+            if (salary == null) throw new ArgumentNullException(nameof(salary), "StaffSalary is null");
+            if (employee == null) throw new ArgumentNullException(nameof(employee), "Employee is null");
+            if (org == null) throw new ArgumentNullException(nameof(org), "Organization is null");
+            
+            // Log for debugging
+            Console.WriteLine($"[ExportService] Generating PaySlip for {employee.Name} ({employee.EmployeeCode}), Month: {month}, Year: {year}");
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            var dt = new DataTable();
+            dt.TableName = "PaySlipDataSet";
+            dt.Columns.Add("OrgName");
+            dt.Columns.Add("OrgAddress");
+            dt.Columns.Add("MonthYear");
+            dt.Columns.Add("EmpName");
+            dt.Columns.Add("EmpCode");
+            dt.Columns.Add("Designation");
+            dt.Columns.Add("Department");
+            dt.Columns.Add("Doj");
+            dt.Columns.Add("BankName");
+            dt.Columns.Add("AccNo");
+            dt.Columns.Add("Ifsc");
+            dt.Columns.Add("PfNo");
+            dt.Columns.Add("EsiNo");
+            dt.Columns.Add("TotalDays", typeof(int));
+            dt.Columns.Add("PresentDays", typeof(decimal));
+            dt.Columns.Add("BasicPay", typeof(decimal));
+            dt.Columns.Add("EarnedBasic", typeof(decimal));
+            dt.Columns.Add("GrossEarnings", typeof(decimal));
+            dt.Columns.Add("FullGrossEarnings", typeof(decimal));
+            dt.Columns.Add("GrossDeduction", typeof(decimal));
+            dt.Columns.Add("NetSalary", typeof(decimal));
+            dt.Columns.Add("EarningsList");
+            dt.Columns.Add("DeductionsList");
+            dt.Columns.Add("EarnParticulars");
+            dt.Columns.Add("EarnFull");
+            dt.Columns.Add("EarnActual");
+            dt.Columns.Add("DedParticulars");
+            dt.Columns.Add("DedAmount");
+
+            var monthName = new DateTime(year, month, 1).ToString("MMMM - yyyy");
+            
+            var row = dt.NewRow();
+            row["OrgName"] = org.Name;
+            row["OrgAddress"] = org.Address ?? "";
+            row["MonthYear"] = monthName;
+            row["EmpName"] = employee.Name;
+            row["EmpCode"] = employee.EmployeeCode ?? "--";
+            row["Designation"] = employee.Designation ?? "--";
+            row["Department"] = employee.Department ?? "--";
+            row["Doj"] = employee.JoiningDate?.ToString("dd/MM/yyyy") ?? "--";
+            row["BankName"] = employee.BankName ?? "--";
+            row["AccNo"] = employee.AccountNumber ?? "--";
+            row["Ifsc"] = employee.IfscCode ?? "--";
+            row["PfNo"] = employee.EmployeePfNo ?? "--";
+            row["EsiNo"] = employee.EmployeeEsicNo ?? "--";
+            row["TotalDays"] = salary.TotalDaysInMonth;
+            row["PresentDays"] = salary.PresentDays;
+            
+            row["BasicPay"] = salary.BaseBasicPay;
+            row["EarnedBasic"] = salary.NetSalary;
+            row["GrossEarnings"] = salary.NetSalary + salary.TotalAllowance;
+            row["GrossDeduction"] = salary.TotalDeduction;
+            row["NetSalary"] = salary.GrossSalary;
+
+            // Format Earnings
+            var earnPart = new StringBuilder();
+            var earnFull = new StringBuilder();
+            var earnActual = new StringBuilder();
+            decimal fullGrossEarnings = salary.BaseBasicPay;
+            
+            // Basic Salary Row
+            earnPart.AppendLine("Basic Salary");
+            earnFull.AppendLine($"{salary.BaseBasicPay:N0}");
+            earnActual.AppendLine($"{salary.NetSalary:N0}");
+
+            if (!string.IsNullOrEmpty(salary.AllowancesDetail))
+            {
+                var list = JsonConvert.DeserializeObject<List<dynamic>>(salary.AllowancesDetail);
+                if (list != null)
+                {
+                    foreach (var item in list)
+                    {
+                        if (item == null) continue;
+                        string name = (string)item.name;
+                        decimal actual = (decimal?)(item.amount) ?? 0m;
+                        decimal full = (decimal?)(item.baseAmount) ?? actual;
+                        
+                        // Fallback logic
+                        if (item.baseAmount == null && salary.PresentDays > 0 && salary.TotalDaysInMonth > 0)
+                        {
+                            full = actual * salary.TotalDaysInMonth / salary.PresentDays;
+                        }
+
+                        if (actual > 0 && name != null)
+                        {
+                            earnPart.AppendLine(name);
+                            earnFull.AppendLine($"{full:N0}");
+                            earnActual.AppendLine($"{actual:N0}");
+                            fullGrossEarnings += full;
+                        }
+                    }
+                }
+            }
+            row["FullGrossEarnings"] = fullGrossEarnings;
+            row["EarningsList"] = ""; // Maintain column schema
+            row["EarnParticulars"] = earnPart.ToString();
+            row["EarnFull"] = earnFull.ToString();
+            row["EarnActual"] = earnActual.ToString();
+
+            // Format Deductions
+            var dedPart = new StringBuilder();
+            var dedAmt = new StringBuilder();
+            var standardDeds = new Dictionary<string, decimal>();
+
+            if (!string.IsNullOrEmpty(salary.DeductionsDetail))
+            {
+                var list = JsonConvert.DeserializeObject<List<dynamic>>(salary.DeductionsDetail);
+                if (list != null)
+                {
+                    foreach (var item in list)
+                    {
+                        if (item == null) continue;
+                        string name = (string)item.name;
+                        decimal amount = (decimal?)(item.amount) ?? 0m;
+                        if (amount > 0 && name != null) standardDeds[name] = amount;
+                    }
+                }
+            }
+
+            foreach (var kvp in standardDeds)
+            {
+                string displayName = kvp.Key;
+                dedPart.AppendLine(displayName);
+                dedAmt.AppendLine($"{kvp.Value:N0}");
+            }
+            row["DeductionsList"] = ""; // Maintain column schema
+            row["DedParticulars"] = dedPart.ToString();
+            row["DedAmount"] = dedAmt.ToString();
+
+            dt.Rows.Add(row);
+
+            var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "ReportTemplate", "Pay_Slip.rdlc");
+            using var localReport = new LocalReport();
+            localReport.ReportPath = reportPath;
+            localReport.DataSources.Add(new ReportDataSource("PaySlipDataSet", dt));
+
+            return localReport.Render("PDF");
+        }
     }
 }

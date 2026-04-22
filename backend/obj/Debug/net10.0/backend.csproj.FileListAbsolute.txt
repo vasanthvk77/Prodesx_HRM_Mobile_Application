@@ -379,3 +379,5 @@ C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.p
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\backend.genruntimeconfig.cache
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\obj\Debug\net10.0\ref\backend.dll
 C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Attendance_Register.rdlc
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Pay_Slip.rdlc
+C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\bin\Debug\net10.0\ReportTemplate\Salary_Register.rdlc

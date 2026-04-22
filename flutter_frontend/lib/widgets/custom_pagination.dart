@@ -39,14 +39,13 @@ class CustomPagination extends StatelessWidget {
               // Page Size Selector
               Row(
                 children: [
-                  Text('Show ', style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)),
+                  Text('Show ', style: theme.textTheme.bodySmall?.copyWith(fontSize: 13, color: const Color(0xFF475569), fontWeight: FontWeight.w600)),
                   Container(
                     height: 32,
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
@@ -66,7 +65,7 @@ class CustomPagination extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(' entries', style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)),
+                  Text(' entries', style: theme.textTheme.bodySmall?.copyWith(fontSize: 13, color: const Color(0xFF475569), fontWeight: FontWeight.w600)),
                 ],
               ),
               
@@ -83,7 +82,7 @@ class CustomPagination extends StatelessWidget {
                   children: [
                     Text(
                       'Showing $startItem to $endItem of $totalItems entries',
-                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 13, color: const Color(0xFF475569), fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: 24),
                     _buildPageControls(totalPages, theme),
@@ -175,7 +174,6 @@ class _PageButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            border: Border.all(color: theme.dividerColor),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: onPressed != null ? theme.iconTheme.color : theme.iconTheme.color?.withOpacity(0.2), size: 18),
@@ -206,7 +204,6 @@ class _PageNumberButton extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isActive ? theme.colorScheme.primary : Colors.transparent,
-            border: isActive ? null : Border.all(color: theme.dividerColor),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(

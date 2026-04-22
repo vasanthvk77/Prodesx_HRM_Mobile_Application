@@ -8,6 +8,12 @@ import '../screens/login_screen.dart';
 import '../screens/employee_registration_screen.dart';
 import '../screens/organization_list_screen.dart';
 import '../screens/attendance_list_screen.dart';
+import '../screens/professional_tax_screen.dart';
+import '../screens/benefits_master_screen.dart';
+import '../screens/benefit_assignment_screen.dart';
+import '../screens/benefits_screen.dart';
+import '../models/benefit_models.dart';
+import '../screens/calendar_settings_screen.dart';
 import '../core/api_config.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -82,35 +88,35 @@ class AppDrawer extends ConsumerWidget {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
-                    _drawerItem(context, Icons.dashboard_outlined, "Dashboard", isSelected: navState.currentIndex == 0, onTap: () {
+                    _drawerItem(context, Icons.dashboard_outlined, "Dashboard", isSelected: navState.activeModule == 'dashboard', onTap: () {
                       navNotifier.setIndex(0);
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
                     if (user?.role == 'SuperAdmin' || user?.role == 'Admin') ...[
-                      _drawerItem(context, Icons.badge_outlined, "HR Management", isSelected: navState.currentIndex == 1, onTap: () {
+                      _drawerItem(context, Icons.badge_outlined, "HR Management", isSelected: navState.activeModule == 'hrm', onTap: () {
                         navNotifier.setIndex(1);
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
-                      _drawerItem(context, Icons.person_outline, "User Management", isSelected: navState.currentIndex == 2, onTap: () {
+                      _drawerItem(context, Icons.person_outline, "User Management", isSelected: navState.activeModule == 'user_mgmt', onTap: () {
                         navNotifier.setIndex(2);
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
                       // Add Face Registration for Admins
-                      _drawerItem(context, Icons.camera_front, "Face Management", onTap: () {
-                        navNotifier.setDashboardContent(const EmployeeRegistrationScreen());
+                      _drawerItem(context, Icons.camera_front, "Face Management", isSelected: navState.activeModule == 'face_mgmt', onTap: () {
+                        navNotifier.setDashboardContent(const EmployeeRegistrationScreen(), module: 'face_mgmt');
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
-                      _drawerItem(context, Icons.history, "Attendance Logs", onTap: () {
-                        navNotifier.setDashboardContent(const AttendanceListScreen());
+                      _drawerItem(context, Icons.history, "Attendance Logs", isSelected: navState.activeModule == 'attendance_logs', onTap: () {
+                        navNotifier.setDashboardContent(const AttendanceListScreen(), module: 'attendance_logs');
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
                     ] else ...[
-                      _drawerItem(context, Icons.fingerprint, "Attendance", isSelected: navState.currentIndex == 1, onTap: () {
+                      _drawerItem(context, Icons.fingerprint, "Attendance", isSelected: navState.activeModule == 'hrm', onTap: () {
                         navNotifier.setIndex(1);
                         if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                       }),
                     ],
-                    _drawerItem(context, Icons.task_alt_outlined, "Tasks", isSelected: navState.currentIndex == 3, onTap: () {
+                    _drawerItem(context, Icons.task_alt_outlined, "Tasks", isSelected: navState.activeModule == 'tasks', onTap: () {
                       navNotifier.setIndex(3);
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
@@ -120,42 +126,63 @@ class AppDrawer extends ConsumerWidget {
                       child: Divider(color: Theme.of(context).dividerColor.withOpacity(0.5)),
                     ),
 
-                    _drawerItem(context, Icons.handshake_outlined, "Clients", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Clients Screen")));
+                    _drawerItem(context, Icons.handshake_outlined, "Clients", isSelected: navState.activeModule == 'clients', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Clients Screen")), module: 'clients');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.work_outline, "Work", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Work Screen")));
+                    /// Tax Section
+                    _buildExpansionTile(
+                      context,
+                      icon: Icons.payments_outlined,
+                      title: "Tax",
+                      isExpanded: navState.activeModule == 'professional_tax',
+                      children: [
+                        _subItem(context, "Professional Tax", isSelected: navState.activeModule == 'professional_tax', onTap: () {
+                          navNotifier.setDashboardContent(const ProfessionalTaxScreen(), module: 'professional_tax');
+                          if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                        }),
+                      ],
+                    ),
+
+                    _drawerItem(context, Icons.card_giftcard, "Benefits", isSelected: navState.activeModule == 'benefits', onTap: () {
+                      navNotifier.setDashboardContent(const BenefitsScreen(), module: 'benefits');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.account_balance_wallet_outlined, "Finance", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Finance Screen")));
+
+                    _drawerItem(context, Icons.work_outline, "Work", isSelected: navState.activeModule == 'work', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Work Screen")), module: 'work');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.shopping_cart_outlined, "Orders", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Orders Screen")));
+                    _drawerItem(context, Icons.account_balance_wallet_outlined, "Finance", isSelected: navState.activeModule == 'finance', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Finance Screen")), module: 'finance');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.confirmation_num_outlined, "Tickets", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Tickets Screen")));
+                    _drawerItem(context, Icons.shopping_cart_outlined, "Orders", isSelected: navState.activeModule == 'orders', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Orders Screen")), module: 'orders');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.event_outlined, "Events", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Events Screen")));
+                    _drawerItem(context, Icons.confirmation_num_outlined, "Tickets", isSelected: navState.activeModule == 'tickets', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Tickets Screen")), module: 'tickets');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.message_outlined, "Messages", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Messages Screen")));
+                    _drawerItem(context, Icons.event_outlined, "Events", isSelected: navState.activeModule == 'events', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Events Screen")), module: 'events');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.campaign_outlined, "Notice Board", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Notice Board Screen")));
+                    _drawerItem(context, Icons.message_outlined, "Messages", isSelected: navState.activeModule == 'messages', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Messages Screen")), module: 'messages');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
-                    _drawerItem(context, Icons.book_outlined, "Knowledge Base", onTap: () {
-                      navNotifier.setDashboardContent(const Center(child: Text("Knowledge Base Screen")));
+                    _drawerItem(context, Icons.campaign_outlined, "Notice Board", isSelected: navState.activeModule == 'notice_board', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Notice Board Screen")), module: 'notice_board');
                       if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                     }),
+                    _drawerItem(context, Icons.book_outlined, "Knowledge Base", isSelected: navState.activeModule == 'knowledge_base', onTap: () {
+                      navNotifier.setDashboardContent(const Center(child: Text("Knowledge Base Screen")), module: 'knowledge_base');
+                      if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                    }),
+                    
+                    
 
                     /// Forms
                     _buildExpansionTile(
@@ -247,8 +274,13 @@ class AppDrawer extends ConsumerWidget {
                         _subItem(context, "Notifications"),
                         _subItem(context, "Updates"),
                         if (user?.role == 'SuperAdmin')
-                          _subItem(context, "Organizations", onTap: () {
-                            navNotifier.setDashboardContent(const OrganizationListScreen());
+                          _subItem(context, "Organizations", isSelected: navState.activeModule == 'organizations', onTap: () {
+                            navNotifier.setDashboardContent(const OrganizationListScreen(), module: 'organizations');
+                            if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
+                          }),
+                        if (user?.role == 'SuperAdmin' || user?.role == 'Admin')
+                          _subItem(context, "Calendar Settings", isSelected: navState.activeModule == 'calendar_settings', onTap: () {
+                            navNotifier.setDashboardContent(const CalendarSettingsScreen(), module: 'calendar_settings');
                             if (MediaQuery.of(context).size.width < 900) Navigator.pop(context);
                           }),
                       ],
@@ -378,6 +410,7 @@ class AppDrawer extends ConsumerWidget {
     if (materialIcon == Icons.message_outlined) return CupertinoIcons.bubble_left;
     if (materialIcon == Icons.campaign_outlined) return CupertinoIcons.speaker_2;
     if (materialIcon == Icons.book_outlined) return CupertinoIcons.book;
+    if (materialIcon == Icons.payments_outlined) return CupertinoIcons.money_dollar_circle;
     return materialIcon;
   }
 

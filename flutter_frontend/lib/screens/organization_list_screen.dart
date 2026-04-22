@@ -112,9 +112,9 @@ class _OrganizationListScreenState extends ConsumerState<OrganizationListScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Organisation Management',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF0F172A)),
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
@@ -133,8 +133,8 @@ class _OrganizationListScreenState extends ConsumerState<OrganizationListScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         elevation: 0,
                       ),
                       child: const Row(
@@ -142,7 +142,7 @@ class _OrganizationListScreenState extends ConsumerState<OrganizationListScreen>
                         children: [
                           Icon(Icons.add, size: 14),
                           SizedBox(width: 4),
-                          Text('Add', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          Text('Add Organization', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -183,24 +183,30 @@ class _OrganizationListScreenState extends ConsumerState<OrganizationListScreen>
   Widget _buildDesktopTable(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200),
+        color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+        borderRadius: BorderRadius.circular(20), // Premium rounding
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.04), // Soft shadow
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            headingRowColor: WidgetStateProperty.all(isDark ? Colors.white.withOpacity(0.02) : Colors.grey.shade50),
+            headingRowColor: WidgetStateProperty.all(isDark ? Colors.white.withOpacity(0.01) : Colors.white),
             columnSpacing: 30,
             columns: const [
-              DataColumn(label: Text('LOGO', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
-              DataColumn(label: Text('NAME', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
-              DataColumn(label: Text('EMAIL', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
-              DataColumn(label: Text('PHONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
-              DataColumn(label: Text('ADDRESS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
-              DataColumn(label: Text('ACTIONS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.blueAccent))),
+              DataColumn(label: Text('LOGO', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
+              DataColumn(label: Text('NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
+              DataColumn(label: Text('EMAIL', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
+              DataColumn(label: Text('PHONE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
+              DataColumn(label: Text('ADDRESS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
+              DataColumn(label: Text('ACTIONS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF475569), letterSpacing: 0.8))),
             ],
             rows: _organizations.map((org) {
               return DataRow(cells: [

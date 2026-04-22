@@ -92,11 +92,6 @@ class OrgDropdown extends StatelessWidget {
                 ? Theme.of(context).scaffoldBackgroundColor
                 : Theme.of(context).cardTheme.color,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isCompact && value != null && value != ''
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).dividerColor,
-            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -112,9 +107,9 @@ class OrgDropdown extends StatelessWidget {
               Text(
                 items.firstWhere((e) => e.id == currentValue).name,
                 style: TextStyle(
-                  color:
-                      Theme.of(context).textTheme.bodyMedium?.color ??
-                      Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white 
+                      : const Color(0xFF1E293B), // Darker slate 800
                   fontSize: 12,
                   fontWeight: isCompact ? FontWeight.normal : FontWeight.w600,
                 ),
@@ -139,11 +134,6 @@ class OrgDropdown extends StatelessWidget {
             ? Theme.of(context).scaffoldBackgroundColor
             : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isCompact && value != null && value != ''
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).dividerColor,
-        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -158,8 +148,9 @@ class OrgDropdown extends StatelessWidget {
           ),
           isDense: true,
           style: TextStyle(
-            color:
-                Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.white 
+                : const Color(0xFF1E293B), // Darker slate 800
             fontSize: 12,
             fontWeight: isCompact ? FontWeight.normal : FontWeight.w600,
           ),
@@ -190,9 +181,6 @@ class OrgDropdown extends StatelessWidget {
               ? Colors.white
               : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
-          ),
           boxShadow: Theme.of(context).brightness == Brightness.light
               ? [
                   BoxShadow(
@@ -224,11 +212,11 @@ class OrgDropdown extends StatelessWidget {
                       child: Text(
                         'Organization',
                         style: TextStyle(
-                          color: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withOpacity(0.8)
+                              : const Color(0xFF475569), // Darker slate 600
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

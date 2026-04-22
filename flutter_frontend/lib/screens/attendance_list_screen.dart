@@ -88,27 +88,57 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
         if (didPop) return;
         ref.read(navigationProvider.notifier).setHRManagementContent(null);
       },
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('Attendance Logs'),
-        elevation: 0,
-        backgroundColor: theme.cardColor,
-        leading: IconButton(
-          icon: Icon(isIOS ? CupertinoIcons.back : Icons.arrow_back),
-          onPressed: () => ref.read(navigationProvider.notifier).setHRManagementContent(null),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchLogs,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Premium Search Toolbar
-          Padding(
+      child: Material(
+        color: theme.scaffoldBackgroundColor,
+        child: Column(
+          children: [
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: theme.cardColor,
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.iconTheme.color,
+                        size: 20,
+                      ),
+                      onPressed: () => ref
+                          .read(navigationProvider.notifier)
+                          .setHRManagementContent(null),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Attendance Logs',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900, // Extra bold
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.refresh, size: 20),
+                      onPressed: _fetchLogs,
+                    ),
+                    if (_isLoading)
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.blue,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            // Premium Search Toolbar
+            Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: HRMSearchToolbar(
               selectedOrgId: _selectedOrgId,
@@ -129,189 +159,269 @@ class _AttendanceListScreenState extends ConsumerState<AttendanceListScreen> {
             ),
           ),
 
-          // Header Info
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "TOTAL LOGS: ${_logs.length}",
-                  style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.blue),
-                ),
-                Text(
-                  DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                  style: theme.textTheme.labelSmall,
-                ),
-              ],
+            // Info Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "TOTAL LOGS: ${_logs.length}",
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    DateFormat('EEEE, MMM dd').format(DateTime.now()),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // Logs List
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _logs.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.history_toggle_off, size: 64, color: Colors.grey.withOpacity(0.5)),
-                            const SizedBox(height: 16),
-                            const Text("No attendance records found today", style: TextStyle(color: Colors.grey)),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _fetchLogs,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          itemCount: _logs.where((log) {
-                            final name = (log['employeeName'] ?? log['EmployeeName'] ?? '').toString().toLowerCase();
-                            final code = (log['employeeCode'] ?? log['EmployeeCode'] ?? '').toString().toLowerCase();
-                            final search = _searchQuery.toLowerCase();
-                            return name.contains(search) || code.contains(search);
-                          }).length,
-                          itemBuilder: (context, index) {
-                            final filteredLogs = _logs.where((log) {
+            // Content
+            Expanded(
+              child: _isLoading && _logs.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : _logs.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.history_toggle_off, size: 64, color: Colors.grey.withOpacity(0.3)),
+                              const SizedBox(height: 16),
+                              const Text("No records found", style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            final filtered = _logs.where((log) {
                               final name = (log['employeeName'] ?? log['EmployeeName'] ?? '').toString().toLowerCase();
                               final code = (log['employeeCode'] ?? log['EmployeeCode'] ?? '').toString().toLowerCase();
                               final search = _searchQuery.toLowerCase();
                               return name.contains(search) || code.contains(search);
                             }).toList();
-                            final log = filteredLogs[index];
-                            
-                            // Safe parsing
-                            final rawTime = log['punchTime'] ?? log['PunchTime'] ?? DateTime.now().toIso8601String();
-                            final punchTime = DateTime.tryParse(rawTime.toString()) ?? DateTime.now();
-                            final hourStr = DateFormat('HH:mm:ss').format(punchTime);
-                            final dateStr = DateFormat('MMM dd, yyyy').format(punchTime);
-                            
-                            final empName = log['employeeName'] ?? log['EmployeeName'] ?? 'Unknown';
-                            final empCode = log['employeeCode'] ?? log['EmployeeCode'] ?? '---';
-                            final role = log['role'] ?? log['Role'] ?? 'No Role';
-                            final punchType = log['punchType'] ?? log['PunchType'] ?? 'FACE';
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
-                                gradient: isDark ? null : LinearGradient(
-                                  colors: [theme.cardColor, theme.cardColor.withOpacity(0.95)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: isDark ? [] : [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: IntrinsicHeight(
-                                  child: Row(
-                                    children: [
-                                      // Status Stripe
-                                      Container(
-                                        width: 4,
-                                        color: Colors.blueAccent,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      // Info Section
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 16),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                width: 42,
-                                                height: 42,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blue.withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(12),
-                                                ),
-                                                child: const Icon(Icons.person, color: Colors.blueAccent, size: 20),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      empName,
-                                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      "$empCode • $role",
-                                                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      // Time Section
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                        decoration: BoxDecoration(
-                                          color: theme.dividerColor.withOpacity(0.03),
-                                          border: Border(left: BorderSide(color: theme.dividerColor.withOpacity(0.1))),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              hourStr,
-                                              style: TextStyle(
-                                                fontFamily: 'monospace',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.blueAccent,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              dateStr,
-                                              style: const TextStyle(fontSize: 9, color: Colors.grey),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: Colors.green.withOpacity(0.1),
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: Text(
-                                                punchType.toString().toUpperCase(),
-                                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.green),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                            if (constraints.maxWidth < 900) {
+                              return _buildMobileCards(filtered, theme, isDark);
+                            }
+                            return _buildDesktopTable(filtered, theme, isDark);
                           },
                         ),
-                      ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileCards(List<dynamic> filtered, ThemeData theme, bool isDark) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: filtered.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final log = filtered[index];
+        final rawTime = log['punchTime'] ?? log['PunchTime'] ?? DateTime.now().toIso8601String();
+        final punchTime = DateTime.tryParse(rawTime.toString()) ?? DateTime.now();
+        final hourStr = DateFormat('hh:mm:ss a').format(punchTime);
+        final dateStr = DateFormat('MMM dd, yyyy').format(punchTime);
+        final empName = log['employeeName'] ?? log['EmployeeName'] ?? 'Unknown';
+        final empCode = log['employeeCode'] ?? log['EmployeeCode'] ?? '---';
+        final role = log['role'] ?? log['Role'] ?? 'No Role';
+        final punchType = log['punchType'] ?? log['PunchType'] ?? 'FACE';
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+            boxShadow: [
+              if (!isDark)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.person_outline, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(empName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    const SizedBox(height: 4),
+                    Text("$empCode • $role", style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(hourStr, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Colors.blue.shade600)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(punchType.toString().toUpperCase(), style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.green)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDesktopTable(List<dynamic> filtered, ThemeData theme, bool isDark) {
+    final border = isDark ? Colors.white.withOpacity(0.05) : theme.dividerColor.withOpacity(0.1);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.04),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
+            child: Row(
+              children: [
+                _headerCell('Employee Details', flex: 4),
+                _headerCell('Punch Time', flex: 2),
+                _headerCell('Punch Date', flex: 2),
+                _headerCell('Verification', flex: 1),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: border),
+          // Body
+          Expanded(
+            child: ListView.separated(
+              itemCount: filtered.length,
+              separatorBuilder: (_, __) => Divider(height: 1, color: border),
+              itemBuilder: (context, index) {
+                final log = filtered[index];
+                final rawTime = log['punchTime'] ?? log['PunchTime'] ?? DateTime.now().toIso8601String();
+                final punchTime = DateTime.tryParse(rawTime.toString()) ?? DateTime.now();
+                final hourStr = DateFormat('hh:mm:ss a').format(punchTime);
+                final dateStr = DateFormat('MMM dd, yyyy').format(punchTime);
+                final empName = log['employeeName'] ?? log['EmployeeName'] ?? 'Unknown';
+                final empCode = log['employeeCode'] ?? log['EmployeeCode'] ?? '---';
+                final role = log['role'] ?? log['Role'] ?? 'No Role';
+                final punchType = log['punchType'] ?? log['PunchType'] ?? 'FACE';
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.blue.shade50,
+                              child: Text(empName[0], style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(empName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                                  Text("$empCode • $role", style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(hourStr, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Colors.blue.shade600)),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(dateStr, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            punchType.toString().toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.green),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _headerCell(String label, {int? flex}) {
+    return Expanded(
+      flex: flex ?? 1,
+      child: Text(
+        label.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+          color: Color(0xFF475569),
+          letterSpacing: 0.8,
+        ),
       ),
     );
   }

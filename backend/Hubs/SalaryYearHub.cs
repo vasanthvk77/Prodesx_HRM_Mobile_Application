@@ -1,0 +1,17 @@
+using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
+
+namespace backend.Hubs;
+
+public class SalaryYearHub : Hub
+{
+    public async Task JoinOrganizationGroup(string orgId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"Org_{orgId}");
+    }
+
+    public async Task LeaveOrganizationGroup(string orgId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Org_{orgId}");
+    }
+}

@@ -276,7 +276,11 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                         'Designation Management',
                         style: isIOS 
                             ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)
-                            : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            : theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w900, // Extra bold
+                                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                letterSpacing: 0.5,
+                              ),
                       ),
                     ),
                     if (_isLoading) 
@@ -324,11 +328,8 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                   Container(
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.black.withOpacity(0.2) : theme.colorScheme.surface,
+                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isDark ? Colors.white.withOpacity(0.05) : theme.dividerColor.withOpacity(0.1),
-                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -369,8 +370,9 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue.shade600,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
                   const SizedBox(width: 8),
@@ -443,16 +445,22 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
+        borderRadius: BorderRadius.circular(20), // Premium rounding
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.04), // Soft shadow
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           // Header Row
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
             child: Row(
               children: [
                 SizedBox(
@@ -472,7 +480,7 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                   width: 120,
                   child: Text(
                     'ACTION',
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 0.5),
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: const Color(0xFF475569), letterSpacing: 0.8),
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -520,7 +528,8 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
                         child: Text(
                           d.parentDesignationName ?? '-',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                            color: const Color(0xFF475569), // Darker text
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -565,7 +574,11 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(title, style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: theme.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w900, // Extra bold
+          color: const Color(0xFF475569), // Darker text
+          letterSpacing: 0.8,
+        )),
         const SizedBox(width: 4),
         Icon(Icons.unfold_more, color: theme.iconTheme.color?.withOpacity(0.3), size: 14),
       ],
@@ -737,14 +750,18 @@ class _DesignationListScreenState extends ConsumerState<DesignationListScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.2) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300,
-        ),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+        ],
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(

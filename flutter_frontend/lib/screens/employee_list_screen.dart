@@ -237,7 +237,11 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                         'Employees',
                         style: isIOS 
                             ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)
-                            : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            : theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w900, // Extra bold
+                                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                letterSpacing: 0.5,
+                              ),
                       ),
                     ),
                     if (MediaQuery.of(context).size.width < 900)
@@ -364,14 +368,18 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     final isDark = theme.brightness == Brightness.dark;
     
     return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.2) : Colors.white,
+        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300,
-        ),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+        ],
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
@@ -415,7 +423,8 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                   backgroundColor: Colors.blue[600],
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
               ),
         const SizedBox(width: 12),
@@ -441,9 +450,9 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                 label: const Text('Manage Fields', style: TextStyle(fontSize: 13)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.redAccent,
-                  side: const BorderSide(color: Colors.redAccent),
+                  side: BorderSide(color: Colors.redAccent.withOpacity(0.3)),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
               ),
         const SizedBox(width: 12),
@@ -474,15 +483,16 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
 
   Widget _buildActionButton({required IconData icon, required String label, required VoidCallback onPressed}) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 16),
       label: Text(label, style: const TextStyle(fontSize: 12)),
       style: OutlinedButton.styleFrom(
         foregroundColor: theme.textTheme.bodyMedium?.color,
-        side: BorderSide(color: theme.dividerColor),
+        side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -496,13 +506,12 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: theme.cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.dividerColor),
-            boxShadow: isDark ? [] : [
+            borderRadius: BorderRadius.circular(20), // Heightened rounding
+            boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(isDark ? 0.4 : 0.04), // Soft shadow
+                blurRadius: 24,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
@@ -517,7 +526,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: theme.dividerColor, width: 1.5)),
+                      color: isDark ? Colors.white.withOpacity(0.01) : Colors.white,
                     ),
                     child: Row(
                       children: [
@@ -543,7 +552,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                         Expanded(flex: 4, child: _buildSortableHeader('EMAIL', theme)),
                         Expanded(flex: 2, child: _buildSortableHeader('USER ROLE', theme)),
                         Expanded(flex: 2, child: _buildSortableHeader('STATUS', theme)),
-                        SizedBox(width: 60, child: Text('ACTION', style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
+                        SizedBox(width: 60, child: Text('ACTION', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: const Color(0xFF475569), letterSpacing: 0.8), textAlign: TextAlign.right)),
                       ],
                     ),
                   ),
@@ -599,12 +608,24 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                                   ],
                                 )),
                                 Expanded(flex: 4, child: Text(emp.email, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis)),
-                                Expanded(flex: 2, child: Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)))),
+                                Expanded(flex: 2, child: Text((emp.designation == null || emp.designation!.isEmpty) ? 'Staff' : emp.designation!, style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF475569), fontWeight: FontWeight.w600))),
                                 Expanded(flex: 2, child: Row(
                                   children: [
-                                    Container(width: 8, height: 8, decoration: BoxDecoration(color: emp.status == 'Active' ? Colors.green : Colors.red, shape: BoxShape.circle)),
-                                    const SizedBox(width: 6),
-                                    Text(emp.status, style: theme.textTheme.bodySmall),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: emp.status == 'Active' ? Colors.green.withOpacity(0.08) : Colors.red.withOpacity(0.08),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        emp.status,
+                                        style: TextStyle(
+                                          color: emp.status == 'Active' ? Colors.green : Colors.red,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 )),
                                 SizedBox(
@@ -677,7 +698,11 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(title, style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: theme.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w900, // Extra bold
+          color: const Color(0xFF475569), // Darker text
+          letterSpacing: 0.8,
+        )),
         const SizedBox(width: 4),
         Icon(Icons.unfold_more, color: theme.iconTheme.color?.withOpacity(0.3), size: 14),
       ],

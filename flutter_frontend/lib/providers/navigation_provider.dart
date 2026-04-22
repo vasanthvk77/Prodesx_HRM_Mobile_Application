@@ -5,12 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Simple data class to hold our current tab and dashboard content.
 class NavigationState {
   final int currentIndex;
+  final String activeModule;
   final Widget? dashboardContent;
   final Widget? manageUsersContent;
   final Widget? hrManagementContent;
 
   NavigationState({
     this.currentIndex = 0,
+    this.activeModule = 'dashboard',
     this.dashboardContent,
     this.manageUsersContent,
     this.hrManagementContent,
@@ -18,6 +20,7 @@ class NavigationState {
 
   NavigationState copyWith({
     int? currentIndex,
+    String? activeModule,
     Widget? dashboardContent,
     Widget? manageUsersContent,
     Widget? hrManagementContent,
@@ -27,6 +30,7 @@ class NavigationState {
   }) {
     return NavigationState(
       currentIndex: currentIndex ?? this.currentIndex,
+      activeModule: activeModule ?? this.activeModule,
       dashboardContent: (clearDashboard == true) ? null : (dashboardContent ?? this.dashboardContent),
       manageUsersContent: (clearManageUsers == true) ? null : (manageUsersContent ?? this.manageUsersContent),
       hrManagementContent: (clearHRManagement == true) ? null : (hrManagementContent ?? this.hrManagementContent),
@@ -45,33 +49,44 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
 
   /// Sets the active tab on the bottom bar.
   void setIndex(int index) {
-    state = state.copyWith(currentIndex: index);
+    String module = 'dashboard';
+    if (index == 1) module = 'hrm';
+    if (index == 2) module = 'user_mgmt';
+    if (index == 3) module = 'tasks';
+    
+    state = state.copyWith(
+      currentIndex: index,
+      activeModule: module,
+    );
   }
 
   /// Switches the Dashboard's content (e.g., from Drawer selections).
-  void setDashboardContent(Widget? content) {
+  void setDashboardContent(Widget? content, {String? module}) {
     state = state.copyWith(
       dashboardContent: content,
       clearDashboard: content == null,
       currentIndex: 0, // Always switch back to the Dashboard tab
+      activeModule: module ?? 'dashboard',
     );
   }
 
   /// Switches the User Management's content.
-  void setManageUsersContent(Widget? content) {
+  void setManageUsersContent(Widget? content, {String? module}) {
     state = state.copyWith(
       manageUsersContent: content,
       clearManageUsers: content == null,
       currentIndex: 2, // Switch to User Management tab (index 2 for Admin)
+      activeModule: module ?? 'user_mgmt',
     );
   }
 
   /// Switches the HR Management's content.
-  void setHRManagementContent(Widget? content) {
+  void setHRManagementContent(Widget? content, {String? module}) {
     state = state.copyWith(
       hrManagementContent: content,
       clearHRManagement: content == null,
       currentIndex: 1, // Switch to HR Management tab (index 1 for Admin)
+      activeModule: module ?? 'hrm',
     );
   }
 

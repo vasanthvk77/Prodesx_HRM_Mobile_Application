@@ -1,0 +1,700 @@
+2026-04-09 16:30:59.129 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 5: Explicit Columns) ===
+2026-04-09 16:30:59.839 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 4: Clean GOs) ===
+2026-04-09 16:31:02.472 [INF]  | [DB] Connected to: 103.235.104.197 | proxPayroll
+2026-04-09 16:31:02.778 [INF]  | [DB] Database exists. Running migrations.sql...
+2026-04-09 16:31:03.992 [WRN]  | [DB] Batch skipped in migrations.sql: Invalid column name 'EmployeeId'.
+2026-04-09 16:31:04.022 [WRN]  | [DB] Batch skipped in migrations.sql: Invalid column name 'EmployeeId'.
+2026-04-09 16:31:05.198 [WRN]  | [DB] Batch skipped in migrations.sql: 'CREATE/ALTER PROCEDURE' must be the first statement in a query batch.
+2026-04-09 16:31:06.441 [INF]  | [DB] Finished running migrations.sql. 151 batches applied, 3 skipped.
+2026-04-09 16:31:06.862 [WRN]  | [DB] Procedure apply skipped: Invalid column name 'EmployeeId'.
+2026-04-09 16:31:06.886 [WRN]  | [DB] Procedure apply skipped: Invalid column name 'EmployeeId'.
+2026-04-09 16:31:09.458 [INF]  | [DB] Procedures refreshed (CREATE OR ALTER). 132 applied, 2 skipped.
+2026-04-09 16:31:09.458 [INF]  | [DB] Migrations complete.
+2026-04-09 16:31:10.267 [INF]  | === Backend running at http://localhost:5217 ===
+2026-04-09 16:31:10.308 [INF] Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager | User profile is available. Using 'C:\Users\vasanth\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-04-09 16:31:10.335 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is starting.
+2026-04-09 16:31:10.557 [INF] Microsoft.Hosting.Lifetime | Now listening on: http://localhost:5217
+2026-04-09 16:31:10.557 [INF] Microsoft.Hosting.Lifetime | Application started. Press Ctrl+C to shut down.
+2026-04-09 16:31:10.558 [INF] Microsoft.Hosting.Lifetime | Hosting environment: Development
+2026-04-09 16:31:10.558 [INF] Microsoft.Hosting.Lifetime | Content root path: C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend
+2026-04-09 16:31:20.341 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is running...
+2026-04-09 16:31:22.084 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service completed. Inserted 0 new schedules for the rolling 30-day window.
+2026-04-09 16:38:30.430 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - null null
+2026-04-09 16:38:30.487 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:30.495 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - 204 null null 67.3416ms
+2026-04-09 16:38:30.501 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/api/auth/login - application/json 62
+2026-04-09 16:38:30.510 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:30.540 [WRN] Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware | Failed to determine the https port for redirect.
+2026-04-09 16:38:30.594 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 16:38:30.631 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(backend.Models.LoginRequest) on controller backend.Controllers.AuthController (backend).
+2026-04-09 16:38:30.704 [INF] backend.Controllers.AuthController | [Auth] Login attempt | Email=vasanth2004vk@gmail.com
+2026-04-09 16:38:31.651 [INF] backend.Controllers.AuthController | [Auth] User login session recorded | UserId=18 | TokenExpiry="2026-04-10T11:08:31.5538263Z"
+2026-04-09 16:38:31.651 [INF] backend.Controllers.AuthController | [Auth] Login SUCCESS | Email=vasanth2004vk@gmail.com | EffectiveRole=SuperAdmin | OrgId=2
+2026-04-09 16:38:31.661 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type '<>f__AnonymousType23`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType24`6[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:31.696 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AuthController.Login (backend) in 1059.5669ms
+2026-04-09 16:38:31.697 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 16:38:31.700 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /api/auth/login → 200 (1108.1ms)
+2026-04-09 16:38:31.707 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/api/auth/login - 200 null application/json; charset=utf-8 1207.1303ms
+2026-04-09 16:38:31.726 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:38:31.727 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:31.727 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - 204 null null 0.8181ms
+2026-04-09 16:38:31.729 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:38:31.730 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:31.792 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:38:31.802 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Users"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.UsersController (backend).
+2026-04-09 16:38:31.807 [INF] backend.Controllers.UsersController | [Users] GET organizations | Role=SuperAdmin | UserId=18
+2026-04-09 16:38:31.837 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:31.860 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.UsersController.GetOrganizations (backend) in 57.9625ms
+2026-04-09 16:38:31.861 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:38:31.861 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/users/organizations → 200 (68.5ms)
+2026-04-09 16:38:31.861 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/users/organizations - 200 null application/json; charset=utf-8 132.1029ms
+2026-04-09 16:38:32.182 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-04-09 16:38:32.183 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.192 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg was not modified
+2026-04-09 16:38:32.192 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 304 null image/jpeg 10.2337ms
+2026-04-09 16:38:32.210 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-04-09 16:38:32.210 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.211 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.3163ms
+2026-04-09 16:38:32.212 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - application/json null
+2026-04-09 16:38:32.212 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.219 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:38:32.226 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-04-09 16:38:32.232 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-04-09 16:38:32.254 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:32.255 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 28.4351ms
+2026-04-09 16:38:32.255 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:38:32.255 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (35.5ms)
+2026-04-09 16:38:32.255 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 43.0587ms
+2026-04-09 16:38:32.344 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/leads - null null
+2026-04-09 16:38:32.344 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.344 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/leads - 204 null null 0.4278ms
+2026-04-09 16:38:32.345 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/leads - application/json null
+2026-04-09 16:38:32.346 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.348 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:38:32.356 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetLeads", controller = "Leads"}. Executing controller action with signature System.Threading.Tasks.Task`1[System.Collections.Generic.IEnumerable`1[backend.Models.Lead]] GetLeads() on controller backend.Controllers.LeadsController (backend).
+2026-04-09 16:38:32.421 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Lead, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:32.432 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.LeadsController.GetLeads (backend) in 76.0935ms
+2026-04-09 16:38:32.432 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:38:32.433 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/leads → 200 (84.8ms)
+2026-04-09 16:38:32.433 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/leads - 200 null application/json; charset=utf-8 87.2594ms
+2026-04-09 16:38:32.440 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - null null
+2026-04-09 16:38:32.440 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.440 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - 204 null null 1.1234ms
+2026-04-09 16:38:32.442 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 16:38:32.442 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.448 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:38:32.462 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 16:38:32.471 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 16:38:32.611 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:32.640 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 177.2065ms
+2026-04-09 16:38:32.640 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:38:32.640 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (191.6ms)
+2026-04-09 16:38:32.640 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 197.7379ms
+2026-04-09 16:38:32.648 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - null null
+2026-04-09 16:38:32.648 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.648 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 204 null null 0.3698ms
+2026-04-09 16:38:32.650 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - application/json null
+2026-04-09 16:38:32.651 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.651 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:38:32.659 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - null null
+2026-04-09 16:38:32.659 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.660 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetMonthlyRosterFixed", controller = "ShiftAssignments"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRosterFixed(System.String, System.String, System.Nullable`1[System.Int32]) on controller backend.Controllers.ShiftAssignmentsController (backend).
+2026-04-09 16:38:32.660 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/employee-photos/emp-31.jpg was not modified
+2026-04-09 16:38:32.660 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - 304 null image/jpeg 0.9261ms
+2026-04-09 16:38:32.774 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.EmployeeSchedule, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:32.786 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend) in 126.217ms
+2026-04-09 16:38:32.786 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:38:32.786 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/ShiftAssignments/roster → 200 (135.0ms)
+2026-04-09 16:38:32.786 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 200 null application/json; charset=utf-8 136.6017ms
+2026-04-09 16:38:32.855 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - null null
+2026-04-09 16:38:32.855 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.855 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 204 null null 0.3825ms
+2026-04-09 16:38:32.858 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - application/json null
+2026-04-09 16:38:32.860 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:32.860 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:38:32.872 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetStatus", controller = "Attendance"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStatus(Int32, Int32) on controller backend.Controllers.AttendanceController (backend).
+2026-04-09 16:38:32.976 [ERR] backend.Controllers.AttendanceController | Error getting attendance status
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'FN'.
+Invalid column name 'AN'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at backend.Controllers.AttendanceController.GetStatus(Int32 employeeId, Int32 orgId)
+ClientConnectionId:18d90d45-4ee0-447b-98d4-e8ca7cf2a162
+Error Number:207,State:1,Class:16
+2026-04-09 16:38:33.007 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.String'.
+2026-04-09 16:38:33.008 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AttendanceController.GetStatus (backend) in 135.7285ms
+2026-04-09 16:38:33.008 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:38:33.008 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/Attendance/status → 500 (147.2ms)
+2026-04-09 16:38:33.010 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 500 null text/plain; charset=utf-8 152.5289ms
+2026-04-09 16:38:37.376 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - null null
+2026-04-09 16:38:37.376 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:37.377 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 204 null null 0.4456ms
+2026-04-09 16:38:37.378 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - application/json null
+2026-04-09 16:38:37.380 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:37.380 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:38:37.388 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSalaryYearsByOrgId", controller = "SalaryYear"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSalaryYearsByOrgId(System.String) on controller backend.Controllers.SalaryYearController (backend).
+2026-04-09 16:38:42.284 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.SalaryYear, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:38:42.285 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend) in 4897.2553ms
+2026-04-09 16:38:42.285 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:38:42.285 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/SalaryYear/GetSalaryYearsByOrgId → 200 (4905.5ms)
+2026-04-09 16:38:42.286 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 200 null application/json; charset=utf-8 4907.757ms
+2026-04-09 16:38:42.307 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - null null
+2026-04-09 16:38:42.307 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:42.307 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - 204 null null 0.3317ms
+2026-04-09 16:38:42.308 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/payroll-settings - application/json null
+2026-04-09 16:38:42.309 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:38:42.310 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:38:42.318 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSettings", controller = "PayrollSettings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSettings() on controller backend.Controllers.PayrollSettingsController (backend).
+2026-04-09 16:38:42.505 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'backend.Models.OrganizationPayrollSettings'.
+2026-04-09 16:38:42.519 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.PayrollSettingsController.GetSettings (backend) in 200.8426ms
+2026-04-09 16:38:42.519 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:38:42.519 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/payroll-settings → 200 (209.0ms)
+2026-04-09 16:38:42.519 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/payroll-settings - 200 null application/json; charset=utf-8 210.8345ms
+2026-04-09 16:45:01.892 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - null null
+2026-04-09 16:45:01.892 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:01.892 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - 204 null null 0.2973ms
+2026-04-09 16:45:01.893 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/api/auth/login - application/json 62
+2026-04-09 16:45:01.893 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:01.893 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 16:45:01.894 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(backend.Models.LoginRequest) on controller backend.Controllers.AuthController (backend).
+2026-04-09 16:45:01.895 [INF] backend.Controllers.AuthController | [Auth] Login attempt | Email=vasanth2004vk@gmail.com
+2026-04-09 16:45:02.251 [INF] backend.Controllers.AuthController | [Auth] User login session recorded | UserId=18 | TokenExpiry="2026-04-10T11:15:02.1481727Z"
+2026-04-09 16:45:02.251 [INF] backend.Controllers.AuthController | [Auth] Login SUCCESS | Email=vasanth2004vk@gmail.com | EffectiveRole=SuperAdmin | OrgId=2
+2026-04-09 16:45:02.252 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type '<>f__AnonymousType23`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType24`6[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:02.252 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AuthController.Login (backend) in 358.1862ms
+2026-04-09 16:45:02.252 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 16:45:02.252 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /api/auth/login → 200 (358.5ms)
+2026-04-09 16:45:02.252 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/api/auth/login - 200 null application/json; charset=utf-8 359.1525ms
+2026-04-09 16:45:02.279 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:45:02.279 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.279 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - 204 null null 0.2578ms
+2026-04-09 16:45:02.281 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:45:02.282 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.282 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:45:02.282 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Users"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.UsersController (backend).
+2026-04-09 16:45:02.282 [INF] backend.Controllers.UsersController | [Users] GET organizations | Role=SuperAdmin | UserId=18
+2026-04-09 16:45:02.361 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:02.361 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.UsersController.GetOrganizations (backend) in 79.1215ms
+2026-04-09 16:45:02.361 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:45:02.361 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/users/organizations → 200 (79.4ms)
+2026-04-09 16:45:02.362 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/users/organizations - 200 null application/json; charset=utf-8 80.1752ms
+2026-04-09 16:45:02.746 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-04-09 16:45:02.746 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.749 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg was not modified
+2026-04-09 16:45:02.749 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 304 null image/jpeg 2.6612ms
+2026-04-09 16:45:02.787 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-04-09 16:45:02.787 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.787 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.3347ms
+2026-04-09 16:45:02.789 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - application/json null
+2026-04-09 16:45:02.789 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.790 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:45:02.790 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-04-09 16:45:02.790 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-04-09 16:45:02.802 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:02.802 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 12.4422ms
+2026-04-09 16:45:02.802 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:45:02.802 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (12.7ms)
+2026-04-09 16:45:02.803 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 13.3416ms
+2026-04-09 16:45:02.841 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/leads - null null
+2026-04-09 16:45:02.841 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.841 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/leads - 204 null null 0.2371ms
+2026-04-09 16:45:02.843 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/leads - application/json null
+2026-04-09 16:45:02.843 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.844 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:45:02.844 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetLeads", controller = "Leads"}. Executing controller action with signature System.Threading.Tasks.Task`1[System.Collections.Generic.IEnumerable`1[backend.Models.Lead]] GetLeads() on controller backend.Controllers.LeadsController (backend).
+2026-04-09 16:45:02.901 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Lead, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:02.902 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.LeadsController.GetLeads (backend) in 57.7022ms
+2026-04-09 16:45:02.902 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:45:02.902 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/leads → 200 (58.1ms)
+2026-04-09 16:45:02.902 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/leads - 200 null application/json; charset=utf-8 58.789ms
+2026-04-09 16:45:02.996 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - null null
+2026-04-09 16:45:02.996 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.996 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - 204 null null 0.3572ms
+2026-04-09 16:45:02.998 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 16:45:02.998 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:02.999 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:45:02.999 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 16:45:03.000 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 16:45:03.023 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:03.024 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 25.0588ms
+2026-04-09 16:45:03.024 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:45:03.024 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (25.5ms)
+2026-04-09 16:45:03.024 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 26.2893ms
+2026-04-09 16:45:03.031 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - null null
+2026-04-09 16:45:03.032 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:03.032 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 204 null null 1.233ms
+2026-04-09 16:45:03.034 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - application/json null
+2026-04-09 16:45:03.034 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:03.034 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:45:03.034 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetMonthlyRosterFixed", controller = "ShiftAssignments"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRosterFixed(System.String, System.String, System.Nullable`1[System.Int32]) on controller backend.Controllers.ShiftAssignmentsController (backend).
+2026-04-09 16:45:03.048 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.EmployeeSchedule, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:03.049 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend) in 14.1961ms
+2026-04-09 16:45:03.049 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:45:03.049 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/ShiftAssignments/roster → 200 (14.4ms)
+2026-04-09 16:45:03.049 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 200 null application/json; charset=utf-8 15.0015ms
+2026-04-09 16:45:03.052 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - null null
+2026-04-09 16:45:03.052 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:03.053 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/employee-photos/emp-31.jpg was not modified
+2026-04-09 16:45:03.053 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - 304 null image/jpeg 0.5301ms
+2026-04-09 16:45:03.126 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - null null
+2026-04-09 16:45:03.126 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:03.126 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 204 null null 0.2614ms
+2026-04-09 16:45:03.128 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - application/json null
+2026-04-09 16:45:03.128 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:03.129 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:45:03.129 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetStatus", controller = "Attendance"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStatus(Int32, Int32) on controller backend.Controllers.AttendanceController (backend).
+2026-04-09 16:45:03.161 [ERR] backend.Controllers.AttendanceController | Error getting attendance status
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'FN'.
+Invalid column name 'AN'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at backend.Controllers.AttendanceController.GetStatus(Int32 employeeId, Int32 orgId)
+ClientConnectionId:18d90d45-4ee0-447b-98d4-e8ca7cf2a162
+Error Number:207,State:1,Class:16
+2026-04-09 16:45:03.162 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.String'.
+2026-04-09 16:45:03.162 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AttendanceController.GetStatus (backend) in 33.0278ms
+2026-04-09 16:45:03.162 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:45:03.162 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/Attendance/status → 500 (33.3ms)
+2026-04-09 16:45:03.162 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 500 null text/plain; charset=utf-8 34.1098ms
+2026-04-09 16:45:08.556 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - null null
+2026-04-09 16:45:08.556 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:08.556 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 204 null null 0.4204ms
+2026-04-09 16:45:08.562 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - application/json null
+2026-04-09 16:45:08.562 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:08.563 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:45:08.563 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSalaryYearsByOrgId", controller = "SalaryYear"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSalaryYearsByOrgId(System.String) on controller backend.Controllers.SalaryYearController (backend).
+2026-04-09 16:45:08.582 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.SalaryYear, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:45:08.582 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend) in 18.9712ms
+2026-04-09 16:45:08.582 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:45:08.582 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/SalaryYear/GetSalaryYearsByOrgId → 200 (19.3ms)
+2026-04-09 16:45:08.582 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 200 null application/json; charset=utf-8 20.0298ms
+2026-04-09 16:45:08.621 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - null null
+2026-04-09 16:45:08.621 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:08.622 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - 204 null null 0.2083ms
+2026-04-09 16:45:08.623 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/payroll-settings - application/json null
+2026-04-09 16:45:08.623 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:45:08.624 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:45:08.624 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSettings", controller = "PayrollSettings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSettings() on controller backend.Controllers.PayrollSettingsController (backend).
+2026-04-09 16:45:08.638 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'backend.Models.OrganizationPayrollSettings'.
+2026-04-09 16:45:08.639 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.PayrollSettingsController.GetSettings (backend) in 14.2173ms
+2026-04-09 16:45:08.639 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:45:08.639 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/payroll-settings → 200 (14.5ms)
+2026-04-09 16:45:08.639 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/payroll-settings - 200 null application/json; charset=utf-8 15.817ms
+2026-04-09 16:52:48.452 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:52:48.453 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:48.453 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - 204 null null 0.5966ms
+2026-04-09 16:52:48.455 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/users/organizations - null null
+2026-04-09 16:52:48.456 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:48.456 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:52:48.457 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Users"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.UsersController (backend).
+2026-04-09 16:52:48.457 [INF] backend.Controllers.UsersController | [Users] GET organizations | Role=SuperAdmin | UserId=18
+2026-04-09 16:52:48.602 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:48.602 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.UsersController.GetOrganizations (backend) in 145.2108ms
+2026-04-09 16:52:48.602 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 16:52:48.602 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/users/organizations → 200 (145.4ms)
+2026-04-09 16:52:48.602 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/users/organizations - 200 null application/json; charset=utf-8 146.6491ms
+2026-04-09 16:52:49.042 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-04-09 16:52:49.042 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.042 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.2032ms
+2026-04-09 16:52:49.043 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - application/json null
+2026-04-09 16:52:49.044 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.044 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:52:49.044 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-04-09 16:52:49.044 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-04-09 16:52:49.058 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:49.058 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 14.2591ms
+2026-04-09 16:52:49.058 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 16:52:49.058 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (14.4ms)
+2026-04-09 16:52:49.058 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 14.9624ms
+2026-04-09 16:52:49.179 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/leads - null null
+2026-04-09 16:52:49.179 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.179 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/leads - 204 null null 0.1927ms
+2026-04-09 16:52:49.180 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/leads - application/json null
+2026-04-09 16:52:49.180 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.181 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:52:49.181 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetLeads", controller = "Leads"}. Executing controller action with signature System.Threading.Tasks.Task`1[System.Collections.Generic.IEnumerable`1[backend.Models.Lead]] GetLeads() on controller backend.Controllers.LeadsController (backend).
+2026-04-09 16:52:49.220 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Lead, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:49.220 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.LeadsController.GetLeads (backend) in 38.9372ms
+2026-04-09 16:52:49.220 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 16:52:49.220 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/leads → 200 (39.2ms)
+2026-04-09 16:52:49.220 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/leads - 200 null application/json; charset=utf-8 39.6574ms
+2026-04-09 16:52:49.265 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - null null
+2026-04-09 16:52:49.266 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.266 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - 204 null null 0.3399ms
+2026-04-09 16:52:49.267 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 16:52:49.268 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.268 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:52:49.268 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 16:52:49.268 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 16:52:49.308 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:49.308 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 39.8404ms
+2026-04-09 16:52:49.308 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 16:52:49.308 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (40.0ms)
+2026-04-09 16:52:49.308 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 40.6295ms
+2026-04-09 16:52:49.315 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - null null
+2026-04-09 16:52:49.315 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.315 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 204 null null 0.2402ms
+2026-04-09 16:52:49.316 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - application/json null
+2026-04-09 16:52:49.316 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.317 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:52:49.317 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetMonthlyRosterFixed", controller = "ShiftAssignments"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRosterFixed(System.String, System.String, System.Nullable`1[System.Int32]) on controller backend.Controllers.ShiftAssignmentsController (backend).
+2026-04-09 16:52:49.342 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.EmployeeSchedule, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:49.343 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend) in 25.7402ms
+2026-04-09 16:52:49.343 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 16:52:49.343 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/ShiftAssignments/roster → 200 (25.9ms)
+2026-04-09 16:52:49.343 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 200 null application/json; charset=utf-8 26.5837ms
+2026-04-09 16:52:49.357 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - null null
+2026-04-09 16:52:49.357 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.357 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 204 null null 0.187ms
+2026-04-09 16:52:49.358 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - application/json null
+2026-04-09 16:52:49.358 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:49.359 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:52:49.359 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetStatus", controller = "Attendance"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStatus(Int32, Int32) on controller backend.Controllers.AttendanceController (backend).
+2026-04-09 16:52:49.390 [ERR] backend.Controllers.AttendanceController | Error getting attendance status
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'FN'.
+Invalid column name 'AN'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at backend.Controllers.AttendanceController.GetStatus(Int32 employeeId, Int32 orgId)
+ClientConnectionId:42d09c76-4ce0-49c6-9bd4-bb541c4008d1
+Error Number:207,State:1,Class:16
+2026-04-09 16:52:49.391 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.String'.
+2026-04-09 16:52:49.391 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AttendanceController.GetStatus (backend) in 32.7193ms
+2026-04-09 16:52:49.392 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 16:52:49.392 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/Attendance/status → 500 (32.9ms)
+2026-04-09 16:52:49.392 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 500 null text/plain; charset=utf-8 33.462ms
+2026-04-09 16:52:52.950 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organization - null null
+2026-04-09 16:52:52.950 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:52.950 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organization - 204 null null 0.1903ms
+2026-04-09 16:52:52.952 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organization - application/json null
+2026-04-09 16:52:52.952 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:52.955 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organization → 404 (0.2ms)
+2026-04-09 16:52:52.955 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organization - 404 0 null 3.086ms
+2026-04-09 16:52:52.959 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/api/organization, Response status code: 404
+2026-04-09 16:52:52.962 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - null null
+2026-04-09 16:52:52.962 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:52.962 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/payroll-settings - 204 null null 0.1742ms
+2026-04-09 16:52:52.963 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/payroll-settings - application/json null
+2026-04-09 16:52:52.963 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:52.964 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:52:52.964 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSettings", controller = "PayrollSettings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSettings() on controller backend.Controllers.PayrollSettingsController (backend).
+2026-04-09 16:52:53.064 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'backend.Models.OrganizationPayrollSettings'.
+2026-04-09 16:52:53.065 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.PayrollSettingsController.GetSettings (backend) in 100.8896ms
+2026-04-09 16:52:53.065 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.PayrollSettingsController.GetSettings (backend)'
+2026-04-09 16:52:53.065 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/payroll-settings → 200 (101.1ms)
+2026-04-09 16:52:53.065 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/payroll-settings - 200 null application/json; charset=utf-8 101.6023ms
+2026-04-09 16:52:53.069 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - null null
+2026-04-09 16:52:53.069 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:53.070 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 204 null null 0.1719ms
+2026-04-09 16:52:53.071 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - application/json null
+2026-04-09 16:52:53.071 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 16:52:53.072 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:52:53.072 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSalaryYearsByOrgId", controller = "SalaryYear"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSalaryYearsByOrgId(System.String) on controller backend.Controllers.SalaryYearController (backend).
+2026-04-09 16:52:53.184 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.SalaryYear, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 16:52:53.184 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend) in 112.5275ms
+2026-04-09 16:52:53.184 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 16:52:53.184 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/SalaryYear/GetSalaryYearsByOrgId → 200 (112.7ms)
+2026-04-09 16:52:53.184 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=0 - 200 null application/json; charset=utf-8 113.5117ms
+2026-04-09 16:58:10.142 [INF] Microsoft.Hosting.Lifetime | Application is shutting down...
+2026-04-09 16:58:29.950 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 5: Explicit Columns) ===
+2026-04-09 16:58:30.220 [INF]  | === ProDesX-HRM Backend Starting (Migrations Rev 4: Clean GOs) ===
+2026-04-09 16:58:30.541 [INF]  | [DB] Connected to: 103.235.104.197 | proxPayroll
+2026-04-09 16:58:30.934 [INF]  | [DB] Database exists. Running migrations.sql...
+2026-04-09 16:58:31.954 [WRN]  | [DB] Batch skipped in migrations.sql: Invalid column name 'EmployeeId'.
+2026-04-09 16:58:31.976 [WRN]  | [DB] Batch skipped in migrations.sql: Invalid column name 'EmployeeId'.
+2026-04-09 16:58:32.980 [WRN]  | [DB] Batch skipped in migrations.sql: 'CREATE/ALTER PROCEDURE' must be the first statement in a query batch.
+2026-04-09 16:58:33.906 [INF]  | [DB] Finished running migrations.sql. 151 batches applied, 3 skipped.
+2026-04-09 16:58:34.287 [WRN]  | [DB] Procedure apply skipped: Invalid column name 'EmployeeId'.
+2026-04-09 16:58:34.299 [WRN]  | [DB] Procedure apply skipped: Invalid column name 'EmployeeId'.
+2026-04-09 16:58:35.937 [INF]  | [DB] Procedures refreshed (CREATE OR ALTER). 132 applied, 2 skipped.
+2026-04-09 16:58:35.937 [INF]  | [DB] Migrations complete.
+2026-04-09 16:58:36.397 [INF]  | === Backend running at http://localhost:5217 ===
+2026-04-09 16:58:36.421 [INF] Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager | User profile is available. Using 'C:\Users\vasanth\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-04-09 16:58:36.435 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is starting.
+2026-04-09 16:58:36.560 [INF] Microsoft.Hosting.Lifetime | Now listening on: http://localhost:5217
+2026-04-09 16:58:36.560 [INF] Microsoft.Hosting.Lifetime | Application started. Press Ctrl+C to shut down.
+2026-04-09 16:58:36.560 [INF] Microsoft.Hosting.Lifetime | Hosting environment: Development
+2026-04-09 16:58:36.560 [INF] Microsoft.Hosting.Lifetime | Content root path: C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend
+2026-04-09 16:58:46.435 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service is running...
+2026-04-09 16:58:48.387 [INF] backend.Services.ShiftScheduleBackgroundService | Shift Schedule Background Service completed. Inserted 0 new schedules for the rolling 30-day window.
+2026-04-09 17:06:16.735 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - null null
+2026-04-09 17:06:16.797 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:16.806 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/auth/login - 204 null null 72.2141ms
+2026-04-09 17:06:16.810 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/api/auth/login - application/json 62
+2026-04-09 17:06:16.819 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:16.843 [WRN] Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware | Failed to determine the https port for redirect.
+2026-04-09 17:06:16.895 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 17:06:16.927 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(backend.Models.LoginRequest) on controller backend.Controllers.AuthController (backend).
+2026-04-09 17:06:16.982 [INF] backend.Controllers.AuthController | [Auth] Login attempt | Email=vasanth2004vk@gmail.com
+2026-04-09 17:06:17.922 [INF] backend.Controllers.AuthController | [Auth] User login session recorded | UserId=18 | TokenExpiry="2026-04-10T11:36:17.8525649Z"
+2026-04-09 17:06:17.923 [INF] backend.Controllers.AuthController | [Auth] Login SUCCESS | Email=vasanth2004vk@gmail.com | EffectiveRole=SuperAdmin | OrgId=2
+2026-04-09 17:06:17.931 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type '<>f__AnonymousType23`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType24`6[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:17.961 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AuthController.Login (backend) in 1029.1808ms
+2026-04-09 17:06:17.962 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AuthController.Login (backend)'
+2026-04-09 17:06:17.965 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /api/auth/login → 200 (1070.9ms)
+2026-04-09 17:06:17.970 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/api/auth/login - 200 null application/json; charset=utf-8 1161ms
+2026-04-09 17:06:17.984 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - null null
+2026-04-09 17:06:17.985 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:17.985 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/users/organizations - 204 null null 1.1932ms
+2026-04-09 17:06:17.987 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/users/organizations - null null
+2026-04-09 17:06:17.988 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.043 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 17:06:18.052 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Users"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.UsersController (backend).
+2026-04-09 17:06:18.056 [INF] backend.Controllers.UsersController | [Users] GET organizations | Role=SuperAdmin | UserId=18
+2026-04-09 17:06:18.074 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:18.092 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.UsersController.GetOrganizations (backend) in 39.3772ms
+2026-04-09 17:06:18.092 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 17:06:18.092 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/users/organizations → 200 (48.9ms)
+2026-04-09 17:06:18.092 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/users/organizations - 200 null application/json; charset=utf-8 105.7137ms
+2026-04-09 17:06:18.395 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - null null
+2026-04-09 17:06:18.396 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.406 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg was not modified
+2026-04-09 17:06:18.407 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-5873c475d91d4bbd9046deec667d136c.jpg - 304 null image/jpeg 11.6066ms
+2026-04-09 17:06:18.433 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - null null
+2026-04-09 17:06:18.433 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.433 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/organizations - 204 null null 0.3621ms
+2026-04-09 17:06:18.435 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/organizations - application/json null
+2026-04-09 17:06:18.435 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.443 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 17:06:18.451 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Organizations"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.OrganizationsController (backend).
+2026-04-09 17:06:18.454 [INF] backend.Controllers.OrganizationsController | [Orgs] GET all requested | Role=SuperAdmin | UserId=18
+2026-04-09 17:06:18.466 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:18.467 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.OrganizationsController.GetOrganizations (backend) in 15.6777ms
+2026-04-09 17:06:18.467 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.OrganizationsController.GetOrganizations (backend)'
+2026-04-09 17:06:18.467 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/organizations → 200 (24.4ms)
+2026-04-09 17:06:18.467 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/organizations - 200 null application/json; charset=utf-8 32.065ms
+2026-04-09 17:06:18.493 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/leads - null null
+2026-04-09 17:06:18.493 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.493 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/leads - 204 null null 0.3271ms
+2026-04-09 17:06:18.495 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/leads - application/json null
+2026-04-09 17:06:18.495 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.498 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 17:06:18.508 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetLeads", controller = "Leads"}. Executing controller action with signature System.Threading.Tasks.Task`1[System.Collections.Generic.IEnumerable`1[backend.Models.Lead]] GetLeads() on controller backend.Controllers.LeadsController (backend).
+2026-04-09 17:06:18.533 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Lead, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:18.549 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.LeadsController.GetLeads (backend) in 41.1398ms
+2026-04-09 17:06:18.549 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.LeadsController.GetLeads (backend)'
+2026-04-09 17:06:18.549 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/leads → 200 (51.0ms)
+2026-04-09 17:06:18.549 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/leads - 200 null application/json; charset=utf-8 54.3833ms
+2026-04-09 17:06:18.632 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - null null
+2026-04-09 17:06:18.632 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.632 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - 204 null null 0.3196ms
+2026-04-09 17:06:18.633 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 17:06:18.634 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.639 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:18.648 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 17:06:18.653 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 17:06:18.689 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:18.709 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 60.8789ms
+2026-04-09 17:06:18.709 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:18.709 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (69.8ms)
+2026-04-09 17:06:18.709 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 75.6316ms
+2026-04-09 17:06:18.717 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - null null
+2026-04-09 17:06:18.717 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.717 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 204 null null 0.5126ms
+2026-04-09 17:06:18.719 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - application/json null
+2026-04-09 17:06:18.720 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.721 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 17:06:18.729 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - null null
+2026-04-09 17:06:18.729 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.730 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/employee-photos/emp-31.jpg was not modified
+2026-04-09 17:06:18.730 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-31.jpg - 304 null image/jpeg 0.9345ms
+2026-04-09 17:06:18.730 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetMonthlyRosterFixed", controller = "ShiftAssignments"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRosterFixed(System.String, System.String, System.Nullable`1[System.Int32]) on controller backend.Controllers.ShiftAssignmentsController (backend).
+2026-04-09 17:06:18.761 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.EmployeeSchedule, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:18.768 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend) in 37.5525ms
+2026-04-09 17:06:18.768 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.ShiftAssignmentsController.GetMonthlyRosterFixed (backend)'
+2026-04-09 17:06:18.768 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/ShiftAssignments/roster → 200 (46.9ms)
+2026-04-09 17:06:18.768 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/ShiftAssignments/roster?start=2026-04-09&end=2026-04-16&orgId=2 - 200 null application/json; charset=utf-8 49.1532ms
+2026-04-09 17:06:18.772 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - null null
+2026-04-09 17:06:18.773 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.773 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 204 null null 0.3273ms
+2026-04-09 17:06:18.774 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - application/json null
+2026-04-09 17:06:18.776 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:18.776 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 17:06:18.784 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetStatus", controller = "Attendance"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStatus(Int32, Int32) on controller backend.Controllers.AttendanceController (backend).
+2026-04-09 17:06:18.804 [ERR] backend.Controllers.AttendanceController | Error getting attendance status
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'FN'.
+Invalid column name 'AN'.
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at backend.Controllers.AttendanceController.GetStatus(Int32 employeeId, Int32 orgId) in C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\Controllers\AttendanceController.cs:line 235
+ClientConnectionId:ea704b92-8b98-40b1-af39-03c65e1ffa54
+Error Number:207,State:1,Class:16
+2026-04-09 17:06:18.831 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing ObjectResult, writing value of type 'System.String'.
+2026-04-09 17:06:18.831 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.AttendanceController.GetStatus (backend) in 47.5183ms
+2026-04-09 17:06:18.831 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.AttendanceController.GetStatus (backend)'
+2026-04-09 17:06:18.831 [ERR] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/Attendance/status → 500 (55.2ms)
+2026-04-09 17:06:18.833 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/Attendance/status?employeeId=31&orgId=2 - 500 null text/plain; charset=utf-8 59.1905ms
+2026-04-09 17:06:22.445 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/users/organizations - null null
+2026-04-09 17:06:22.446 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:22.446 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 17:06:22.447 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetOrganizations", controller = "Users"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetOrganizations() on controller backend.Controllers.UsersController (backend).
+2026-04-09 17:06:22.447 [INF] backend.Controllers.UsersController | [Users] GET organizations | Role=SuperAdmin | UserId=18
+2026-04-09 17:06:22.488 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Organization, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:22.489 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.UsersController.GetOrganizations (backend) in 41.917ms
+2026-04-09 17:06:22.489 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.UsersController.GetOrganizations (backend)'
+2026-04-09 17:06:22.489 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/users/organizations → 200 (42.3ms)
+2026-04-09 17:06:22.489 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/users/organizations - 200 null application/json; charset=utf-8 43.3824ms
+2026-04-09 17:06:22.530 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 17:06:22.530 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:22.530 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:22.531 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 17:06:22.532 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 17:06:22.637 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:22.638 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 107.0193ms
+2026-04-09 17:06:22.638 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:22.638 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (107.4ms)
+2026-04-09 17:06:22.638 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 108.2324ms
+2026-04-09 17:06:26.587 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=2 - null null
+2026-04-09 17:06:26.587 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.587 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=2 - 204 null null 0.4114ms
+2026-04-09 17:06:26.589 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=2 - application/json null
+2026-04-09 17:06:26.591 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.592 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 17:06:26.597 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSalaryYearsByOrgId", controller = "SalaryYear"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSalaryYearsByOrgId(System.String) on controller backend.Controllers.SalaryYearController (backend).
+2026-04-09 17:06:26.608 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-f3e5c29a5727487a9d6c2a5527e8919d.png - null null
+2026-04-09 17:06:26.608 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.609 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/org-logos/org-logo-f3e5c29a5727487a9d6c2a5527e8919d.png was not modified
+2026-04-09 17:06:26.609 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-f3e5c29a5727487a9d6c2a5527e8919d.png - 304 null image/png 1.5359ms
+2026-04-09 17:06:26.616 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-6fcb4a5d7f2e442f800ddd9bde90c680.jpg - null null
+2026-04-09 17:06:26.617 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.617 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/org-logos/org-logo-6fcb4a5d7f2e442f800ddd9bde90c680.jpg was not modified
+2026-04-09 17:06:26.617 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/org-logos/org-logo-6fcb4a5d7f2e442f800ddd9bde90c680.jpg - 304 null image/jpeg 0.6367ms
+2026-04-09 17:06:26.851 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.SalaryYear, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:26.855 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend) in 258.1788ms
+2026-04-09 17:06:26.855 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.SalaryYearController.GetSalaryYearsByOrgId (backend)'
+2026-04-09 17:06:26.855 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/SalaryYear/GetSalaryYearsByOrgId → 200 (263.6ms)
+2026-04-09 17:06:26.855 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/SalaryYear/GetSalaryYearsByOrgId?orgId=2 - 200 null application/json; charset=utf-8 265.8781ms
+2026-04-09 17:06:26.873 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - null null
+2026-04-09 17:06:26.873 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.874 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/employees?organizationId=2 - 204 null null 0.3612ms
+2026-04-09 17:06:26.875 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - application/json null
+2026-04-09 17:06:26.875 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.876 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:26.876 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetEmployees", controller = "Employees"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEmployees(System.Nullable`1[System.Int32]) on controller backend.Controllers.EmployeesController (backend).
+2026-04-09 17:06:26.876 [INF] backend.Controllers.EmployeesController | [Employees] GET all | TargetOrgId=2 | UserOrgId=2
+2026-04-09 17:06:26.909 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.Employee, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:26.909 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.EmployeesController.GetEmployees (backend) in 33.2932ms
+2026-04-09 17:06:26.909 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.EmployeesController.GetEmployees (backend)'
+2026-04-09 17:06:26.909 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/employees → 200 (33.6ms)
+2026-04-09 17:06:26.910 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/employees?organizationId=2 - 200 null application/json; charset=utf-8 34.3734ms
+2026-04-09 17:06:26.937 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/api/SalarySettings/GetSalarySettings?orgId=2&salaryYearId=3 - null null
+2026-04-09 17:06:26.937 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.937 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/api/SalarySettings/GetSalarySettings?orgId=2&salaryYearId=3 - 204 null null 0.3251ms
+2026-04-09 17:06:26.939 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/api/SalarySettings/GetSalarySettings?orgId=2&salaryYearId=3 - application/json null
+2026-04-09 17:06:26.940 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:26.940 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint 'backend.Controllers.SalarySettingsController.GetSalarySettings (backend)'
+2026-04-09 17:06:26.949 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Route matched with {action = "GetSalarySettings", controller = "SalarySettings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSalarySettings(System.String, System.String) on controller backend.Controllers.SalarySettingsController (backend).
+2026-04-09 17:06:27.145 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor | Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[backend.Models.SalarySettings, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-04-09 17:06:27.153 [INF] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker | Executed action backend.Controllers.SalarySettingsController.GetSalarySettings (backend) in 203.5933ms
+2026-04-09 17:06:27.153 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint 'backend.Controllers.SalarySettingsController.GetSalarySettings (backend)'
+2026-04-09 17:06:27.153 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /api/SalarySettings/GetSalarySettings → 200 (212.5ms)
+2026-04-09 17:06:27.153 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/api/SalarySettings/GetSalarySettings?orgId=2&salaryYearId=3 - 200 null application/json; charset=utf-8 214.4417ms
+2026-04-09 17:06:27.318 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-28.jpg - null null
+2026-04-09 17:06:27.319 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.319 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - null null
+2026-04-09 17:06:27.319 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.320 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /uploads/employee-photos/emp-28.jpg → 404 (0.1ms)
+2026-04-09 17:06:27.320 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-28.jpg - 404 0 null 1.8556ms
+2026-04-09 17:06:27.321 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5217/uploads/employee-photos/emp-28.jpg, Response status code: 404
+2026-04-09 17:06:27.322 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - null null
+2026-04-09 17:06:27.322 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.322 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | The file /uploads/employee-photos/emp-22.png was not modified
+2026-04-09 17:06:27.322 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-22.png - 304 null image/png 0.4887ms
+2026-04-09 17:06:27.327 [INF] Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware | Sending file. Request path: '/uploads/employee-photos/emp-23.png'. Physical path: 'C:\Repos_Work\Prodesx_HRM_Mobile_Application\backend\wwwroot\uploads\employee-photos\emp-23.png'
+2026-04-09 17:06:27.328 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/uploads/employee-photos/emp-23.png - 200 9572 image/png 8.5014ms
+2026-04-09 17:06:27.338 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - null null
+2026-04-09 17:06:27.338 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.338 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 204 null null 0.616ms
+2026-04-09 17:06:27.339 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - text/plain;charset=UTF-8 0
+2026-04-09 17:06:27.342 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.343 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:06:27.349 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:06:27.349 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/salarysettings/negotiate → 200 (6.0ms)
+2026-04-09 17:06:27.349 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 200 316 application/json 9.5834ms
+2026-04-09 17:06:27.402 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=I8taoZAaoRK3KHOxmhXO_Q&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - null null
+2026-04-09 17:06:27.403 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:06:27.403 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings'
+2026-04-09 17:08:33.959 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings'
+2026-04-09 17:08:33.959 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/salarysettings → 101 (126561.9ms)
+2026-04-09 17:08:33.960 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=I8taoZAaoRK3KHOxmhXO_Q&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - 101 null null 126563.0132ms
+2026-04-09 17:08:33.995 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - null null
+2026-04-09 17:08:33.995 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:08:33.995 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 204 null null 0.5244ms
+2026-04-09 17:08:33.997 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - text/plain;charset=UTF-8 0
+2026-04-09 17:08:33.997 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:08:33.998 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:08:33.998 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:08:33.998 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/salarysettings/negotiate → 200 (0.7ms)
+2026-04-09 17:08:33.998 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 200 316 application/json 1.3802ms
+2026-04-09 17:08:34.006 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=b15tnkTFBGZv9JRajbLtKA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - null null
+2026-04-09 17:08:34.006 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:08:34.006 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings'
+2026-04-09 17:11:05.939 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings'
+2026-04-09 17:11:05.939 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/salarysettings → 101 (151939.4ms)
+2026-04-09 17:11:05.939 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=b15tnkTFBGZv9JRajbLtKA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - 101 null null 151939.9119ms
+2026-04-09 17:11:05.943 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - null null
+2026-04-09 17:11:05.943 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:11:05.943 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 204 null null 0.2185ms
+2026-04-09 17:11:05.944 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - text/plain;charset=UTF-8 0
+2026-04-09 17:11:05.944 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:11:05.945 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:11:05.945 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:11:05.945 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/salarysettings/negotiate → 200 (0.2ms)
+2026-04-09 17:11:05.945 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 200 316 application/json 0.6638ms
+2026-04-09 17:11:05.950 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=Kf0D2hkcTFHHT_vqihM7nA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - null null
+2026-04-09 17:11:05.950 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:11:05.951 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings'
+2026-04-09 17:13:11.936 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings'
+2026-04-09 17:13:11.936 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/salarysettings → 101 (125990.7ms)
+2026-04-09 17:13:11.936 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=Kf0D2hkcTFHHT_vqihM7nA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - 101 null null 125991.6537ms
+2026-04-09 17:13:11.941 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - null null
+2026-04-09 17:13:11.941 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:13:11.941 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 204 null null 0.1992ms
+2026-04-09 17:13:11.942 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - text/plain;charset=UTF-8 0
+2026-04-09 17:13:11.942 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:13:11.943 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:13:11.943 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:13:11.943 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/salarysettings/negotiate → 200 (0.2ms)
+2026-04-09 17:13:11.943 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 200 316 application/json 0.7508ms
+2026-04-09 17:13:11.947 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=dijSokIbMvRhlnUYOR182Q&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - null null
+2026-04-09 17:13:11.947 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:13:11.948 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings'
+2026-04-09 17:15:17.918 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings'
+2026-04-09 17:15:17.918 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/salarysettings → 101 (125976.6ms)
+2026-04-09 17:15:17.919 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=dijSokIbMvRhlnUYOR182Q&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - 101 null null 125977.1179ms
+2026-04-09 17:15:17.922 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - null null
+2026-04-09 17:15:17.922 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:15:17.922 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 OPTIONS http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 204 null null 0.292ms
+2026-04-09 17:15:17.923 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - text/plain;charset=UTF-8 0
+2026-04-09 17:15:17.924 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:15:17.924 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:15:17.924 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings/negotiate'
+2026-04-09 17:15:17.924 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP POST /hubs/salarysettings/negotiate → 200 (0.2ms)
+2026-04-09 17:15:17.924 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 POST http://localhost:5217/hubs/salarysettings/negotiate?negotiateVersion=1 - 200 316 application/json 0.6484ms
+2026-04-09 17:15:17.929 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request starting HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=reKWGC_gYtshoeApbEdHwA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - null null
+2026-04-09 17:15:17.929 [INF] Microsoft.AspNetCore.Cors.Infrastructure.CorsService | CORS policy execution successful.
+2026-04-09 17:15:17.929 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executing endpoint '/hubs/salarysettings'
+2026-04-09 17:16:35.918 [INF] Microsoft.AspNetCore.Routing.EndpointMiddleware | Executed endpoint '/hubs/salarysettings'
+2026-04-09 17:16:35.919 [INF] Serilog.AspNetCore.RequestLoggingMiddleware | HTTP GET /hubs/salarysettings → 101 (77992.8ms)
+2026-04-09 17:16:35.919 [INF] Microsoft.AspNetCore.Hosting.Diagnostics | Request finished HTTP/1.1 GET http://localhost:5217/hubs/salarysettings?id=reKWGC_gYtshoeApbEdHwA&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOCIsInVuaXF1ZV9uYW1lIjoidmFzYW50aGFrdW1hciIsImVtYWlsIjoidmFzYW50aDIwMDR2a0BnbWFpbC5jb20iLCJyb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ2FuaXphdGlvbklkIjoiMiIsIk9yZ2FuaXphdGlvbkxvZ28iOiIvdXBsb2Fkcy9vcmctbG9nb3Mvb3JnLWxvZ28tNTg3M2M0NzVkOTFkNGJiZDkwNDZkZWVjNjY3ZDEzNmMuanBnIiwibmJmIjoxNzc1NzM0NTc3LCJleHAiOjE3NzU4MjA5NzcsImlhdCI6MTc3NTczNDU3NywiaXNzIjoiUHJvRGVzWC1CYWNrZW5kIiwiYXVkIjoiUHJvRGVzWC1Gcm9udGVuZCJ9.MULDU_F7LEVM-BWG_7Qa_uVGYmnIkr3f3XqW2U01OZE - 101 null null 77993.2664ms
+2026-04-09 17:23:02.586 [INF] Microsoft.Hosting.Lifetime | Application is shutting down...

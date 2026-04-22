@@ -25,7 +25,7 @@ class DepartmentFormScreen extends StatefulWidget {
 class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final DepartmentRepository _repository = DepartmentRepository();
-  
+
   late TextEditingController _nameController;
   int? _parentDepartmentId;
   bool _isLoading = false;
@@ -35,7 +35,9 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.editData?.departmentName ?? '');
+    _nameController = TextEditingController(
+      text: widget.editData?.departmentName ?? '',
+    );
     _parentDepartmentId = widget.editData?.parentDepartmentId;
     _loadParentOptions();
   }
@@ -51,11 +53,11 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
       final all = await _repository.getDepartments(widget.organizationId);
       _prepareParentOptions(all);
     } catch (e) {
-        CustomSnackbar.show(
-          context: context,
-          message: 'Failed to load parents: $e',
-          isError: true,
-        );
+      CustomSnackbar.show(
+        context: context,
+        message: 'Failed to load parents: $e',
+        isError: true,
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -74,10 +76,13 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
           }
         }
       }
+
       findDescendants(widget.editData!.id);
-      _parentOptions = all.where((d) => 
-        d.id != widget.editData!.id && !descendants.contains(d.id)
-      ).toList();
+      _parentOptions = all
+          .where(
+            (d) => d.id != widget.editData!.id && !descendants.contains(d.id),
+          )
+          .toList();
     }
   }
 
@@ -113,11 +118,11 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
 
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
-        CustomSnackbar.show(
-          context: context,
-          message: 'Save failed: $e',
-          isError: true,
-        );
+      CustomSnackbar.show(
+        context: context,
+        message: 'Save failed: $e',
+        isError: true,
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -128,7 +133,7 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
     final theme = Theme.of(context);
     final isIOS = theme.platform == TargetPlatform.iOS;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Consistent with Private Dashboard/Main Shell
     final navyBg = isDark ? const Color(0xFF0F172A) : Colors.white;
     final cardColor = isDark ? const Color(0xFF1E293B) : Colors.grey.shade100;
@@ -147,13 +152,13 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
             child: const Icon(CupertinoIcons.back),
             onPressed: () => Navigator.pop(context),
           ),
-          trailing: _isSaving 
-            ? const CupertinoActivityIndicator() 
-            : CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: _save,
-                child: const Text('Save'),
-              ),
+          trailing: _isSaving
+              ? const CupertinoActivityIndicator()
+              : CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _save,
+                  child: const Text('Save'),
+                ),
         ),
         child: SafeArea(
           child: Material(
@@ -172,13 +177,20 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                     CupertinoTextField(
                       controller: _nameController,
                       placeholder: 'e.g. Sales Department',
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       decoration: BoxDecoration(
                         color: cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+                        border: Border.all(
+                          color: isDark ? Colors.white10 : Colors.black12,
+                        ),
                       ),
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     _buildLabel('Parent Department', isDark),
@@ -186,22 +198,37 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                     GestureDetector(
                       onTap: () => _showParentPicker(context),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: cardColor,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+                          border: Border.all(
+                            color: isDark ? Colors.white10 : Colors.black12,
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _parentDepartmentId == null 
-                                ? '-- None --' 
-                                : _parentOptions.firstWhere((o) => o.id == _parentDepartmentId).departmentName,
-                              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                              _parentDepartmentId == null
+                                  ? '-- None --'
+                                  : _parentOptions
+                                        .firstWhere(
+                                          (o) => o.id == _parentDepartmentId,
+                                        )
+                                        .departmentName,
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
                             ),
-                            Icon(CupertinoIcons.chevron_down, size: 16, color: isDark ? Colors.white54 : Colors.black54),
+                            Icon(
+                              CupertinoIcons.chevron_down,
+                              size: 16,
+                              color: isDark ? Colors.white54 : Colors.black54,
+                            ),
                           ],
                         ),
                       ),
@@ -220,10 +247,18 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(widget.editData != null ? 'Edit Department' : 'Add Department', 
-          style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+        title: Text(
+          widget.editData != null ? 'Edit Department' : 'Add Department',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -243,13 +278,23 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   hintText: 'e.g. Sales Department',
-                  hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.black26),
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.white24 : Colors.black26,
+                  ),
                   filled: true,
                   fillColor: cardColor,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Department name is required' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Department name is required'
+                    : null,
               ),
               const SizedBox(height: 20),
               _buildLabel('Parent Department', isDark),
@@ -265,15 +310,43 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                     value: _parentDepartmentId,
                     dropdownColor: cardColor,
                     isExpanded: true,
-                    hint: Text('-- None --', style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 14)),
-                    style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                    items: _isLoading 
-                      ? [const DropdownMenuItem<int>(value: null, child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)))]
-                      : [
-                          const DropdownMenuItem<int>(value: null, child: Text('-- None --')),
-                          ..._parentOptions.map((o) => DropdownMenuItem(value: o.id, child: Text(o.departmentName))),
-                        ],
-                    onChanged: (val) => setState(() => _parentDepartmentId = val),
+                    hint: Text(
+                      '-- None --',
+                      style: TextStyle(
+                        color: isDark ? Colors.white24 : Colors.black26,
+                        fontSize: 14,
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    items: _isLoading
+                        ? [
+                            const DropdownMenuItem<int>(
+                              value: null,
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                          ]
+                        : [
+                            const DropdownMenuItem<int>(
+                              value: null,
+                              child: Text('-- None --'),
+                            ),
+                            ..._parentOptions.map(
+                              (o) => DropdownMenuItem(
+                                value: o.id,
+                                child: Text(o.departmentName),
+                              ),
+                            ),
+                          ],
+                    onChanged: (val) =>
+                        setState(() => _parentDepartmentId = val),
                   ),
                 ),
               ),
@@ -285,11 +358,26 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue.shade600,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: _isSaving 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Text('Save Department', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Save Department',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -300,7 +388,14 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
   }
 
   Widget _buildLabel(String text, bool isDark) {
-    return Text(text, style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 13, fontWeight: FontWeight.w600));
+    return Text(
+      text,
+      style: TextStyle(
+        color: isDark ? Colors.white70 : Colors.black87,
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+      ),
+    );
   }
 
   Widget _buildOrgInfoCard(Color cardColor, bool isDark) {
@@ -318,8 +413,20 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Organization', style: TextStyle(color: isDark ? Colors.grey : Colors.grey.shade600, fontSize: 12)),
-              Text(widget.organizationName, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold)),
+              Text(
+                'Organization',
+                style: TextStyle(
+                  color: isDark ? Colors.grey : Colors.grey.shade600,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                widget.organizationName,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ],
@@ -330,10 +437,14 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
   void _showParentPicker(BuildContext context) {
     int selectedIndex = 0;
     if (_parentDepartmentId != null) {
-      selectedIndex = _parentOptions.indexWhere((o) => o.id == _parentDepartmentId) + 1;
+      selectedIndex =
+          _parentOptions.indexWhere((o) => o.id == _parentDepartmentId) + 1;
     }
-    
-    final options = [Department(id: -1, organizationId: 0, departmentName: '-- None --'), ..._parentOptions];
+
+    final options = [
+      Department(id: -1, organizationId: 0, departmentName: '-- None --'),
+      ..._parentOptions,
+    ];
 
     showCupertinoModalPopup(
       context: context,
@@ -346,7 +457,12 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
               height: 44,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: CupertinoColors.separator, width: 0.5)),
+                border: Border(
+                  bottom: BorderSide(
+                    color: CupertinoColors.separator,
+                    width: 0.5,
+                  ),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -361,7 +477,9 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
                     child: const Text('Done'),
                     onPressed: () {
                       setState(() {
-                        _parentDepartmentId = options[selectedIndex].id == -1 ? null : options[selectedIndex].id;
+                        _parentDepartmentId = options[selectedIndex].id == -1
+                            ? null
+                            : options[selectedIndex].id;
                       });
                       Navigator.pop(context);
                     },
@@ -372,9 +490,13 @@ class _DepartmentFormScreenState extends State<DepartmentFormScreen> {
             Expanded(
               child: CupertinoPicker(
                 itemExtent: 40,
-                scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                scrollController: FixedExtentScrollController(
+                  initialItem: selectedIndex,
+                ),
                 onSelectedItemChanged: (index) => selectedIndex = index,
-                children: options.map((o) => Center(child: Text(o.departmentName))).toList(),
+                children: options
+                    .map((o) => Center(child: Text(o.departmentName)))
+                    .toList(),
               ),
             ),
           ],

@@ -35,7 +35,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddSignalR();
-    
+
     // Register background tasks
     builder.Services.AddHostedService<backend.Services.ShiftScheduleBackgroundService>();
     builder.Services.AddScoped<backend.Services.ExportService>();
@@ -104,18 +104,18 @@ try
     builder.Services.AddSingleton(new DataBaseConnection(connectionString));
 
     var app = builder.Build();
-    
+
     // Move CORS to the very top of the pipeline
     app.UseCors("AllowAll");
 
     // Auto-Initialize Database
-    var schemaPath     = Path.Combine(app.Environment.ContentRootPath, "../schema.sql");
+    var schemaPath = Path.Combine(app.Environment.ContentRootPath, "../schema.sql");
     var migrationsPath = Path.Combine(app.Environment.ContentRootPath, "../migrations.sql");
     var seedFieldsPath = Path.Combine(app.Environment.ContentRootPath, "../seed_fields.sql");
-    
-    var adminEmail    = app.Configuration["InitialAdmin:Email"]    ?? throw new Exception("'InitialAdmin:Email' is missing");
+
+    var adminEmail = app.Configuration["InitialAdmin:Email"] ?? throw new Exception("'InitialAdmin:Email' is missing");
     var adminPassword = app.Configuration["InitialAdmin:Password"] ?? throw new Exception("'InitialAdmin:Password' is missing");
-    
+
     DbInitializer.Initialize(connectionString, schemaPath, migrationsPath, seedFieldsPath, adminEmail, adminPassword);
 
     var backendUrl = app.Configuration["BackendUrl"] ?? throw new Exception("Critical Error: 'BackendUrl' is missing in appsettings.json");
@@ -156,6 +156,14 @@ try
     app.MapHub<HolidaysHub>("/hubs/holidays");
     app.MapHub<AttendanceHub>("/hubs/attendance");
     app.MapHub<EmpOTHub>("/hubs/empot");
+    app.MapHub<ProfessionalTaxHub>("/hubs/professionaltax");
+    app.MapHub<AllowancesHub>("/hubs/allowances");
+    app.MapHub<StaffAllowanceHub>("/hubs/staffallowances");
+    app.MapHub<DeductionsHub>("/hubs/deductions");
+    app.MapHub<StaffDeductionHub>("/hubs/staffdeductions");
+    app.MapHub<SalaryYearHub>("/hubs/salaryyears");
+    app.MapHub<SalarySettingsHub>("/hubs/salarysettings");
+    app.MapHub<StaffSalaryHub>("/hubs/staffsalary");
 
     app.MapControllers();
     Log.Information("=== Backend running at {Url} ===", backendUrl);
